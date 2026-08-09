@@ -7,6 +7,9 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { exportToCSV } from '../components/reports/ReportExporter';
 import { BarChart3, Download, Clock, AlertCircle } from 'lucide-react';
 
+import { getFocusedGroupId, clearFocusedGroupId, getSelectedGroupId, setSelectedGroupIdMemory } from '../utils/workspaceContext';
+import { Layers, LogOut } from 'lucide-react';
+
 export const ReportsPage: React.FC = () => {
   const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
   const students = useLiveQuery(() => db.students.toArray());
@@ -21,13 +24,26 @@ export const ReportsPage: React.FC = () => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
   const [selectedMonth, setSelectedMonth] = useState<string>(currentMonthStr);
   const [reportTitle, setReportTitle] = useState('Haftalik O\'quv & Imtihon Natijalari');
-  const [teacherComments, setTeacherComments] = useState<Record<string, string>>({
-    's-101': 'Juda faol, darslarni o\'z vaqtida bajarmoqda.',
-    's-102': 'Vazifalarni yaxshiroq bajarishi kerak.',
-  });
+  const [teacherComments, setTeacherComments] = useState<Record<string, string>>({});
+  const [focusedGroupId, setFocusedGroupIdState] = useState<string | null>(getFocusedGroupId());
 
+  // Listen to workspace focus changes
   React.useEffect(() => {
-    if (groups && groups.length > 0 && !selectedGroupId) {
+    const handleStorage = () => setFocusedGroupIdState(getFocusedGroupId());
+    window.addEventListener('workspace_group_changed', handleStorage);
+    return () => window.removeEventListener('workspace_group_changed', handleStorage);
+  }, []);
+
+  // Group selection memory
+  React.useEffect(() => {
+    if (!groups || groups.length === 0) return;
+    const focusId = getFocusedGroupId();
+    const rememberedId = getSelectedGroupId();
+    if (focusId && groups.some((g) => g.id === focusId)) {
+      setSelectedGroupId(focusId);
+    } else if (rememberedId && groups.some((g) => g.id === rememberedId)) {
+      setSelectedGroupId(rememberedId);
+    } else if (!selectedGroupId) {
       setSelectedGroupId(groups[0].id);
     }
   }, [groups, selectedGroupId]);
@@ -171,9 +187,13 @@ export const ReportsPage: React.FC = () => {
         <div className="flex items-center space-x-2 w-full sm:w-auto">
           <span className="text-xs font-semibold text-slate-300 min-w-16">Guruh:</span>
           <select
+            disabled={!!focusedGroupId}
             value={selectedGroupId}
-            onChange={(e) => setSelectedGroupId(e.target.value)}
-            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64"
+            onChange={(e) => {
+              setSelectedGroupId(e.target.value);
+              setSelectedGroupIdMemory(e.target.value);
+            }}
+            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64 disabled:opacity-80"
           >
             {groups.map((g) => (
               <option key={g.id} value={g.id}>
