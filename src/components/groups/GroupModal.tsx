@@ -10,6 +10,9 @@ interface GroupModalProps {
   groupToEdit?: Group | null;
 }
 
+import { setSelectedGroupIdMemory } from '../../utils/workspaceContext';
+import { syncCollectionToCloud } from '../../services/firebase';
+
 export const GroupModal: React.FC<GroupModalProps> = ({
   isOpen,
   onClose,
@@ -61,6 +64,7 @@ export const GroupModal: React.FC<GroupModalProps> = ({
         await db.groups.update(groupToEdit.id, {
           ...formData,
         });
+        setSelectedGroupIdMemory(groupToEdit.id);
       } else {
         const newGroup: Group = {
           id: `g-${Date.now()}`,
@@ -69,7 +73,10 @@ export const GroupModal: React.FC<GroupModalProps> = ({
           createdAt: new Date().toISOString(),
         };
         await db.groups.add(newGroup);
+        setSelectedGroupIdMemory(newGroup.id);
       }
+      const allGroups = await db.groups.toArray();
+      syncCollectionToCloud('groups', allGroups).catch(console.error);
       onClose();
     } catch (err) {
       console.error('Guruhni saqlashda xatolik:', err);
@@ -118,14 +125,14 @@ export const GroupModal: React.FC<GroupModalProps> = ({
             <option value="Dushanba / Chorshanba / Juma (13:30 - 15:30)">
               Dushanba / Chorshanba / Juma (13:30 - 15:30)
             </option>
-            <option value="Seshonba / Payshanba / Shanba (08:00 - 10:00)">
-              Seshonba / Payshanba / Shanba (08:00 - 10:00)
+            <option value="Seshanba / Payshanba / Shanba (08:00 - 10:00)">
+              Seshanba / Payshanba / Shanba (08:00 - 10:00)
             </option>
-            <option value="Seshonba / Payshanba / Shanba (10:00 - 12:00)">
-              Seshonba / Payshanba / Shanba (10:00 - 12:00)
+            <option value="Seshanba / Payshanba / Shanba (10:00 - 12:00)">
+              Seshanba / Payshanba / Shanba (10:00 - 12:00)
             </option>
-            <option value="Seshonba / Payshanba / Shanba (13:30 - 15:30)">
-              Seshonba / Payshanba / Shanba (13:30 - 15:30)
+            <option value="Seshanba / Payshanba / Shanba (13:30 - 15:30)">
+              Seshanba / Payshanba / Shanba (13:30 - 15:30)
             </option>
           </select>
         </div>

@@ -3,6 +3,7 @@ import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
 import { Student } from '../../types';
 import { db } from '../../db';
+import { syncCollectionToCloud } from '../../services/firebase';
 
 interface StudentModalProps {
   isOpen: boolean;
@@ -83,6 +84,8 @@ export const StudentModal: React.FC<StudentModalProps> = ({
           });
         }
       }
+      const allStudents = await db.students.toArray();
+      syncCollectionToCloud('students', allStudents).catch(console.error);
       onClose();
     } catch (err) {
       console.error('Error saving student:', err);

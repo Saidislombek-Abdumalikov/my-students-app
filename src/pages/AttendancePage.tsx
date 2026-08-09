@@ -7,7 +7,7 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { CalendarCheck, Check, X, Clock, ChevronLeft, ChevronRight, AlertTriangle, Plus, LogOut, Layers } from 'lucide-react';
 import { AttendanceStatus } from '../types';
 import { getClosestLessonDate, getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
-import { getFocusedGroupId, clearFocusedGroupId } from '../utils/workspaceContext';
+import { getFocusedGroupId, clearFocusedGroupId, getSelectedGroupId, setSelectedGroupIdMemory } from '../utils/workspaceContext';
 
 export const AttendancePage: React.FC = () => {
   const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
@@ -36,8 +36,11 @@ export const AttendancePage: React.FC = () => {
   useEffect(() => {
     if (!groups || groups.length === 0) return;
     const focusId = getFocusedGroupId();
+    const rememberedId = getSelectedGroupId();
     if (focusId && groups.some((g) => g.id === focusId)) {
       setSelectedGroupId(focusId);
+    } else if (rememberedId && groups.some((g) => g.id === rememberedId)) {
+      setSelectedGroupId(rememberedId);
     } else if (!selectedGroupId) {
       setSelectedGroupId(groups[0].id);
     }
@@ -210,7 +213,10 @@ export const AttendancePage: React.FC = () => {
             <select
               disabled={!!focusedGroupId}
               value={selectedGroupId}
-              onChange={(e) => setSelectedGroupId(e.target.value)}
+              onChange={(e) => {
+                setSelectedGroupId(e.target.value);
+                setSelectedGroupIdMemory(e.target.value);
+              }}
               className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-56 disabled:opacity-80"
             >
               {groups.map((g) => (

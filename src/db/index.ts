@@ -68,22 +68,6 @@ export const db = new AppDatabase();
 
 // Seed Database function with exact requested groups & students
 export async function seedInitialData() {
-  // Purge default sample seed data from IndexedDB
-  const sampleGroupCount = await db.groups.where('id').startsWith('g-').count();
-  if (sampleGroupCount > 0) {
-    await db.groups.clear();
-    await db.students.clear();
-    await db.groupStudents.clear();
-    await db.payments.clear();
-    await db.attendance.clear();
-    await db.homeworkPackages.clear();
-    await db.homeworkSubmissions.clear();
-    await db.lessons.clear();
-    await db.tests.clear();
-    await db.testResults.clear();
-    localStorage.removeItem('teacher_os_active_workspace_group');
-  }
-
   const existingUsers = await db.users.count();
   if (existingUsers === 0) {
     const teacherUser: User = {

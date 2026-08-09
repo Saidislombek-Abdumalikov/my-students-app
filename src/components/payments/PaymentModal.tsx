@@ -6,6 +6,8 @@ import { Button } from '../common/Button';
 import { PaymentStatus } from '../../types';
 import { CreditCard, Check, AlertCircle } from 'lucide-react';
 
+import { syncCollectionToCloud } from '../../services/firebase';
+
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -45,6 +47,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
       };
 
       await db.payments.add(newPayment);
+      const allPayments = await db.payments.toArray();
+      syncCollectionToCloud('payments', allPayments).catch(console.error);
       onClose();
     } catch (err) {
       console.error('To\'lovni saqlashda xatolik:', err);

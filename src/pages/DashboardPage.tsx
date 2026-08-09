@@ -6,7 +6,7 @@ import { Button } from '../components/common/Button';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { Users, GraduationCap, CalendarCheck, AlertCircle, CheckCircle2, ArrowRight, LogOut, Layers } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getFocusedGroupId, setFocusedGroupId, clearFocusedGroupId } from '../utils/workspaceContext';
+import { getFocusedGroupId, setFocusedGroupId, clearFocusedGroupId, getSelectedGroupId, setSelectedGroupIdMemory } from '../utils/workspaceContext';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -21,7 +21,14 @@ export const DashboardPage: React.FC = () => {
   useEffect(() => {
     if (groups && groups.length > 0 && !selectedGroupId) {
       const focusId = getFocusedGroupId();
-      setSelectedGroupId(focusId && groups.some((g) => g.id === focusId) ? focusId : groups[0].id);
+      const rememberedId = getSelectedGroupId();
+      if (focusId && groups.some((g) => g.id === focusId)) {
+        setSelectedGroupId(focusId);
+      } else if (rememberedId && groups.some((g) => g.id === rememberedId)) {
+        setSelectedGroupId(rememberedId);
+      } else {
+        setSelectedGroupId(groups[0].id);
+      }
     }
   }, [groups, selectedGroupId]);
 
@@ -68,7 +75,10 @@ export const DashboardPage: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <select
             value={selectedGroupId}
-            onChange={(e) => setSelectedGroupId(e.target.value)}
+            onChange={(e) => {
+              setSelectedGroupId(e.target.value);
+              setSelectedGroupIdMemory(e.target.value);
+            }}
             className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-bold focus:outline-none focus:border-emerald-500"
           >
             {groups.map((g) => (

@@ -7,7 +7,7 @@ import { Button } from '../components/common/Button';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { FileCheck, Save, ChevronLeft, ChevronRight, AlertTriangle, Plus, LogOut, Layers } from 'lucide-react';
 import { getClosestLessonDate, getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
-import { getFocusedGroupId, clearFocusedGroupId } from '../utils/workspaceContext';
+import { getFocusedGroupId, clearFocusedGroupId, getSelectedGroupId, setSelectedGroupIdMemory } from '../utils/workspaceContext';
 
 interface MultiTaskItem {
   id: string;
@@ -48,8 +48,11 @@ export const HomeworkCheckPage: React.FC = () => {
   useEffect(() => {
     if (!groups || groups.length === 0) return;
     const focusId = getFocusedGroupId();
+    const rememberedId = getSelectedGroupId();
     if (focusId && groups.some((g) => g.id === focusId)) {
       setSelectedGroupId(focusId);
+    } else if (rememberedId && groups.some((g) => g.id === rememberedId)) {
+      setSelectedGroupId(rememberedId);
     } else if (!selectedGroupId) {
       setSelectedGroupId(groups[0].id);
     }
@@ -218,7 +221,15 @@ export const HomeworkCheckPage: React.FC = () => {
       <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900 p-4">
         <div className="flex items-center space-x-2 w-full sm:w-auto">
           <span className="text-xs font-semibold text-slate-300 min-w-16">Guruh:</span>
-          <select disabled={!!focusedGroupId} value={selectedGroupId} onChange={(e) => setSelectedGroupId(e.target.value)} className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64 disabled:opacity-80">
+          <select
+            disabled={!!focusedGroupId}
+            value={selectedGroupId}
+            onChange={(e) => {
+              setSelectedGroupId(e.target.value);
+              setSelectedGroupIdMemory(e.target.value);
+            }}
+            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64 disabled:opacity-80"
+          >
             {groups.map((g) => (
               <option key={g.id} value={g.id}>{g.name}</option>
             ))}
