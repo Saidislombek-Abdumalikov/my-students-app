@@ -18,7 +18,6 @@ import { ReportsPage } from './pages/ReportsPage';
 import { CommunicationsPage } from './pages/CommunicationsPage';
 import { TelegramPage } from './pages/TelegramPage';
 import { CalendarPage } from './pages/CalendarPage';
-import { LessonPlansPage } from './pages/LessonPlansPage';
 import { seedInitialData } from './db';
 
 export const App: React.FC = () => {
@@ -38,7 +37,6 @@ export const App: React.FC = () => {
           <Route path="attendance" element={<AttendancePage />} />
           <Route path="homework-check" element={<HomeworkCheckPage />} />
           <Route path="homework-add" element={<HomeworkAddPage />} />
-          <Route path="lesson-plans" element={<LessonPlansPage />} />
           <Route path="screenshots" element={<ScreenshotHubPage />} />
           <Route path="payments" element={<PaymentsPage />} />
           <Route path="workspace" element={<DailyWorkspacePage />} />

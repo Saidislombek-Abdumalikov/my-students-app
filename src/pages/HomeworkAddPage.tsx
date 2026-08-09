@@ -5,7 +5,7 @@ import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
-import { PlusCircle, Save, Trash2, History, ChevronLeft, ChevronRight, LogOut, Layers } from 'lucide-react';
+import { PlusCircle, Save, Trash2, History, ChevronLeft, ChevronRight, LogOut, Layers, AlertTriangle, Plus } from 'lucide-react';
 import { getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
 import { getFocusedGroupId, clearFocusedGroupId } from '../utils/workspaceContext';
 
@@ -85,6 +85,19 @@ export const HomeworkAddPage: React.FC = () => {
     setFocusedGroupIdState(null);
   };
 
+  const handleAddExtraLesson = async () => {
+    const newLessonId = `l-${selectedGroupId}-${deadline}`;
+    await db.lessons.put({
+      id: newLessonId,
+      groupId: selectedGroupId,
+      date: deadline,
+      title: `Qo'shimcha dars (${deadline})`,
+      status: 'COMPLETED',
+      createdAt: new Date().toISOString(),
+    });
+    alert(`${deadline} (${dayName}) kungi dars kalendarga muvaffaqiyatli biriktirildi va saqlandi!`);
+  };
+
   const handleSaveHomeworkPackage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedGroupId || tasks.length === 0) return;
@@ -140,6 +153,24 @@ export const HomeworkAddPage: React.FC = () => {
           </div>
           <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-400" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
             Guruh ishchi xonasidan chiqish
+          </Button>
+        </Card>
+      )}
+
+      {/* NON-LESSON DAY WARNING & FIXING BANNER */}
+      {!isValidDay && (
+        <Card className="p-4 bg-amber-950/40 border border-amber-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-amber-300">
+            <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+            <div>
+              <span className="font-bold text-sm">Bu kunda dars mavjud emas!</span>
+              <p className="text-[11px] text-amber-400/90 mt-0.5">
+                Ushbu guruhning dars jadvallari bo'yicha {deadline} ({dayName}) dars kuni emas. Agar ushbu kunda dars o'tgan bo'lsangiz, uni kalendarga biriktirishingiz mumkin.
+              </p>
+            </div>
+          </div>
+          <Button size="sm" variant="outline" leftIcon={<Plus className="w-3.5 h-3.5" />} onClick={handleAddExtraLesson} className="whitespace-nowrap">
+            Qo'shimcha dars biriktirish
           </Button>
         </Card>
       )}
