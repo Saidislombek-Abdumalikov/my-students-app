@@ -20,6 +20,7 @@ import {
   GraduationCap,
   ChevronRight
 } from 'lucide-react';
+import { getFocusedGroupId, clearFocusedGroupId } from '../utils/workspaceContext';
 
 export const GroupDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -54,8 +55,20 @@ export const GroupDetailPage: React.FC = () => {
   };
 
   const handleArchiveGroup = async () => {
-    if (confirm(`Archive group "${group.name}"?`)) {
+    if (confirm(`"${group.name}" guruhini arxivlashni xohlaysizmi?`)) {
       await db.groups.update(group.id, { status: 'ARCHIVED' });
+      navigate('/groups');
+    }
+  };
+
+  const handleDeleteGroup = async () => {
+    if (confirm(`Ushbu "${group.name}" guruhini BUTUNLAY O'CHIRIB tashlamoqchimisiz? Qayta tiklab bo'lmaydi.`)) {
+      await db.groups.delete(group.id);
+      await db.groupStudents.where('groupId').equals(group.id).delete();
+      if (getFocusedGroupId() === group.id) {
+        clearFocusedGroupId();
+      }
+      alert(`"${group.name}" guruhi muvaffaqiyatli o'chirildi!`);
       navigate('/groups');
     }
   };
@@ -72,7 +85,7 @@ export const GroupDetailPage: React.FC = () => {
             <div className="flex items-center space-x-2">
               <h1 className="text-2xl font-bold text-slate-100">{group.name}</h1>
               <Badge variant={group.status === 'ACTIVE' ? 'success' : 'neutral'} dot>
-                {group.status}
+                {group.status === 'ACTIVE' ? 'FAOL' : 'ARXIV'}
               </Badge>
             </div>
             <p className="text-xs text-slate-400 font-mono mt-0.5">
@@ -88,16 +101,24 @@ export const GroupDetailPage: React.FC = () => {
             leftIcon={<Edit className="w-4 h-4" />}
             onClick={() => setIsEditGroupOpen(true)}
           >
-            Edit Group
+            Tahrirlash
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-amber-400 hover:text-amber-300"
+            onClick={handleArchiveGroup}
+          >
+            Arxivlash
           </Button>
           <Button
             variant="ghost"
             size="sm"
             className="text-rose-400 hover:text-rose-300"
             leftIcon={<Trash2 className="w-4 h-4" />}
-            onClick={handleArchiveGroup}
+            onClick={handleDeleteGroup}
           >
-            Archive
+            O'chirish
           </Button>
         </div>
       </div>
