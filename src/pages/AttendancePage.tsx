@@ -274,7 +274,20 @@ export const AttendancePage: React.FC = () => {
           </div>
         </div>
 
-        {groupStudents.length === 0 ? (
+        {!isEffectiveLessonDay ? (
+          <div className="p-8 text-center space-y-2">
+            <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto opacity-80" />
+            <h3 className="text-sm font-bold text-slate-200">Ushbu kunda ({selectedDate}, {dayName}) dars mavjud emas</h3>
+            <p className="text-xs text-slate-400 max-w-md mx-auto">
+              {selectedGroup?.name} guruhining dars jadvali bo'yicha bu kunda dars rejalashtirilmagan.
+            </p>
+            <div className="pt-2">
+              <Button size="sm" variant="outline" leftIcon={<Plus className="w-3.5 h-3.5" />} onClick={handleAddExtraLesson}>
+                + Ushbu kunga dars biriktirish
+              </Button>
+            </div>
+          </div>
+        ) : groupStudents.length === 0 ? (
           <p className="text-xs text-slate-400 p-4 text-center">Ushbu guruhda o'quvchilar mavjud emas.</p>
         ) : (
           <div className="space-y-2">

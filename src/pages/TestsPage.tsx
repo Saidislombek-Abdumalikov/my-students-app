@@ -256,7 +256,7 @@ export const TestsPage: React.FC = () => {
         </div>
 
         {groupTests.length === 0 ? (
-          <p className="text-xs text-slate-400 p-4 text-center">Ushbu turdagi imtihonlar hali yaratilmagan.</p>
+          <p className="text-xs text-slate-400 p-4 text-center">Ushbu guruh yoki tanlangan kunda imtihon o'tkazilmagan.</p>
         ) : (
           <div className="space-y-2">
             {groupTests.map((test) => {
