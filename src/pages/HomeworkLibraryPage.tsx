@@ -21,72 +21,7 @@ export const HomeworkLibraryPage: React.FC = () => {
   const [itemToAssign, setItemToAssign] = useState<HomeworkLibraryItem | null>(null);
   const [itemToPreview, setItemToPreview] = useState<HomeworkLibraryItem | null>(null);
 
-  // Seed sample library items if library is empty
-  useEffect(() => {
-    async function seedLibrary() {
-      const count = await db.homeworkLibrary.count();
-      if (count > 0) return;
-
-      const seeds: HomeworkLibraryItem[] = [
-        {
-          id: 'hl-1',
-          title: 'IELTS Cambridge 18 Reading & Task 2 Package',
-          courseSubject: 'IELTS Preparation',
-          level: 'Upper-Intermediate',
-          category: 'Cambridge Practice',
-          tasks: [
-            {
-              title: 'Reading Passage 3 Scanning',
-              taskType: 'READING',
-              instructions: 'Complete Cambridge 18 Test 2 Passage 3 questions 27-40.',
-              maxScore: 40,
-            },
-            {
-              title: 'Task 2 Essay Brainstorming',
-              taskType: 'WRITING',
-              instructions: 'Outline 2 body paragraphs for Essay Prompt #4.',
-              maxScore: 9,
-            },
-            {
-              title: 'Academic Vocabulary Bank',
-              taskType: 'VOCABULARY',
-              instructions: 'Memorize 20 high-frequency academic collocations.',
-              maxScore: 20,
-            },
-          ],
-          tags: ['cambridge', 'reading', 'writing', 'task2'],
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: 'hl-2',
-          title: 'General English B2 Grammar & Listening Suite',
-          courseSubject: 'General English',
-          level: 'Intermediate',
-          category: 'Grammar',
-          tasks: [
-            {
-              title: 'Conditionals Type 2 & 3 Worksheet',
-              taskType: 'GRAMMAR',
-              instructions: 'Complete exercise 1-15 on page 42.',
-              maxScore: 15,
-            },
-            {
-              title: 'BBC Podcast Listening Task',
-              taskType: 'LISTENING',
-              instructions: 'Listen to 6-minute English and answer 5 comprehension questions.',
-              maxScore: 10,
-            },
-          ],
-          tags: ['b2', 'grammar', 'conditionals', 'listening'],
-          createdAt: new Date().toISOString(),
-        },
-      ];
-
-      await db.homeworkLibrary.bulkAdd(seeds);
-    }
-
-    seedLibrary().catch(console.error);
-  }, []);
+  // Library items are managed manually by teacher
 
   if (!libraryItems) {
     return <LoadingSpinner label="Loading homework library bank..." />;

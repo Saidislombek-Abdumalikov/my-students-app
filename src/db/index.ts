@@ -68,6 +68,18 @@ export const db = new AppDatabase();
 
 // Seed Database function with exact requested groups & students
 export async function seedInitialData() {
+  // One-time purge of legacy sample homeworks, library items, and sample tests
+  const legacySampleCount = await db.homeworkLibrary.count();
+  const legacySamplePackageCount = await db.homeworkPackages.where('id').startsWith('hp-sample').count();
+  if (legacySampleCount > 0 || legacySamplePackageCount > 0) {
+    await db.homeworkPackages.clear();
+    await db.homeworkTasks.clear();
+    await db.homeworkSubmissions.clear();
+    await db.homeworkLibrary.clear();
+    await db.tests.clear();
+    await db.testResults.clear();
+  }
+
   const existingUsers = await db.users.count();
   if (existingUsers === 0) {
     const teacherUser: User = {
