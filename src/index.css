@@ -228,12 +228,6 @@ body.light-theme [class*="bg-black/"] {
   background-color: rgba(15, 23, 42, 0.4) !important;
 }
 
-/* Disable Glowing Effects for Light Theme */
-* {
-  box-shadow: none !important;
-  text-shadow: none !important;
-}
-
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

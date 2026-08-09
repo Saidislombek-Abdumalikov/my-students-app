@@ -8,6 +8,8 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { Award, Plus, Play, Save, Edit, Trash2 } from 'lucide-react';
 import { Test } from '../types';
 
+import { validateAndFormatScore } from '../utils/scoreValidation';
+
 export const TestsPage: React.FC = () => {
   const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
   const students = useLiveQuery(() => db.students.where('status').equals('ACTIVE').toArray());
@@ -29,7 +31,7 @@ export const TestsPage: React.FC = () => {
   const [formDate, setFormDate] = useState(todayStr);
   const [formMaxScore, setFormMaxScore] = useState(100);
 
-  // Scores State: studentId -> { score: number, comment: string }
+  // Scores State: studentId -> { score: number; comment: string }
   const [scoresState, setScoresState] = useState<Record<string, { score: number; comment: string }>>({});
   const [isSaving, setIsSaving] = useState(false);
 
@@ -136,11 +138,13 @@ export const TestsPage: React.FC = () => {
     setScoresState(existingMap);
   };
 
-  const updateScore = (studentId: string, scoreVal: number) => {
+  const updateScore = (studentId: string, rawVal: number) => {
+    if (!activeTest) return;
+    const validated = validateAndFormatScore(rawVal, activeTest.maxScore, activeTest.category);
     setScoresState((prev) => ({
       ...prev,
       [studentId]: {
-        score: scoreVal,
+        score: validated.score,
         comment: prev[studentId]?.comment || '',
       },
     }));
@@ -150,7 +154,7 @@ export const TestsPage: React.FC = () => {
     setScoresState((prev) => ({
       ...prev,
       [studentId]: {
-        score: prev[studentId]?.score || 85,
+        score: prev[studentId]?.score ?? activeTest?.maxScore ?? 100,
         comment: commentVal,
       },
     }));
@@ -161,13 +165,14 @@ export const TestsPage: React.FC = () => {
     setIsSaving(true);
     try {
       const resultEntries = groupStudents.map((s) => {
-        const data = scoresState[s.id] || { score: 85, comment: '' };
+        const data = scoresState[s.id] || { score: activeTest.maxScore, comment: '' };
+        const validated = validateAndFormatScore(data.score, activeTest.maxScore, activeTest.category);
         return {
           id: `tr-${activeTest.id}-${s.id}`,
           testId: activeTest.id,
           studentId: s.id,
-          score: data.score,
-          percentage: data.score,
+          score: validated.score,
+          percentage: validated.percentage,
           comment: data.comment,
           createdAt: new Date().toISOString(),
         };
@@ -334,15 +339,15 @@ export const TestsPage: React.FC = () => {
           ) : (
             <div className="space-y-3">
               {groupStudents.map((s, idx) => {
-                const current = scoresState[s.id] || { score: 85, comment: '' };
-                const scoreVal = current.score;
+                const current = scoresState[s.id] || { score: activeTest.maxScore, comment: '' };
+                const validated = validateAndFormatScore(current.score, activeTest.maxScore, activeTest.category);
 
                 let grade = "A'lo";
                 let gradeBadgeClass = "bg-emerald-600 text-white font-extrabold";
-                if (scoreVal >= 90) grade = "Super";
-                else if (scoreVal >= 80) grade = "A'lo";
-                else if (scoreVal >= 65) grade = "Yaxshi";
-                else if (scoreVal >= 50) grade = "Qoniqarli";
+                if (validated.percentage >= 90) grade = "Super";
+                else if (validated.percentage >= 80) grade = "A'lo";
+                else if (validated.percentage >= 65) grade = "Yaxshi";
+                else if (validated.percentage >= 50) grade = "Qoniqarli";
                 else grade = "Qoniqarsiz";
 
                 return (
@@ -356,17 +361,19 @@ export const TestsPage: React.FC = () => {
                       </div>
 
                       <span className={`px-3 py-0.5 text-xs rounded-lg ${gradeBadgeClass}`}>
-                        Baho: {grade} ({scoreVal}%)
+                        Baho: {grade} ({validated.score} / {activeTest.maxScore} — {validated.percentage}%)
                       </span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-400 mb-1">Ball (0 - 100)</label>
+                        <label className="block text-xs font-semibold text-slate-400 mb-1">
+                          Ball (0 - {activeTest.maxScore})
+                        </label>
                         <input
                           type="number"
                           min="0"
-                          max="100"
+                          max={activeTest.maxScore}
                           value={current.score}
                           onChange={(e) => updateScore(s.id, Number(e.target.value))}
                           className="w-full px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs font-bold text-emerald-400 focus:outline-none focus:border-emerald-500"

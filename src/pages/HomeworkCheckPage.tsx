@@ -19,6 +19,7 @@ export const HomeworkCheckPage: React.FC = () => {
   const students = useLiveQuery(() => db.students.where('status').equals('ACTIVE').toArray());
   const memberships = useLiveQuery(() => db.groupStudents.toArray());
   const packages = useLiveQuery(() => db.homeworkPackages.toArray());
+  const homeworkTasksList = useLiveQuery(() => db.homeworkTasks.toArray());
   const submissions = useLiveQuery(() => db.homeworkSubmissions.toArray());
   const lessons = useLiveQuery(() => db.lessons.toArray());
 
@@ -27,11 +28,23 @@ export const HomeworkCheckPage: React.FC = () => {
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>(todayStr);
 
-  const [assignedTasks] = useState<MultiTaskItem[]>([
+  const defaultTasks: MultiTaskItem[] = [
     { id: 't-1', name: "So'zlar yodlash (Vocabulary)" },
     { id: 't-2', name: 'WorkBook mashqlari' },
     { id: 't-3', name: "O'qib kelish (Reading)" },
-  ]);
+  ];
+
+  // Resolve assigned tasks dynamically from DB if teacher created a package for this date/group
+  const matchedPkg = packages?.find(
+    (p) => p.groupId === selectedGroupId && (p.deadline === selectedDate || p.id === `hp-${selectedGroupId}-${selectedDate}`)
+  );
+  const matchedDbTasks = matchedPkg && homeworkTasksList
+    ? homeworkTasksList.filter((t) => t.packageId === matchedPkg.id)
+    : [];
+
+  const assignedTasks: MultiTaskItem[] = matchedDbTasks.length > 0
+    ? matchedDbTasks.map((t) => ({ id: t.id, name: t.title }))
+    : defaultTasks;
 
   const [studentTaskChecks, setStudentTaskChecks] = useState<Record<string, Record<string, boolean>>>({});
   const [isSaving, setIsSaving] = useState(false);
