@@ -36,7 +36,8 @@ export const DashboardPage: React.FC = () => {
   }
 
   const focusedGroup = groups.find((g) => g.id === focusedGroupId);
-  const unpaidPayments = payments.filter((p) => p.status === 'UNPAID');
+  const activeStudentIds = new Set(students.filter((s) => s.status === 'ACTIVE').map((s) => s.id));
+  const unpaidPayments = payments.filter((p) => p.status === 'UNPAID' && activeStudentIds.has(p.studentId));
   const studentMap = new Map(students.map((s) => [s.id, s]));
 
   const handleOpenWorkspace = (gId?: string) => {

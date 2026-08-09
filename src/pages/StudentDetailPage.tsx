@@ -46,8 +46,20 @@ export const StudentDetailPage: React.FC = () => {
   const enrolledGroups = groups.filter(g => enrolledGroupIds.has(g.id));
 
   const handleArchiveStudent = async () => {
-    if (confirm(`Archive student profile for "${student.fullName}"?`)) {
+    if (confirm(`"${student.fullName}" o'quvchisini arxivlashni tasdiqlaysizmi?`)) {
       await db.students.update(student.id, { status: 'ARCHIVED' });
+      navigate('/students');
+    }
+  };
+
+  const handleDeleteStudentPermanently = async () => {
+    if (confirm(`Ushbu "${student.fullName}" o'quvchisini va uning barcha to'lov hamda dars yozuvlarini BUTUNLAY O'CHIRIB tashlamoqchimisiz? Qayta tiklab bo'lmaydi.`)) {
+      await db.students.delete(student.id);
+      await db.groupStudents.where('studentId').equals(student.id).delete();
+      await db.payments.where('studentId').equals(student.id).delete();
+      await db.attendance.where('studentId').equals(student.id).delete();
+      await db.homeworkSubmissions.where('studentId').equals(student.id).delete();
+      alert(`"${student.fullName}" o'quvchisi va uning to'lov hamda dars ma'lumotlari to'liq o'chirildi!`);
       navigate('/students');
     }
   };
@@ -73,7 +85,7 @@ export const StudentDetailPage: React.FC = () => {
                 }
                 dot
               >
-                {student.status}
+                {student.status === 'ACTIVE' ? 'FAOL' : student.status === 'ARCHIVED' ? 'ARXIV' : 'NOPAO' }
               </Badge>
             </div>
             <p className="text-xs text-slate-400 mt-0.5 font-mono">
@@ -89,16 +101,24 @@ export const StudentDetailPage: React.FC = () => {
             leftIcon={<Edit className="w-4 h-4" />}
             onClick={() => setIsEditModalOpen(true)}
           >
-            Edit Profile
+            Tahrirlash
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-amber-400 hover:text-amber-300"
+            onClick={handleArchiveStudent}
+          >
+            Arxivlash
           </Button>
           <Button
             variant="ghost"
             size="sm"
             className="text-rose-400 hover:text-rose-300"
             leftIcon={<Trash2 className="w-4 h-4" />}
-            onClick={handleArchiveStudent}
+            onClick={handleDeleteStudentPermanently}
           >
-            Archive Profile
+            Butunlay O'chirish
           </Button>
         </div>
       </div>
