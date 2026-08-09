@@ -12,6 +12,7 @@ import {
   FileSpreadsheet,
   Users,
   UserCheck,
+  BookOpenCheck,
   CreditCard
 } from 'lucide-react';
 
@@ -27,6 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
     { label: 'Davomat Kiritish', path: '/attendance', icon: CalendarCheck },
     { label: 'Bugungi Vazifani Tekshirish', path: '/homework-check', icon: FileCheck },
     { label: 'Keyingi Darsga Vazifa Berish', path: '/homework-add', icon: PlusCircle },
+    { label: 'Dars Rejalari', path: '/lesson-plans', icon: BookOpenCheck },
     { label: 'Baholar & Imtihonlar', path: '/tests', icon: GraduationCap },
     { label: 'Dars Jadvali', path: '/calendar', icon: Calendar },
   ];

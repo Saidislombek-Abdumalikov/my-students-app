@@ -55,7 +55,7 @@ export class AppDatabase extends Dexie {
       homeworkLibrary: 'id, title, courseSubject, category',
       tests: 'id, groupId, date, category',
       testResults: 'id, testId, studentId, [testId+studentId]',
-      lessonPlans: 'id, lessonId',
+      lessonPlans: 'id, lessonId, groupId, targetDate, status',
       learnedMaterial: 'id, lessonId',
       payments: 'id, studentId, groupId, periodMonth, status',
       files: 'id, studentId, groupId, lessonId, testId',

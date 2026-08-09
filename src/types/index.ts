@@ -176,6 +176,8 @@ export interface TestResult {
 export interface LessonPlan {
   id: string;
   lessonId: string;
+  groupId?: string;
+  targetDate?: string;
   topic: string;
   objectives: string;
   vocabulary?: string;
@@ -188,6 +190,7 @@ export interface LessonPlan {
   materials?: string;
   plannedHomework?: string;
   teacherNotes?: string;
+  status?: 'PENDING' | 'COMPLETED';
 }
 
 export interface LearnedMaterial {

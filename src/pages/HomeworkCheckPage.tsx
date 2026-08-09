@@ -5,8 +5,9 @@ import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
-import { FileCheck, Save, ChevronLeft, ChevronRight, AlertTriangle, Plus } from 'lucide-react';
+import { FileCheck, Save, ChevronLeft, ChevronRight, AlertTriangle, Plus, LogOut, Layers } from 'lucide-react';
 import { getClosestLessonDate, getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
+import { getFocusedGroupId, clearFocusedGroupId } from '../utils/workspaceContext';
 
 interface MultiTaskItem {
   id: string;
@@ -34,10 +35,22 @@ export const HomeworkCheckPage: React.FC = () => {
 
   const [studentTaskChecks, setStudentTaskChecks] = useState<Record<string, Record<string, boolean>>>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [focusedGroupId, setFocusedGroupIdState] = useState<string | null>(getFocusedGroupId());
 
-  // Set default group on first load
+  // Listen to workspace focus changes
   useEffect(() => {
-    if (groups && groups.length > 0 && !selectedGroupId) {
+    const handleStorage = () => setFocusedGroupIdState(getFocusedGroupId());
+    window.addEventListener('workspace_group_changed', handleStorage);
+    return () => window.removeEventListener('workspace_group_changed', handleStorage);
+  }, []);
+
+  // Set default group or locked focused group
+  useEffect(() => {
+    if (!groups || groups.length === 0) return;
+    const focusId = getFocusedGroupId();
+    if (focusId && groups.some((g) => g.id === focusId)) {
+      setSelectedGroupId(focusId);
+    } else if (!selectedGroupId) {
       setSelectedGroupId(groups[0].id);
     }
   }, [groups, selectedGroupId]);
@@ -114,6 +127,11 @@ export const HomeworkCheckPage: React.FC = () => {
     });
   };
 
+  const handleLeaveWorkspace = () => {
+    clearFocusedGroupId();
+    setFocusedGroupIdState(null);
+  };
+
   const handleAddExtraLesson = async () => {
     const newLessonId = `l-${selectedGroupId}-${selectedDate}`;
     await db.lessons.put({
@@ -179,10 +197,28 @@ export const HomeworkCheckPage: React.FC = () => {
         </Button>
       </div>
 
+      {/* FOCUSED WORKSPACE BANNER */}
+      {focusedGroupId && selectedGroup && (
+        <Card className="p-4 bg-emerald-950/40 border border-emerald-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-emerald-300">
+            <Layers className="w-5 h-5 flex-shrink-0 text-emerald-400" />
+            <div>
+              <span className="font-bold text-sm">Hozirda '{selectedGroup.name}' guruh ishchi xonasidasiz</span>
+              <p className="text-[11px] text-emerald-400/90 mt-0.5">
+                Ushbu guruh bilan ishlamoqdasiz. Boshqa guruhga o'tish uchun guruh ishchi xonasidan chiqishingiz mumkin.
+              </p>
+            </div>
+          </div>
+          <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-400" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
+            Guruh ishchi xonasidan chiqish
+          </Button>
+        </Card>
+      )}
+
       <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900 p-4">
         <div className="flex items-center space-x-2 w-full sm:w-auto">
           <span className="text-xs font-semibold text-slate-300 min-w-16">Guruh:</span>
-          <select value={selectedGroupId} onChange={(e) => setSelectedGroupId(e.target.value)} className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64">
+          <select disabled={!!focusedGroupId} value={selectedGroupId} onChange={(e) => setSelectedGroupId(e.target.value)} className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64 disabled:opacity-80">
             {groups.map((g) => (
               <option key={g.id} value={g.id}>{g.name}</option>
             ))}

@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
-import { PlusCircle, Save, Trash2, History } from 'lucide-react';
+import { PlusCircle, Save, Trash2, History, ChevronLeft, ChevronRight, LogOut, Layers } from 'lucide-react';
+import { getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
+import { getFocusedGroupId, clearFocusedGroupId } from '../utils/workspaceContext';
 
 interface MultiTaskItem {
   id: string;
@@ -19,24 +21,52 @@ export const HomeworkAddPage: React.FC = () => {
   const todayStr = new Date().toISOString().split('T')[0];
 
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
-  const [title, setTitle] = useState('Unit 3: Kids Vocabulary & Pre-Inter Homework');
+  const [title, setTitle] = useState('Unit 3: Vocabulary & Workbook Homework');
   const [deadline, setDeadline] = useState(todayStr);
   const [tasks, setTasks] = useState<MultiTaskItem[]>([
-    { id: 't-1', name: 'So\'zlar yodlash (Vocabulary 15 ta)' },
+    { id: 't-1', name: "So'zlar yodlash (Vocabulary 15 ta)" },
     { id: 't-2', name: 'WorkBook 20-bet 1-3 mashqlar' },
   ]);
   const [newTaskName, setNewTaskName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [focusedGroupId, setFocusedGroupIdState] = useState<string | null>(getFocusedGroupId());
 
-  React.useEffect(() => {
-    if (groups && groups.length > 0 && !selectedGroupId) {
+  // Listen to workspace focus changes
+  useEffect(() => {
+    const handleStorage = () => setFocusedGroupIdState(getFocusedGroupId());
+    window.addEventListener('workspace_group_changed', handleStorage);
+    return () => window.removeEventListener('workspace_group_changed', handleStorage);
+  }, []);
+
+  // Set default group or locked focused group
+  useEffect(() => {
+    if (!groups || groups.length === 0) return;
+    const focusId = getFocusedGroupId();
+    if (focusId && groups.some((g) => g.id === focusId)) {
+      setSelectedGroupId(focusId);
+    } else if (!selectedGroupId) {
       setSelectedGroupId(groups[0].id);
     }
   }, [groups, selectedGroupId]);
 
+  // Snap deadline date to group's NEXT scheduled lesson day when group changes
+  useEffect(() => {
+    if (!groups || !selectedGroupId) return;
+    const selectedGroup = groups.find((g) => g.id === selectedGroupId);
+    if (selectedGroup) {
+      const nextDay = getNextLessonDate(todayStr, selectedGroup.scheduleDescription, true);
+      setDeadline(nextDay);
+    }
+  }, [selectedGroupId, groups, todayStr]);
+
   if (!groups || !packages) {
     return <LoadingSpinner label="Vazifa qo'shish sahifasi yuklanmoqda..." />;
   }
+
+  const selectedGroup = groups.find((g) => g.id === selectedGroupId);
+  const schedule = selectedGroup?.scheduleDescription || '';
+  const isValidDay = isLessonDay(deadline, schedule);
+  const dayName = getUzbekDayName(deadline);
 
   const groupPackages = packages.filter((p) => selectedGroupId === 'ALL' || p.groupId === selectedGroupId);
 
@@ -50,14 +80,19 @@ export const HomeworkAddPage: React.FC = () => {
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
   };
 
+  const handleLeaveWorkspace = () => {
+    clearFocusedGroupId();
+    setFocusedGroupIdState(null);
+  };
+
   const handleSaveHomeworkPackage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedGroupId || tasks.length === 0) return;
 
     setIsSaving(true);
     try {
-      const pkgId = `hp-${Date.now()}`;
-      await db.homeworkPackages.add({
+      const pkgId = `hp-${selectedGroupId}-${deadline}`;
+      await db.homeworkPackages.put({
         id: pkgId,
         groupId: selectedGroupId,
         lessonId: `l-${selectedGroupId}-${deadline}`,
@@ -83,13 +118,31 @@ export const HomeworkAddPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
             <PlusCircle className="w-6 h-6 text-emerald-400" />
-            <span>Uy Vazifasi Qo'shish & Saqlash</span>
+            <span>Keyingi Darsga Vazifa Berish</span>
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
             Keyingi dars uchun vazifalar topshirig'ini yaratish va saqlab qo'yish paneli.
           </p>
         </div>
       </div>
+
+      {/* FOCUSED WORKSPACE BANNER */}
+      {focusedGroupId && selectedGroup && (
+        <Card className="p-4 bg-emerald-950/40 border border-emerald-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-emerald-300">
+            <Layers className="w-5 h-5 flex-shrink-0 text-emerald-400" />
+            <div>
+              <span className="font-bold text-sm">Hozirda '{selectedGroup.name}' guruh ishchi xonasidasiz</span>
+              <p className="text-[11px] text-emerald-400/90 mt-0.5">
+                Ushbu guruh bilan ishlamoqdasiz. Boshqa guruhga o'tish uchun guruh ishchi xonasidan chiqishingiz mumkin.
+              </p>
+            </div>
+          </div>
+          <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-400" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
+            Guruh ishchi xonasidan chiqish
+          </Button>
+        </Card>
+      )}
 
       {/* Main Grid: Form + History */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -105,9 +158,10 @@ export const HomeworkAddPage: React.FC = () => {
               <label className="block font-semibold text-slate-300 mb-1">Guruhni Tanlang</label>
               <select
                 required
+                disabled={!!focusedGroupId}
                 value={selectedGroupId}
                 onChange={(e) => setSelectedGroupId(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-bold focus:outline-none focus:border-emerald-500"
+                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-bold focus:outline-none focus:border-emerald-500 disabled:opacity-80"
               >
                 {groups.map((g) => (
                   <option key={g.id} value={g.id}>
@@ -128,15 +182,41 @@ export const HomeworkAddPage: React.FC = () => {
               />
             </div>
 
+            {/* Schedule-Aware Next Lesson Deadline Picker */}
             <div>
-              <label className="block font-semibold text-slate-300 mb-1">Topshirish Muddat (Muddati)</label>
-              <input
-                type="date"
-                required
-                value={deadline}
-                onChange={(e) => setDeadline(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-bold focus:outline-none focus:border-emerald-500"
-              />
+              <label className="block font-semibold text-slate-300 mb-1">Topshirish Muddati (Keyingi Dars Kuni)</label>
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setDeadline(getPrevLessonDate(deadline, schedule))}
+                  className="p-2 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-emerald-400 cursor-pointer"
+                  title="Oldingi dars kuni"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <div className="flex-1 flex items-center space-x-2 bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5">
+                  <input
+                    type="date"
+                    required
+                    value={deadline}
+                    onChange={(e) => setDeadline(e.target.value)}
+                    className="bg-transparent text-xs text-slate-100 font-semibold focus:outline-none flex-1"
+                  />
+                  <span className={`text-[11px] font-bold ${isValidDay ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {dayName} {isValidDay ? '(Dars kuni)' : '(Dars kuni emas!)'}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setDeadline(getNextLessonDate(deadline, schedule))}
+                  className="p-2 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-emerald-400 cursor-pointer"
+                  title="Keyingi dars kuni"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             {/* Task Items List */}
