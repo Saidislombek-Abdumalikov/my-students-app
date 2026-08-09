@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { PaymentModal } from '../components/payments/PaymentModal';
-import { CreditCard, AlertCircle, CheckCircle2, Plus, Search, Trash2 } from 'lucide-react';
+import { CreditCard, AlertCircle, CheckCircle2, Plus, Search, Trash2, Layers, LogOut, RefreshCw } from 'lucide-react';
+import { getFocusedGroupId, clearFocusedGroupId, getSelectedGroupId, setSelectedGroupIdMemory } from '../utils/workspaceContext';
+import { syncCollectionToCloud } from '../services/firebase';
+import { Payment } from '../types';
 
 export const PaymentsPage: React.FC = () => {
   const payments = useLiveQuery(() => db.payments.toArray());
   const students = useLiveQuery(() => db.students.toArray());
   const groups = useLiveQuery(() => db.groups.toArray());
+  const memberships = useLiveQuery(() => db.groupStudents.toArray());
 
   const currentMonthStr = new Date().toISOString().slice(0, 7);
 
@@ -19,51 +23,141 @@ export const PaymentsPage: React.FC = () => {
   const [studentStatusFilter, setStudentStatusFilter] = useState<'ACTIVE' | 'ARCHIVED' | 'ALL'>('ACTIVE');
   const [searchQuery, setSearchQuery] = useState('');
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [focusedGroupId, setFocusedGroupIdState] = useState<string | null>(getFocusedGroupId());
 
-  if (!payments || !students || !groups) {
+  // Listen to workspace focus changes
+  useEffect(() => {
+    const handleStorage = () => setFocusedGroupIdState(getFocusedGroupId());
+    window.addEventListener('workspace_group_changed', handleStorage);
+    return () => window.removeEventListener('workspace_group_changed', handleStorage);
+  }, []);
+
+  // Set default group or locked focused group
+  useEffect(() => {
+    if (!groups || groups.length === 0) return;
+    const focusId = getFocusedGroupId();
+    const rememberedId = getSelectedGroupId();
+    if (focusId && groups.some((g) => g.id === focusId)) {
+      setSelectedGroupId(focusId);
+    } else if (rememberedId && groups.some((g) => g.id === rememberedId)) {
+      setSelectedGroupId(rememberedId);
+    } else if (selectedGroupId === '') {
+      setSelectedGroupId(groups[0].id);
+    }
+  }, [groups, selectedGroupId]);
+
+  if (!payments || !students || !groups || !memberships) {
     return <LoadingSpinner label="To'lovlar sahifasi yuklanmoqda..." />;
   }
 
+  const selectedGroupObj = groups.find((g) => g.id === selectedGroupId);
   const studentMap = new Map(students.map((s) => [s.id, s]));
   const groupMap = new Map(groups.map((g) => [g.id, g]));
 
-  const filteredPayments = payments.filter((p) => {
+  // Generate Group Payment Rows (Ensuring EVERY student in selected group is listed as UNPAID by default)
+  let displayPayments: Payment[] = [];
+
+  if (selectedGroupId !== 'ALL') {
+    const groupActiveStudentIds = memberships
+      .filter((m) => m.groupId === selectedGroupId && m.status === 'ACTIVE')
+      .map((m) => m.studentId);
+
+    const existingPaymentMap = new Map(
+      payments
+        .filter((p) => p.groupId === selectedGroupId && p.periodMonth === selectedMonth)
+        .map((p) => [p.studentId, p])
+    );
+
+    displayPayments = groupActiveStudentIds.map((sId) => {
+      const existing = existingPaymentMap.get(sId);
+      if (existing) return existing;
+
+      // Default UNPAID row for group members without payment entries yet
+      return {
+        id: `virtual-p-${selectedGroupId}-${sId}-${selectedMonth}`,
+        studentId: sId,
+        groupId: selectedGroupId,
+        amount: 0,
+        paymentDate: '',
+        periodMonth: selectedMonth,
+        paymentMethod: 'CASH',
+        status: 'UNPAID',
+        createdAt: new Date().toISOString(),
+      };
+    });
+  } else {
+    displayPayments = payments.filter((p) => p.periodMonth === selectedMonth);
+  }
+
+  // Filter display rows by search and status
+  const filteredPayments = displayPayments.filter((p) => {
     const s = studentMap.get(p.studentId);
-    
-    // If student record was completely deleted, don't show orphaned payments unless viewing ALL
     if (!s && studentStatusFilter !== 'ALL') return false;
-
-    // Filter by student status (ACTIVE / ARCHIVED / ALL)
-    if (studentStatusFilter !== 'ALL' && s && s.status !== studentStatusFilter) {
-      return false;
-    }
-
+    if (studentStatusFilter !== 'ALL' && s && s.status !== studentStatusFilter) return false;
     const matchesSearch = !searchQuery || (s && s.fullName.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesGroup = selectedGroupId === 'ALL' || p.groupId === selectedGroupId;
-    const matchesMonth = !selectedMonth || p.periodMonth === selectedMonth;
-    return matchesSearch && matchesGroup && matchesMonth;
+    return matchesSearch;
   });
 
-  const handleMarkAsPaid = async (paymentId: string) => {
-    const todayStr = new Date().toISOString().split('T')[0];
-    await db.payments.update(paymentId, {
-      status: 'PAID',
-      paymentDate: todayStr,
-    });
+  const handleLeaveWorkspace = () => {
+    clearFocusedGroupId();
+    setFocusedGroupIdState(null);
   };
 
-  const handleToggleStatus = async (paymentId: string, currentStatus: string) => {
+  const handleMarkAsPaid = async (payment: Payment) => {
     const todayStr = new Date().toISOString().split('T')[0];
-    const newStatus = currentStatus === 'PAID' ? 'UNPAID' : 'PAID';
-    await db.payments.update(paymentId, {
-      status: newStatus,
-      paymentDate: newStatus === 'PAID' ? todayStr : '',
+    const realId = payment.id.startsWith('virtual-') ? `p-${Date.now()}-${payment.studentId}` : payment.id;
+    
+    await db.payments.put({
+      id: realId,
+      studentId: payment.studentId,
+      groupId: payment.groupId,
+      amount: 0,
+      paymentDate: todayStr,
+      periodMonth: payment.periodMonth,
+      paymentMethod: 'CASH',
+      status: 'PAID',
+      createdAt: new Date().toISOString(),
     });
+
+    const allPayments = await db.payments.toArray();
+    syncCollectionToCloud('payments', allPayments).catch(console.error);
+  };
+
+  const handleToggleStatus = async (payment: Payment) => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const newStatus = payment.status === 'PAID' ? 'UNPAID' : 'PAID';
+    const realId = payment.id.startsWith('virtual-') ? `p-${Date.now()}-${payment.studentId}` : payment.id;
+
+    await db.payments.put({
+      id: realId,
+      studentId: payment.studentId,
+      groupId: payment.groupId,
+      amount: 0,
+      paymentDate: newStatus === 'PAID' ? todayStr : '',
+      periodMonth: payment.periodMonth,
+      paymentMethod: 'CASH',
+      status: newStatus,
+      createdAt: new Date().toISOString(),
+    });
+
+    const allPayments = await db.payments.toArray();
+    syncCollectionToCloud('payments', allPayments).catch(console.error);
   };
 
   const handleDeletePayment = async (paymentId: string, studentName: string) => {
+    if (paymentId.startsWith('virtual-')) return;
     if (confirm(`Ushbu "${studentName}" ga tegishli to'lov yozuvini o'chirmoqchimisiz?`)) {
       await db.payments.delete(paymentId);
+      const allPayments = await db.payments.toArray();
+      syncCollectionToCloud('payments', allPayments).catch(console.error);
+    }
+  };
+
+  const handleClearAllRawHomeworkData = async () => {
+    if (confirm("BARCHA eski uy vazifalar va ularga tegishli foizli ma'lumotlarni tozalashni tasdiqlaysizmi?")) {
+      await db.homeworkPackages.clear();
+      await db.homeworkSubmissions.clear();
+      alert("Barcha eski vazifalar va foizlar muvaffaqiyatli tozalandi!");
     }
   };
 
@@ -77,18 +171,48 @@ export const PaymentsPage: React.FC = () => {
             <span>To'lov Holatlari Nazorati</span>
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            O'quvchilarning to'lov qilganligi (To'langan) yoki to'lashi kerakligi (QARZDOR) nazorati.
+            Guruhni tanlang. Guruhdagi barcha o'quvchilar avtomatik QARZDOR deb chiqariladi, to'laganlarni "To'landi" deb belgilashingiz mumkin.
           </p>
         </div>
 
-        <Button
-          variant="primary"
-          leftIcon={<Plus className="w-4 h-4" />}
-          onClick={() => setIsPaymentModalOpen(true)}
-        >
-          To'lov Holatini Kiritish
-        </Button>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-rose-400 hover:bg-rose-950 border-rose-900 text-xs"
+            leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
+            onClick={handleClearAllRawHomeworkData}
+          >
+            Eski Vazifalarni Tozalash
+          </Button>
+
+          <Button
+            variant="primary"
+            leftIcon={<Plus className="w-4 h-4" />}
+            onClick={() => setIsPaymentModalOpen(true)}
+          >
+            To'lov Holatini Kiritish
+          </Button>
+        </div>
       </div>
+
+      {/* FOCUSED WORKSPACE BANNER */}
+      {focusedGroupId && selectedGroupObj && (
+        <Card className="p-4 bg-emerald-950/40 border border-emerald-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-emerald-300">
+            <Layers className="w-5 h-5 flex-shrink-0 text-emerald-400" />
+            <div>
+              <span className="font-bold text-sm">Hozirda '{selectedGroupObj.name}' guruh ishchi xonasidasiz</span>
+              <p className="text-[11px] text-emerald-400/90 mt-0.5">
+                Ushbu guruh bilan ishlamoqdasiz. Boshqa guruhga o'tish uchun guruh ishchi xonasidan chiqishingiz mumkin.
+              </p>
+            </div>
+          </div>
+          <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-400" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
+            Guruh ishchi xonasidan chiqish
+          </Button>
+        </Card>
+      )}
 
       {/* Control Bar: Filters */}
       <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900 p-4">
@@ -97,9 +221,13 @@ export const PaymentsPage: React.FC = () => {
           <div className="flex items-center space-x-2 w-full sm:w-auto">
             <span className="text-xs font-semibold text-slate-300">Guruh:</span>
             <select
+              disabled={!!focusedGroupId}
               value={selectedGroupId}
-              onChange={(e) => setSelectedGroupId(e.target.value)}
-              className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-48"
+              onChange={(e) => {
+                setSelectedGroupId(e.target.value);
+                setSelectedGroupIdMemory(e.target.value);
+              }}
+              className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-56 disabled:opacity-80"
             >
               <option value="ALL">Barcha Guruhlar</option>
               {groups.map((g) => (
@@ -151,8 +279,17 @@ export const PaymentsPage: React.FC = () => {
 
       {/* Payment Status Sheet */}
       <Card className="space-y-3 p-4 bg-slate-900 border-slate-800 overflow-x-auto">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+            {selectedGroupObj ? selectedGroupObj.name : 'Barcha Guruhlar'} — {selectedMonth} Oyi To'lov Jadvali
+          </h3>
+          <span className="px-2.5 py-0.5 text-xs font-bold rounded bg-emerald-600 text-white">
+            {filteredPayments.length} Ta O'quvchi Ro'yxatda
+          </span>
+        </div>
+
         {filteredPayments.length === 0 ? (
-          <p className="text-xs text-slate-400 p-4 text-center">Ushbu oy va mezonlar uchun to'lov yozuvlari topilmadi.</p>
+          <p className="text-xs text-slate-400 p-4 text-center">Ushbu oy va mezonlar uchun o'quvchilar topilmadi.</p>
         ) : (
           <table className="w-full text-xs text-left text-slate-200 border-collapse">
             <thead className="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase font-bold text-[11px]">
@@ -193,7 +330,7 @@ export const PaymentsPage: React.FC = () => {
                     {/* Status Badge: To'langan vs QARZDOR Red */}
                     <td className="py-3 px-3 text-center border-r border-slate-800/80">
                       <button
-                        onClick={() => handleToggleStatus(p.id, p.status)}
+                        onClick={() => handleToggleStatus(p)}
                         className="cursor-pointer"
                         title="Bosib holatni o'zgartirish"
                       >
@@ -216,7 +353,7 @@ export const PaymentsPage: React.FC = () => {
                             size="sm"
                             variant="outline"
                             className="text-[11px] py-1 border-emerald-800 text-emerald-400 hover:bg-emerald-950 font-bold"
-                            onClick={() => handleMarkAsPaid(p.id)}
+                            onClick={() => handleMarkAsPaid(p)}
                           >
                             To'landi deb belgilash
                           </Button>
@@ -224,14 +361,16 @@ export const PaymentsPage: React.FC = () => {
                           <span className="text-[10px] text-emerald-400 font-bold">Saqlangan</span>
                         )}
 
-                        <button
-                          type="button"
-                          onClick={() => handleDeletePayment(p.id, studentName)}
-                          className="p-1 text-slate-500 hover:text-rose-400 rounded hover:bg-slate-800 cursor-pointer"
-                          title="To'lov yozuvini o'chirish"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        {!p.id.startsWith('virtual-') && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeletePayment(p.id, studentName)}
+                            className="p-1 text-slate-500 hover:text-rose-400 rounded hover:bg-slate-800 cursor-pointer"
+                            title="To'lov yozuvini o'chirish"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
