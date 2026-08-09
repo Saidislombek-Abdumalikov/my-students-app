@@ -21,6 +21,8 @@ interface StudentScoreItem {
   screenshotUrl: string;
 }
 
+import { validateAndFormatScore } from '../../utils/scoreValidation';
+
 export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) => {
   const test = useLiveQuery(() => db.tests.get(testId), [testId]);
   const memberships = useLiveQuery(
@@ -115,13 +117,13 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
     try {
       const now = new Date().toISOString();
       const entriesToSave = Object.entries(scoresState).map(([studentId, data]) => {
-        const percentage = Math.round((data.score / test.maxScore) * 100);
+        const validated = validateAndFormatScore(data.score, test.maxScore, test.category);
         return {
           id: `tr-${testId}-${studentId}`,
           testId,
           studentId,
-          score: Number(data.score),
-          percentage,
+          score: validated.score,
+          percentage: validated.percentage,
           listeningScore: Number(data.listeningScore),
           readingScore: Number(data.readingScore),
           writingScore: Number(data.writingScore),
