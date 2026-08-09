@@ -1,0 +1,280 @@
+import React, { useState, useEffect } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../db';
+import { Card } from '../components/common/Card';
+import { Button } from '../components/common/Button';
+import { LoadingSpinner } from '../components/common/LoadingSpinner';
+import { CalendarCheck, Check, X, Clock, ChevronLeft, ChevronRight, AlertTriangle, Plus } from 'lucide-react';
+import { AttendanceStatus } from '../types';
+import { getClosestLessonDate, getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
+
+export const AttendancePage: React.FC = () => {
+  const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
+  const students = useLiveQuery(() => db.students.where('status').equals('ACTIVE').toArray());
+  const memberships = useLiveQuery(() => db.groupStudents.toArray());
+  const attendanceList = useLiveQuery(() => db.attendance.toArray());
+  const lessons = useLiveQuery(() => db.lessons.toArray());
+
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  const [selectedGroupId, setSelectedGroupId] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<string>(todayStr);
+  const [attendanceState, setAttendanceState] = useState<Record<string, AttendanceStatus>>({});
+  const [lateMinutesState, setLateMinutesState] = useState<Record<string, number>>({});
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Set default group on first load
+  useEffect(() => {
+    if (groups && groups.length > 0 && !selectedGroupId) {
+      setSelectedGroupId(groups[0].id);
+    }
+  }, [groups, selectedGroupId]);
+
+  // Snap date to closest lesson day when group changes
+  useEffect(() => {
+    if (!groups || !selectedGroupId) return;
+    const selectedGroup = groups.find((g) => g.id === selectedGroupId);
+    if (selectedGroup) {
+      const closestDay = getClosestLessonDate(selectedGroup.scheduleDescription);
+      setSelectedDate(closestDay);
+    }
+  }, [selectedGroupId, groups]);
+
+  // Load saved attendance data when date or group changes
+  useEffect(() => {
+    if (!selectedGroupId || !selectedDate || !attendanceList) return;
+
+    const lessonId = `l-${selectedGroupId}-${selectedDate}`;
+    const savedAtt: Record<string, AttendanceStatus> = {};
+    const savedLate: Record<string, number> = {};
+
+    attendanceList.forEach((a) => {
+      if (a.lessonId === lessonId) {
+        savedAtt[a.studentId] = a.status;
+        if (a.lateMinutes) savedLate[a.studentId] = a.lateMinutes;
+      }
+    });
+
+    if (Object.keys(savedAtt).length > 0) {
+      setAttendanceState(savedAtt);
+      setLateMinutesState(savedLate);
+    } else {
+      setAttendanceState({});
+      setLateMinutesState({});
+    }
+  }, [selectedGroupId, selectedDate, attendanceList]);
+
+  if (!groups || !students || !memberships || !attendanceList || !lessons) {
+    return <LoadingSpinner label="Davomat sahifasi yuklanmoqda..." />;
+  }
+
+  const selectedGroup = groups.find((g) => g.id === selectedGroupId);
+  const schedule = selectedGroup?.scheduleDescription || '';
+
+  const activeStudentIds = new Set(
+    memberships
+      .filter((m) => m.groupId === selectedGroupId && m.status === 'ACTIVE')
+      .map((m) => m.studentId)
+  );
+
+  const groupStudents = students.filter((s) => activeStudentIds.has(s.id));
+
+  // Check if date is a standard lesson day OR has a custom lesson in DB
+  const existingLesson = lessons.find((l) => l.groupId === selectedGroupId && l.date === selectedDate);
+  const isStandardDay = isLessonDay(selectedDate, schedule);
+  const isEffectiveLessonDay = isStandardDay || !!existingLesson;
+  const dayName = getUzbekDayName(selectedDate);
+
+  const handleMarkAll = (status: AttendanceStatus) => {
+    const updated: Record<string, AttendanceStatus> = {};
+    groupStudents.forEach((s) => {
+      updated[s.id] = status;
+    });
+    setAttendanceState(updated);
+  };
+
+  const handleAddExtraLesson = async () => {
+    const newLessonId = `l-${selectedGroupId}-${selectedDate}`;
+    await db.lessons.put({
+      id: newLessonId,
+      groupId: selectedGroupId,
+      date: selectedDate,
+      title: `Qo'shimcha dars (${selectedDate})`,
+      status: 'COMPLETED',
+      createdAt: new Date().toISOString(),
+    });
+    alert(`${selectedDate} (${dayName}) kungi dars kalendarga muvaffaqiyatli biriktirildi va saqlandi!`);
+  };
+
+  const handleSaveAttendance = async () => {
+    setIsSaving(true);
+    try {
+      let lesson = await db.lessons.where('[groupId+date]').equals([selectedGroupId, selectedDate]).first();
+      if (!lesson) {
+        const newLessonId = `l-${selectedGroupId}-${selectedDate}`;
+        await db.lessons.add({
+          id: newLessonId,
+          groupId: selectedGroupId,
+          date: selectedDate,
+          title: `Dars (${selectedDate})`,
+          status: 'COMPLETED',
+          createdAt: new Date().toISOString(),
+        });
+        lesson = await db.lessons.get(newLessonId);
+      }
+
+      if (!lesson) return;
+
+      const entries = Object.entries(attendanceState).map(([sId, status]) => ({
+        id: `att-${lesson.id}-${sId}`,
+        lessonId: lesson.id,
+        studentId: sId,
+        status,
+        lateMinutes: status === 'LATE' ? lateMinutesState[sId] || 10 : undefined,
+        updatedAt: new Date().toISOString(),
+      }));
+
+      await db.attendance.bulkPut(entries);
+      alert('Davomat saqlandi!');
+    } catch (err) {
+      console.error('Davomatni saqlashda xatolik:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const presentCount = Object.values(attendanceState).filter((s) => s === 'PRESENT').length;
+  const absentCount = Object.values(attendanceState).filter((s) => s === 'ABSENT').length;
+  const lateCount = Object.values(attendanceState).filter((s) => s === 'LATE').length;
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
+            <CalendarCheck className="w-6 h-6 text-emerald-400" />
+            <span>Davomat Kiritish</span>
+          </h1>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Darsda o'quvchilar qatnashishi hamda kechikish daqiqalarini kiritish paneli.
+          </p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button variant="primary" isLoading={isSaving} leftIcon={<Check className="w-4 h-4" />} onClick={handleSaveAttendance}>
+            Davomatni Saqlash
+          </Button>
+        </div>
+      </div>
+
+      {/* Control Bar: Group & Date Selector */}
+      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900 p-4">
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+          <div className="flex items-center space-x-2 w-full sm:w-auto">
+            <span className="text-xs font-semibold text-slate-300 min-w-16">Guruh:</span>
+            <select
+              value={selectedGroupId}
+              onChange={(e) => setSelectedGroupId(e.target.value)}
+              className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-56"
+            >
+              {groups.map((g) => (
+                <option key={g.id} value={g.id}>{g.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center space-x-1.5 w-full sm:w-auto">
+            <button onClick={() => setSelectedDate(getPrevLessonDate(selectedDate, schedule))} className="p-1.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-emerald-400 cursor-pointer" title="Oldingi dars kuni">
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <div className="flex flex-col items-center">
+              <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500" />
+              <span className={`text-[10px] font-bold mt-0.5 ${isEffectiveLessonDay ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {dayName} {isEffectiveLessonDay ? '(Dars kuni)' : '(Dars kuni emas!)'}
+              </span>
+            </div>
+            <button onClick={() => setSelectedDate(getNextLessonDate(selectedDate, schedule))} className="p-1.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-emerald-400 cursor-pointer" title="Keyingi dars kuni">
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Button size="sm" variant="ghost" className="text-xs text-emerald-400" onClick={() => handleMarkAll('PRESENT')}>Barchasi Keldi</Button>
+          <Button size="sm" variant="ghost" className="text-xs text-rose-400" onClick={() => handleMarkAll('ABSENT')}>Barchasi Kelmadi</Button>
+        </div>
+      </Card>
+
+      {/* NON-LESSON DAY WARNING & FIXING BANNER */}
+      {!isEffectiveLessonDay && (
+        <Card className="p-4 bg-amber-950/40 border border-amber-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-amber-300">
+            <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+            <div>
+              <span className="font-bold text-sm">Bu kunda dars mavjud emas!</span>
+              <p className="text-[11px] text-amber-400/90 mt-0.5">
+                Ushbu guruhning dars jadvallari bo'yicha {selectedDate} ({dayName}) dars kuni emas. Agar ushbu kunda dars o'tgan bo'lsangiz, uni kalendarga biriktirishingiz mumkin.
+              </p>
+            </div>
+          </div>
+          <Button size="sm" variant="outline" leftIcon={<Plus className="w-3.5 h-3.5" />} onClick={handleAddExtraLesson} className="whitespace-nowrap">
+            Qo'shimcha dars biriktirish
+          </Button>
+        </Card>
+      )}
+
+      {/* Attendance Sheet */}
+      <Card className="space-y-4 bg-slate-900 border-slate-800 p-5">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div>
+            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Guruh Davomati</span>
+            <h2 className="text-base font-extrabold text-slate-100">{selectedGroup?.name}</h2>
+            <p className="text-xs text-slate-400 font-mono">Dars Sanasi: {selectedDate} ({dayName})</p>
+          </div>
+          <div className="flex items-center space-x-2 text-xs font-bold">
+            <span className="px-2.5 py-1 rounded bg-emerald-600 text-white">Keldi: {presentCount}</span>
+            <span className="px-2.5 py-1 rounded bg-amber-500 text-slate-950">Kechikdi: {lateCount}</span>
+            <span className="px-2.5 py-1 rounded bg-red-600 text-white">Kelmadi: {absentCount}</span>
+          </div>
+        </div>
+
+        {groupStudents.length === 0 ? (
+          <p className="text-xs text-slate-400 p-4 text-center">Ushbu guruhda o'quvchilar mavjud emas.</p>
+        ) : (
+          <div className="space-y-2">
+            {groupStudents.map((s, idx) => {
+              const currentStatus = attendanceState[s.id] || 'PRESENT';
+              const currentMinutes = lateMinutesState[s.id] || 10;
+              return (
+                <div key={s.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <span className="w-6 h-6 rounded-full bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center font-mono">{idx + 1}</span>
+                    <h4 className="text-sm font-bold text-slate-100">{s.fullName}</h4>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button onClick={() => setAttendanceState((prev) => ({ ...prev, [s.id]: 'PRESENT' }))} className={`px-3 py-1 rounded-lg text-xs font-extrabold flex items-center space-x-1 cursor-pointer ${currentStatus === 'PRESENT' ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-slate-400 border border-slate-800'}`}>
+                      <Check className="w-3.5 h-3.5" /><span>Keldi</span>
+                    </button>
+                    <div className="flex items-center space-x-1">
+                      <button onClick={() => setAttendanceState((prev) => ({ ...prev, [s.id]: 'LATE' }))} className={`px-3 py-1 rounded-lg text-xs font-extrabold flex items-center space-x-1 cursor-pointer ${currentStatus === 'LATE' ? 'bg-amber-500 text-slate-950' : 'bg-slate-900 text-slate-400 border border-slate-800'}`}>
+                        <Clock className="w-3.5 h-3.5" /><span>Kechikdi</span>
+                      </button>
+                      {currentStatus === 'LATE' && (
+                        <div className="flex items-center space-x-1 bg-slate-900 border border-amber-500/50 rounded-lg px-2 py-0.5">
+                          <input type="number" min="1" max="120" value={currentMinutes} onChange={(e) => setLateMinutesState((prev) => ({ ...prev, [s.id]: Number(e.target.value) }))} className="w-10 bg-transparent text-xs font-bold text-amber-400 text-center focus:outline-none" />
+                          <span className="text-[10px] text-amber-400 font-bold">daq</span>
+                        </div>
+                      )}
+                    </div>
+                    <button onClick={() => setAttendanceState((prev) => ({ ...prev, [s.id]: 'ABSENT' }))} className={`px-3 py-1 rounded-lg text-xs font-extrabold flex items-center space-x-1 cursor-pointer ${currentStatus === 'ABSENT' ? 'bg-red-600 text-white' : 'bg-slate-900 text-slate-400 border border-slate-800'}`}>
+                      <X className="w-3.5 h-3.5" /><span>Kelmadi</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+};

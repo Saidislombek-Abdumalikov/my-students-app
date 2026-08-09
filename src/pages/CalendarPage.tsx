@@ -1,0 +1,172 @@
+import React, { useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../db';
+import { CalendarGrid, CalendarEvent } from '../components/calendar/CalendarGrid';
+import { TeacherNotificationCenter } from '../components/calendar/TeacherNotificationCenter';
+import { Card } from '../components/common/Card';
+import { Button } from '../components/common/Button';
+import { LoadingSpinner } from '../components/common/LoadingSpinner';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+
+export const CalendarPage: React.FC = () => {
+  const currentDate = new Date();
+  const [year, setYear] = useState<number>(currentDate.getFullYear());
+  const [month, setMonth] = useState<number>(currentDate.getMonth());
+  const [eventFilter, setEventFilter] = useState<'ALL' | 'LESSON' | 'HOMEWORK' | 'TEST' | 'PAYMENT'>('ALL');
+
+  const lessons = useLiveQuery(() => db.lessons.toArray());
+  const packages = useLiveQuery(() => db.homeworkPackages.toArray());
+  const tests = useLiveQuery(() => db.tests.toArray());
+  const payments = useLiveQuery(() => db.payments.toArray());
+  const groups = useLiveQuery(() => db.groups.toArray());
+
+  if (!lessons || !packages || !tests || !payments || !groups) {
+    return <LoadingSpinner label="Dars jadvali yuklanmoqda..." />;
+  }
+
+  const groupMap = new Map(groups.map((g) => [g.id, g]));
+
+  const calendarEvents: CalendarEvent[] = [];
+
+  // Lessons
+  lessons.forEach((l) => {
+    const g = groupMap.get(l.groupId);
+    calendarEvents.push({
+      id: `ev-l-${l.id}`,
+      date: l.date,
+      type: 'LESSON',
+      title: `Dars: ${g?.name || 'Guruh'}`,
+      targetUrl: '/attendance',
+    });
+  });
+
+  // Homework
+  packages.forEach((p) => {
+    const g = groupMap.get(p.groupId);
+    calendarEvents.push({
+      id: `ev-hp-${p.id}`,
+      date: p.deadline,
+      type: 'HOMEWORK',
+      title: `Vazifa: ${p.title}`,
+      targetUrl: '/homework-check',
+    });
+  });
+
+  // Tests
+  tests.forEach((t) => {
+    calendarEvents.push({
+      id: `ev-t-${t.id}`,
+      date: t.date,
+      type: 'TEST',
+      title: `Imtihon: ${t.title}`,
+      targetUrl: '/tests',
+    });
+  });
+
+  // Payments Overdue
+  payments.forEach((p) => {
+    if (p.status === 'UNPAID') {
+      calendarEvents.push({
+        id: `ev-p-${p.id}`,
+        date: p.paymentDate || p.createdAt.split('T')[0],
+        type: 'PAYMENT',
+        title: `QARZDOR To'lov`,
+        targetUrl: '/payments',
+      });
+    }
+  });
+
+  const handlePrevMonth = () => {
+    if (month === 0) {
+      setMonth(11);
+      setYear(year - 1);
+    } else {
+      setMonth(month - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (month === 11) {
+      setMonth(0);
+      setYear(year + 1);
+    } else {
+      setMonth(month + 1);
+    }
+  };
+
+  const handleToday = () => {
+    setYear(currentDate.getFullYear());
+    setMonth(currentDate.getMonth());
+  };
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
+            <CalendarIcon className="w-6 h-6 text-emerald-400" />
+            <span>Dars va Mashg'ulotlar Jadvali</span>
+          </h1>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Kunlik darslar, vazifa muddatlari va imtihon kunlari taqvimi.
+          </p>
+        </div>
+      </div>
+
+      {/* Control Bar */}
+      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900">
+        <div className="flex items-center space-x-2 w-full md:w-auto">
+          <Button variant="secondary" size="sm" onClick={handlePrevMonth}>
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleToday} className="font-bold">
+            Bugun
+          </Button>
+          <Button variant="secondary" size="sm" onClick={handleNextMonth}>
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
+
+        {/* Event Type Filter Pills */}
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800">
+          {[
+            { id: 'ALL', label: 'Barchasi' },
+            { id: 'LESSON', label: 'Darslar' },
+            { id: 'HOMEWORK', label: 'Vazifalar' },
+            { id: 'TEST', label: 'Imtihonlar' },
+            { id: 'PAYMENT', label: 'Qarzdorlar' },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setEventFilter(item.id as any)}
+              className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
+                eventFilter === item.id
+                  ? 'bg-emerald-600 text-white font-extrabold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </Card>
+
+      {/* Grid + Sidebar Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-3">
+          <CalendarGrid
+            year={year}
+            month={month}
+            events={calendarEvents}
+            eventFilter={eventFilter}
+          />
+        </div>
+
+        <div>
+          <TeacherNotificationCenter />
+        </div>
+      </div>
+    </div>
+  );
+};
