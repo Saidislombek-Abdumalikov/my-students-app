@@ -9,6 +9,9 @@ import { PlusCircle, Save, Trash2, History, ChevronLeft, ChevronRight, LogOut, L
 import { getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
 import { getFocusedGroupId, clearFocusedGroupId } from '../utils/workspaceContext';
 
+import { HomeworkPackage, HomeworkTask } from '../types';
+import { syncCollectionToCloud } from '../services/firebase';
+
 interface MultiTaskItem {
   id: string;
   name: string;
@@ -100,25 +103,55 @@ export const HomeworkAddPage: React.FC = () => {
 
   const handleSaveHomeworkPackage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedGroupId || tasks.length === 0) return;
+    if (!selectedGroupId || tasks.length === 0) {
+      alert("Iltimos, kamida bitta vazifa topshirig'ini kiriting.");
+      return;
+    }
 
     setIsSaving(true);
     try {
       const pkgId = `hp-${selectedGroupId}-${deadline}`;
-      await db.homeworkPackages.put({
+      const now = new Date().toISOString();
+
+      const newPackage: HomeworkPackage = {
         id: pkgId,
         groupId: selectedGroupId,
         lessonId: `l-${selectedGroupId}-${deadline}`,
         title,
         description: tasks.map((t) => t.name).join('; '),
         deadline,
-        createdAt: new Date().toISOString(),
+        createdAt: now,
+      };
+
+      const newTasks: HomeworkTask[] = tasks.map((t, idx) => ({
+        id: `ht-${pkgId}-${idx}-${Date.now()}`,
+        packageId: pkgId,
+        title: t.name,
+        taskType: 'CUSTOM',
+        instructions: '',
+      }));
+
+      // Atomic transaction: put package & replace tasks for this package
+      await db.transaction('rw', [db.homeworkPackages, db.homeworkTasks], async () => {
+        await db.homeworkPackages.put(newPackage);
+        const oldTasks = await db.homeworkTasks.where('packageId').equals(pkgId).toArray();
+        if (oldTasks.length > 0) {
+          await db.homeworkTasks.bulkDelete(oldTasks.map((ot) => ot.id));
+        }
+        await db.homeworkTasks.bulkAdd(newTasks);
       });
 
-      alert('Yangi uy vazifasi saqlandi!');
-      setTitle('Unit ' + (groupPackages.length + 4) + ' Homework');
+      // Background cloud sync
+      const allPkgs = await db.homeworkPackages.toArray();
+      const allTasks = await db.homeworkTasks.toArray();
+      syncCollectionToCloud('homeworkPackages', allPkgs).catch(console.error);
+      syncCollectionToCloud('homeworkTasks', allTasks).catch(console.error);
+
+      alert(`"${title}" muvaffaqiyatli saqlandi! (${newTasks.length} ta topshiriq bilan)`);
+      setTitle(`Unit ${groupPackages.length + 2}: Homework Package`);
     } catch (err) {
       console.error('Vazifani saqlashda xatolik:', err);
+      alert('Vazifani saqlashda xatolik yuz berdi. Qaytadan urinib ko\'ring.');
     } finally {
       setIsSaving(false);
     }

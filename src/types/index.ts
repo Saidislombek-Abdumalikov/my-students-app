@@ -121,6 +121,7 @@ export interface HomeworkSubmission {
   taskId: string;
   studentId: string;
   status: HomeworkSubmissionStatus;
+  completedTaskIds?: string[];
   completionPercentage?: number;
   score?: number;
   comment?: string;

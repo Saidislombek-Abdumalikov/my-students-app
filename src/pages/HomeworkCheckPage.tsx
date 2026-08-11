@@ -8,6 +8,7 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { FileCheck, Save, ChevronLeft, ChevronRight, AlertTriangle, Plus, LogOut, Layers } from 'lucide-react';
 import { getClosestLessonDate, getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
 import { getFocusedGroupId, clearFocusedGroupId, getSelectedGroupId, setSelectedGroupIdMemory } from '../utils/workspaceContext';
+import { syncCollectionToCloud } from '../services/firebase';
 
 interface MultiTaskItem {
   id: string;
@@ -85,29 +86,32 @@ export const HomeworkCheckPage: React.FC = () => {
   useEffect(() => {
     if (!selectedGroupId || !selectedDate || !submissions) return;
 
-    const pkgId = `hp-${selectedGroupId}-${selectedDate}`;
+    const pkgId = matchedPkg?.id || `hp-${selectedGroupId}-${selectedDate}`;
     const savedChecks: Record<string, Record<string, boolean>> = {};
 
     submissions.forEach((sub) => {
-      if (sub.taskId === pkgId) {
-        const pct = sub.completionPercentage ?? 0;
-        const totalTasks = assignedTasks.length || 1;
-        const completedCount = Math.round((pct / 100) * totalTasks);
-
+      if (sub.taskId === pkgId || sub.taskId.startsWith(`hp-${selectedGroupId}-${selectedDate}`)) {
         const taskMap: Record<string, boolean> = {};
-        assignedTasks.forEach((task, i) => {
-          taskMap[task.id] = i < completedCount;
-        });
+
+        if (sub.completedTaskIds && Array.isArray(sub.completedTaskIds)) {
+          const completedSet = new Set(sub.completedTaskIds);
+          assignedTasks.forEach((t) => {
+            taskMap[t.id] = completedSet.has(t.id);
+          });
+        } else {
+          const pct = sub.completionPercentage ?? 0;
+          const totalTasks = assignedTasks.length || 1;
+          const completedCount = Math.round((pct / 100) * totalTasks);
+          assignedTasks.forEach((task, i) => {
+            taskMap[task.id] = i < completedCount;
+          });
+        }
         savedChecks[sub.studentId] = taskMap;
       }
     });
 
-    if (Object.keys(savedChecks).length > 0) {
-      setStudentTaskChecks(savedChecks);
-    } else {
-      setStudentTaskChecks({});
-    }
-  }, [selectedGroupId, selectedDate, submissions, assignedTasks]);
+    setStudentTaskChecks(savedChecks);
+  }, [selectedGroupId, selectedDate, submissions, assignedTasks, matchedPkg?.id]);
 
   if (!groups || !students || !memberships || !packages || !submissions || !lessons) {
     return <LoadingSpinner label="Bugungi vazifani tekshirish bo'limi yuklanmoqda..." />;
@@ -164,12 +168,17 @@ export const HomeworkCheckPage: React.FC = () => {
   const handleSaveHomeworkCheck = async () => {
     setIsSaving(true);
     try {
-      const pkgId = `hp-${selectedGroupId}-${selectedDate}`;
+      const pkgId = matchedPkg?.id || `hp-${selectedGroupId}-${selectedDate}`;
       const totalTasks = assignedTasks.length || 1;
+      const now = new Date().toISOString();
 
       const submissionEntries = groupStudents.map((s) => {
         const sChecks = studentTaskChecks[s.id] || {};
-        const completedCount = Object.values(sChecks).filter(Boolean).length;
+        const completedTaskIds = assignedTasks
+          .filter((t) => sChecks[t.id])
+          .map((t) => t.id);
+
+        const completedCount = completedTaskIds.length;
         const percentage = Math.round((completedCount / totalTasks) * 100);
 
         let statusVal: 'COMPLETED' | 'PARTIAL' | 'MISSING' = 'MISSING';
@@ -181,16 +190,23 @@ export const HomeworkCheckPage: React.FC = () => {
           taskId: pkgId,
           studentId: s.id,
           status: statusVal,
+          completedTaskIds,
           completionPercentage: percentage,
           score: percentage,
-          updatedAt: new Date().toISOString(),
+          updatedAt: now,
         };
       });
 
       await db.homeworkSubmissions.bulkPut(submissionEntries);
+
+      // Cloud sync
+      const allSubmissions = await db.homeworkSubmissions.toArray();
+      syncCollectionToCloud('homeworkSubmissions', allSubmissions).catch(console.error);
+
       alert("Vazifalar va o'quvchilar foizlari saqlandi!");
     } catch (err) {
       console.error('Vazifani saqlashda xatolik:', err);
+      alert('Vazifalarni saqlashda xatolik yuz berdi.');
     } finally {
       setIsSaving(false);
     }
