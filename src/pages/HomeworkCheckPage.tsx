@@ -134,17 +134,53 @@ export const HomeworkCheckPage: React.FC = () => {
   const isEffectiveLessonDay = isStandardDay || !!existingLesson;
   const dayName = getUzbekDayName(selectedDate);
 
-  const toggleStudentTask = (studentId: string, taskId: string) => {
-    setStudentTaskChecks((prev) => {
-      const studentMap = prev[studentId] || {};
-      return {
-        ...prev,
-        [studentId]: {
-          ...studentMap,
-          [taskId]: !studentMap[taskId],
-        },
+  const toggleStudentTask = async (studentId: string, taskId: string) => {
+    const currentMap = studentTaskChecks[studentId] || {};
+    const newDoneState = !currentMap[taskId];
+    const newStudentMap = {
+      ...currentMap,
+      [taskId]: newDoneState,
+    };
+
+    const newOverallChecks = {
+      ...studentTaskChecks,
+      [studentId]: newStudentMap,
+    };
+
+    setStudentTaskChecks(newOverallChecks);
+
+    // Auto-save this student's submission instantly
+    try {
+      const pkgId = matchedPkg?.id || `hp-${selectedGroupId}-${selectedDate}`;
+      const totalTasks = assignedTasks.length || 1;
+      const completedTaskIds = assignedTasks
+        .filter((t) => newStudentMap[t.id])
+        .map((t) => t.id);
+
+      const completedCount = completedTaskIds.length;
+      const percentage = Math.round((completedCount / totalTasks) * 100);
+
+      let statusVal: 'COMPLETED' | 'PARTIAL' | 'MISSING' = 'MISSING';
+      if (percentage === 100) statusVal = 'COMPLETED';
+      else if (percentage > 0) statusVal = 'PARTIAL';
+
+      const submissionEntry = {
+        id: `hs-${pkgId}-${studentId}`,
+        taskId: pkgId,
+        studentId,
+        status: statusVal,
+        completedTaskIds,
+        completionPercentage: percentage,
+        score: percentage,
+        updatedAt: new Date().toISOString(),
       };
-    });
+
+      await db.homeworkSubmissions.put(submissionEntry);
+      const allSubmissions = await db.homeworkSubmissions.toArray();
+      syncCollectionToCloud('homeworkSubmissions', allSubmissions).catch(console.error);
+    } catch (err) {
+      console.error('Auto-save error:', err);
+    }
   };
 
   const handleLeaveWorkspace = () => {
@@ -221,7 +257,7 @@ export const HomeworkCheckPage: React.FC = () => {
             <span>Vazifa Tekshirish</span>
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            Darsda o'quvchilardan berilgan vazifalarni yakka-yakka tekshiring. Foizlar avtomatik hisoblanadi.
+            Darsda o'quvchilardan berilgan vazifalarni yakka-yakka tekshiring. Har bir vazifani ustiga bossangiz darhol saqlanadi.
           </p>
         </div>
         <Button variant="primary" isLoading={isSaving} leftIcon={<Save className="w-4 h-4" />} onClick={handleSaveHomeworkCheck}>
@@ -272,7 +308,7 @@ export const HomeworkCheckPage: React.FC = () => {
           <div className="flex flex-col items-center">
             <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500" />
             <span className={`text-[10px] font-bold mt-0.5 ${isEffectiveLessonDay ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {dayName} {isEffectiveLessonDay ? '(Dars kuni)' : '(Dars kuni emas!)'}
+              {dayName} {isEffectiveLessonDay ? '(Dars kuni)' : '(Dars kuni emas)'}
             </span>
           </div>
           <button onClick={() => setSelectedDate(getNextLessonDate(selectedDate, schedule))} className="p-1.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-emerald-400 cursor-pointer" title="Keyingi dars kuni">
@@ -281,15 +317,15 @@ export const HomeworkCheckPage: React.FC = () => {
         </div>
       </Card>
 
-      {/* NON-LESSON DAY WARNING & FIXING BANNER */}
+      {/* NON-LESSON DAY WARNING BANNER (INFORMATIONAL ONLY, DOES NOT BLOCK MATRIX) */}
       {!isEffectiveLessonDay && (
         <Card className="p-4 bg-amber-950/40 border border-amber-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <div className="flex items-center space-x-2 text-amber-300">
             <AlertTriangle className="w-5 h-5 flex-shrink-0" />
             <div>
-              <span className="font-bold text-sm">Bu kunda dars mavjud emas!</span>
+              <span className="font-bold text-sm">Eslatma: {selectedDate} ({dayName}) guruh dars jadvallarida dars kuni sifatida ko'rsatilmadi</span>
               <p className="text-[11px] text-amber-400/90 mt-0.5">
-                Ushbu guruhning dars jadvallari bo'yicha {selectedDate} ({dayName}) dars kuni emas. Agar ushbu kunda dars o'tgan bo'lsangiz, uni kalendarga biriktirishingiz mumkin.
+                Vazifalarni baribir tekshirishingiz mumkin. Agar ushbu kunga rasmiy dars qo'shmoqchi bo'lsangiz, "Qo'shimcha dars biriktirish" tugmasini bosing.
               </p>
             </div>
           </div>
@@ -306,23 +342,10 @@ export const HomeworkCheckPage: React.FC = () => {
             <h3 className="text-sm font-extrabold text-slate-100">Vazifani Tekshirish Varakasi</h3>
             <p className="text-xs text-slate-400 font-mono">Sana: {selectedDate} ({dayName})</p>
           </div>
-          <Badge variant="brand">{assignedTasks.length} ta vazifa turi</Badge>
+          <Badge variant="brand">{assignedTasks.length} ta topshiriq</Badge>
         </div>
 
-        {!isEffectiveLessonDay ? (
-          <div className="p-8 text-center space-y-2">
-            <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto opacity-80" />
-            <h3 className="text-sm font-bold text-slate-200">Ushbu kunda ({selectedDate}, {dayName}) dars yoki vazifa tekshirish mavjud emas</h3>
-            <p className="text-xs text-slate-400 max-w-md mx-auto">
-              {selectedGroup?.name} guruhining dars jadvali bo'yicha bu kunda dars rejalashtirilmagan.
-            </p>
-            <div className="pt-2">
-              <Button size="sm" variant="outline" leftIcon={<Plus className="w-3.5 h-3.5" />} onClick={handleAddExtraLesson}>
-                + Ushbu kunga dars biriktirish
-              </Button>
-            </div>
-          </div>
-        ) : groupStudents.length === 0 ? (
+        {groupStudents.length === 0 ? (
           <p className="text-xs text-slate-400 p-4 text-center">Guruhda o'quvchilar topilmadi.</p>
         ) : (
           <div className="space-y-3">
@@ -334,7 +357,7 @@ export const HomeworkCheckPage: React.FC = () => {
 
               const statusBadgeClass =
                 percentage === 100
-                  ? 'bg-emerald-600 text-white font-extrabold'
+                  ? 'bg-emerald-600 text-white font-extrabold shadow-sm'
                   : percentage > 0
                   ? 'bg-amber-500 text-slate-950 font-bold'
                   : 'bg-red-600 text-white font-extrabold';
@@ -350,12 +373,25 @@ export const HomeworkCheckPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     {assignedTasks.map((task) => {
-                      const isDone = sChecks[task.id] || false;
+                      const isDone = !!sChecks[task.id];
                       return (
-                        <button key={task.id} onClick={() => toggleStudentTask(s.id, task.id)} className={`p-2 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer border ${isDone ? 'bg-emerald-600 text-white border-emerald-500 font-bold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'}`}>
-                          <span className="truncate mr-1 text-[11px]">{task.name}</span>
-                          <span className={`px-1.5 py-0.5 text-[10px] font-extrabold rounded ${isDone ? 'bg-white text-emerald-700' : 'bg-rose-950 text-rose-400'}`}>
-                            {isDone ? 'Bajarildi' : 'Bajarilmadi'}
+                        <button
+                          key={task.id}
+                          type="button"
+                          onClick={() => toggleStudentTask(s.id, task.id)}
+                          className={`p-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition-all cursor-pointer border select-none ${
+                            isDone
+                              ? 'bg-emerald-600 text-white border-emerald-500 font-bold shadow-md'
+                              : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500 hover:text-white'
+                          }`}
+                        >
+                          <span className="truncate mr-1 text-xs">{task.name}</span>
+                          <span
+                            className={`px-2 py-0.5 text-[10px] font-extrabold rounded-md flex items-center gap-1 ${
+                              isDone ? 'bg-white text-emerald-800' : 'bg-slate-800 text-rose-400 border border-rose-900/50'
+                            }`}
+                          >
+                            {isDone ? '✓ Bajarildi' : '✕ Bajarilmadi'}
                           </span>
                         </button>
                       );
