@@ -125,56 +125,6 @@ export const LoginPage: React.FC = () => {
               Tizimga Kirish
             </Button>
           </form>
-
-          {/* Preset Account Badges */}
-          <div className="border-t border-slate-200 pt-4 space-y-2">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-              Tezkor Kirish Akkountlari:
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickFill('1', 'saidislomadmin1')}
-                className="p-2 rounded-lg bg-amber-50 border border-amber-200 hover:border-amber-400 text-left transition-all cursor-pointer"
-              >
-                <div className="flex items-center space-x-1 text-[11px] font-bold text-amber-700">
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Admin</span>
-                </div>
-                <div className="text-[10px] text-amber-800 font-mono mt-0.5 truncate font-semibold">
-                  1 / saidislom...
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickFill('english', '1')}
-                className="p-2 rounded-lg bg-emerald-50 border border-emerald-200 hover:border-emerald-400 text-left transition-all cursor-pointer"
-              >
-                <div className="flex items-center space-x-1 text-[11px] font-bold text-emerald-700">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>English</span>
-                </div>
-                <div className="text-[10px] text-emerald-800 font-mono mt-0.5 truncate font-semibold">
-                  english / 1
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickFill('math', '1')}
-                className="p-2 rounded-lg bg-blue-50 border border-blue-200 hover:border-blue-400 text-left transition-all cursor-pointer"
-              >
-                <div className="flex items-center space-x-1 text-[11px] font-bold text-blue-700">
-                  <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Math</span>
-                </div>
-                <div className="text-[10px] text-blue-800 font-mono mt-0.5 truncate font-semibold">
-                  math / 1
-                </div>
-              </button>
-            </div>
-          </div>
         </Card>
       </div>
     </div>
