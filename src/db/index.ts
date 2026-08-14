@@ -132,4 +132,14 @@ export async function seedInitialData() {
       createdAt: now,
     });
   }
+
+  // Sync initial user accounts directly to Firebase Cloud Firestore
+  const allUsers = await db.users.toArray();
+  syncCollectionToCloud('users', allUsers).catch(console.error);
+
+  const allGroups = await db.groups.toArray();
+  if (allGroups.length > 0) syncCollectionToCloud('groups', allGroups).catch(console.error);
+
+  const allStudents = await db.students.toArray();
+  if (allStudents.length > 0) syncCollectionToCloud('students', allStudents).catch(console.error);
 }

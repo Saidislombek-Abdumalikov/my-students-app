@@ -1,7 +1,5 @@
 /// <reference types="vite/client" />
 
-declare module 'firebase/app';
-declare module 'firebase/firestore';
 
 interface ImportMetaEnv {
   readonly VITE_FIREBASE_API_KEY?: string;
