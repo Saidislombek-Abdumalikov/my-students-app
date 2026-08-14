@@ -262,7 +262,7 @@ export const ScreenshotHubPage: React.FC = () => {
                   const dateTestIds = dateTests.map((t) => t.id);
                   const sResult = testResults.find((r) => r.studentId === s.id && dateTestIds.includes(r.testId));
                   const parentTest = sResult ? dateTests.find((t) => t.id === sResult.testId) : null;
-                  const maxSc = parentTest?.maxScore || 100;
+                  const maxSc = parentTest?.maxScore && parentTest.maxScore > 0 ? parentTest.maxScore : 100;
                   const isIelts = parentTest?.category?.startsWith('IELTS');
 
                   let grade = '';
@@ -270,11 +270,10 @@ export const ScreenshotHubPage: React.FC = () => {
                   let displayStr = '';
 
                   if (sResult) {
-                    const pct = sResult.percentage !== undefined
-                      ? sResult.percentage
-                      : isIelts
-                      ? Math.round((sResult.score / 9) * 100)
-                      : Math.round((sResult.score / maxSc) * 100);
+                    const rawScore = Number(sResult.score) || 0;
+                    const pct = isIelts
+                      ? Math.round((rawScore / 9) * 100)
+                      : Math.round((rawScore / maxSc) * 100);
 
                     if (pct >= 90) { grade = 'Super'; gradeClass = 'bg-emerald-600 text-white font-black shadow-sm'; }
                     else if (pct >= 80) { grade = "A'lo"; gradeClass = 'bg-emerald-600 text-white font-black shadow-sm'; }
@@ -282,7 +281,7 @@ export const ScreenshotHubPage: React.FC = () => {
                     else if (pct >= 50) { grade = 'Qoniqarli'; gradeClass = 'bg-amber-500 text-slate-950 font-black shadow-sm'; }
                     else { grade = 'Qoniqarsiz'; gradeClass = 'bg-rose-600 text-white font-black shadow-sm'; }
 
-                    displayStr = isIelts ? `${grade} (${sResult.score} Band)` : `${grade} (${sResult.score}/${maxSc} - ${pct}%)`;
+                    displayStr = isIelts ? `${grade} (${rawScore} Band)` : `${grade} (${rawScore}/${maxSc} - ${pct}%)`;
                   }
 
                   return (
