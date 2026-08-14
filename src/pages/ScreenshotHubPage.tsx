@@ -7,8 +7,11 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { Camera, CheckCircle2, AlertCircle, Clock, Award, FileSpreadsheet, ChevronLeft, ChevronRight, AlertTriangle, Plus } from 'lucide-react';
 import { getClosestLessonDate, getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
 
+import { useAuth } from '../context/AuthContext';
+
 export const ScreenshotHubPage: React.FC = () => {
-  const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
+  const { user } = useAuth();
+  const rawGroups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
   const students = useLiveQuery(() => db.students.toArray());
   const memberships = useLiveQuery(() => db.groupStudents.toArray());
   const attendanceLogs = useLiveQuery(() => db.attendance.toArray());
@@ -17,6 +20,14 @@ export const ScreenshotHubPage: React.FC = () => {
   const submissions = useLiveQuery(() => db.homeworkSubmissions.toArray());
   const tests = useLiveQuery(() => db.tests.toArray());
   const lessons = useLiveQuery(() => db.lessons.toArray());
+
+  const groups = rawGroups?.filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    if (user?.id) {
+      return g.teacherId === user.id || g.teacherId === user.username || (user.subject === 'English' && (!g.teacherId || g.teacherId === 't-1'));
+    }
+    return true;
+  });
 
   const todayStr = new Date().toISOString().split('T')[0];
 

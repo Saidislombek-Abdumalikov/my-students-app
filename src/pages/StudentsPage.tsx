@@ -7,20 +7,39 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { StudentModal } from '../components/students/StudentModal';
 import { GraduationCap, Plus, Search, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export const StudentsPage: React.FC = () => {
-  const students = useLiveQuery(() => db.students.toArray());
+  const { user } = useAuth();
+  const rawStudents = useLiveQuery(() => db.students.toArray());
   const memberships = useLiveQuery(() => db.groupStudents.toArray());
-  const groups = useLiveQuery(() => db.groups.toArray());
+  const rawGroups = useLiveQuery(() => db.groups.toArray());
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGroupId, setSelectedGroupId] = useState<string>('ALL');
   const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
 
-  if (!students || !memberships || !groups) {
+  if (!rawStudents || !memberships || !rawGroups) {
     return <LoadingSpinner label="O'quvchilar ro'yxati yuklanmoqda..." />;
   }
 
+  // Filter groups by active teacher ownership
+  const groups = rawGroups.filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    if (user?.id) {
+      return g.teacherId === user.id || g.teacherId === user.username || (user.subject === 'English' && (!g.teacherId || g.teacherId === 't-1'));
+    }
+    return true;
+  });
+
+  const teacherGroupIds = new Set(groups.map((g) => g.id));
+  const teacherStudentIds = new Set(
+    memberships
+      .filter((m) => teacherGroupIds.has(m.groupId) && m.status === 'ACTIVE')
+      .map((m) => m.studentId)
+  );
+
+  const students = rawStudents.filter((s) => user?.role === 'ADMIN' || teacherStudentIds.has(s.id));
   const groupMap = new Map(groups.map((g) => [g.id, g]));
 
   const handleDeleteStudent = async (studentId: string, studentName: string, e: React.MouseEvent) => {

@@ -14,14 +14,32 @@ export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const rawGroups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
-  const students = useLiveQuery(() => db.students.where('status').equals('ACTIVE').toArray());
-  const payments = useLiveQuery(() => db.payments.toArray());
-  const lessons = useLiveQuery(() => db.lessons.toArray());
+  const rawStudents = useLiveQuery(() => db.students.where('status').equals('ACTIVE').toArray());
+  const memberships = useLiveQuery(() => db.groupStudents.toArray());
+  const rawPayments = useLiveQuery(() => db.payments.toArray());
+  const rawLessons = useLiveQuery(() => db.lessons.toArray());
 
-  const groups = rawGroups?.filter((g) => {
+  const groups = (rawGroups || []).filter((g) => {
     if (user?.role === 'ADMIN') return true;
-    return g.teacherId === user?.id || (!g.teacherId && user?.id === 't-1');
+    if (user?.id) {
+      return g.teacherId === user.id || g.teacherId === user.username || (user.subject === 'English' && (!g.teacherId || g.teacherId === 't-1'));
+    }
+    return true;
   });
+
+  const teacherGroupIds = new Set(groups.map((g) => g.id));
+
+  // Filter students enrolled in teacher's assigned groups
+  const teacherStudentIds = new Set(
+    (memberships || [])
+      .filter((m) => teacherGroupIds.has(m.groupId) && m.status === 'ACTIVE')
+      .map((m) => m.studentId)
+  );
+
+  const students = (rawStudents || []).filter((s) => user?.role === 'ADMIN' || teacherStudentIds.has(s.id));
+  const lessons = (rawLessons || []).filter((l) => user?.role === 'ADMIN' || teacherGroupIds.has(l.groupId));
+  const payments = (rawPayments || []).filter((p) => user?.role === 'ADMIN' || teacherGroupIds.has(p.groupId) || teacherStudentIds.has(p.studentId));
+
 
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
   const [focusedGroupId, setFocusedGroupIdState] = useState<string | null>(getFocusedGroupId());

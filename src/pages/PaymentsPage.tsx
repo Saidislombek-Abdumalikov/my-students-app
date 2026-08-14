@@ -21,7 +21,10 @@ export const PaymentsPage: React.FC = () => {
 
   const groups = rawGroups?.filter((g) => {
     if (user?.role === 'ADMIN') return true;
-    return g.teacherId === user?.id || (!g.teacherId && user?.id === 't-1');
+    if (user?.id) {
+      return g.teacherId === user.id || g.teacherId === user.username || (user.subject === 'English' && (!g.teacherId || g.teacherId === 't-1'));
+    }
+    return true;
   });
 
   const currentMonthStr = new Date().toISOString().slice(0, 7);
