@@ -89,7 +89,7 @@ export const HomeworkCheckPage: React.FC = () => {
     }
   }, [selectedGroupId, groups]);
 
-  // Load saved homework check data when date or group changes
+  // Load saved homework check data ONLY when date, group, or matched package changes
   useEffect(() => {
     if (!selectedGroupId || !selectedDate || !submissions) return;
 
@@ -102,8 +102,8 @@ export const HomeworkCheckPage: React.FC = () => {
 
         if (sub.completedTaskIds && Array.isArray(sub.completedTaskIds)) {
           const completedSet = new Set(sub.completedTaskIds);
-          assignedTasks.forEach((t) => {
-            taskMap[t.id] = completedSet.has(t.id);
+          assignedTasks.forEach((t, i) => {
+            taskMap[t.id] = completedSet.has(t.id) || completedSet.has(`t-${i + 1}`) || completedSet.has(`ht-${pkgId}-${i}`);
           });
         } else {
           const pct = sub.completionPercentage ?? 0;
@@ -118,7 +118,7 @@ export const HomeworkCheckPage: React.FC = () => {
     });
 
     setStudentTaskChecks(savedChecks);
-  }, [selectedGroupId, selectedDate, submissions, assignedTasks, matchedPkg?.id]);
+  }, [selectedGroupId, selectedDate, matchedPkg?.id]);
 
   if (!groups || !students || !memberships || !packages || !submissions || !lessons) {
     return <LoadingSpinner label="Bugungi vazifani tekshirish bo'limi yuklanmoqda..." />;
@@ -156,7 +156,7 @@ export const HomeworkCheckPage: React.FC = () => {
 
     setStudentTaskChecks(newOverallChecks);
 
-    // Auto-save this student's submission instantly
+    // Auto-save this student's submission instantly to Dexie & Cloud Firestore
     try {
       const pkgId = matchedPkg?.id || `hp-${selectedGroupId}-${selectedDate}`;
       const totalTasks = assignedTasks.length || 1;
