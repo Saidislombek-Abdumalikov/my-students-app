@@ -15,12 +15,17 @@ import {
   CreditCard
 } from 'lucide-react';
 
+import { useAuth } from '../../context/AuthContext';
+import { LogOut, ShieldCheck, UserCog } from 'lucide-react';
+
 interface SidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => {
+  const { user, logout } = useAuth();
+
   // Section 1: Kunlik Darslar & Ishchi Maydon
   const dailyTeachingNavItems = [
     { label: 'Bosh Sahifa', path: '/', icon: LayoutDashboard },
@@ -44,6 +49,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
     { label: 'O\'quvchilar', path: '/students', icon: UserCheck },
     { label: 'To\'lovlar (Qarzdorlar)', path: '/payments', icon: CreditCard },
   ];
+
+  if (user?.role === 'ADMIN') {
+    adminNavItems.push({
+      label: 'Foydalanuvchilar (Login/Parol)',
+      path: '/users',
+      icon: UserCog,
+    });
+  }
 
   const renderNavGroup = (title: string, items: typeof dailyTeachingNavItems) => (
     <div className="space-y-1">
@@ -94,7 +107,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
         {/* Header Branding */}
         <div className="h-16 flex items-center px-4 border-b border-slate-800">
           <div className="flex items-center space-x-2.5">
-            <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-extrabold text-sm">
+            <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-extrabold text-sm shadow-md">
               TOS
             </div>
             <div>
@@ -109,6 +122,31 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = false, onClose }) => 
           {renderNavGroup("1. Kunlik Darslar & Vazifa", dailyTeachingNavItems)}
           {renderNavGroup("2. Skrinshotlar & Hisobotlar", reportsNavItems)}
           {renderNavGroup("3. Boshqaruv", adminNavItems)}
+        </div>
+
+        {/* Footer User Profile & Logout */}
+        <div className="p-3 border-t border-slate-800 bg-slate-950/60">
+          <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
+            <div className="flex items-center space-x-2 truncate">
+              <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-extrabold text-xs flex items-center justify-center flex-shrink-0">
+                {user?.role === 'ADMIN' ? <ShieldCheck className="w-4 h-4 text-amber-300" /> : user?.fullName.charAt(0).toUpperCase() || 'U'}
+              </div>
+              <div className="truncate">
+                <p className="text-xs font-bold text-slate-100 truncate">{user?.fullName || 'Foydalanuvchi'}</p>
+                <p className="text-[10px] text-slate-400 font-mono">
+                  {user?.role === 'ADMIN' ? 'Admin (1)' : `${user?.username || 'user'}`}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={logout}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Chiqish"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </aside>
     </>

@@ -80,15 +80,56 @@ export async function seedInitialData() {
     await db.testResults.clear();
   }
 
-  const existingUsers = await db.users.count();
-  if (existingUsers === 0) {
-    const teacherUser: User = {
+  // Seed or upgrade user accounts
+  const now = new Date().toISOString();
+
+  // Admin Account
+  const adminUser = await db.users.get('admin-1');
+  if (!adminUser) {
+    await db.users.put({
+      id: 'admin-1',
+      username: '1',
+      password: 'saidislomadmin1',
+      email: 'admin@learningcenter.com',
+      fullName: 'Administrator',
+      role: 'ADMIN',
+      createdAt: now,
+    });
+  }
+
+  // English Teacher Account (Preserves existing data on t-1)
+  const englishTeacher = await db.users.get('t-1');
+  if (!englishTeacher) {
+    await db.users.put({
       id: 't-1',
-      email: 'teacher@learningcenter.com',
-      fullName: 'O\'qituvchi',
+      username: 'english',
+      password: '1',
+      email: 'english@learningcenter.com',
+      fullName: "Ingliz tili o'qituvchisi",
       role: 'TEACHER',
-      createdAt: new Date().toISOString()
-    };
-    await db.users.put(teacherUser);
+      subject: 'English',
+      createdAt: now,
+    });
+  } else if (!englishTeacher.username || !englishTeacher.password) {
+    await db.users.update('t-1', {
+      username: 'english',
+      password: '1',
+      subject: 'English',
+    });
+  }
+
+  // Math Teacher Account
+  const mathTeacher = await db.users.get('t-math');
+  if (!mathTeacher) {
+    await db.users.put({
+      id: 't-math',
+      username: 'math',
+      password: '1',
+      email: 'math@learningcenter.com',
+      fullName: "Matematika o'qituvchisi",
+      role: 'TEACHER',
+      subject: 'Math',
+      createdAt: now,
+    });
   }
 }

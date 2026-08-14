@@ -7,7 +7,11 @@ interface NavbarProps {
   onToggleSidebar?: () => void;
 }
 
+import { useAuth } from '../../context/AuthContext';
+import { LogOut, ShieldCheck } from 'lucide-react';
+
 export const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onToggleSidebar }) => {
+  const { user, logout } = useAuth();
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   useEffect(() => {
@@ -60,10 +64,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onToggleSidebar }
 
         {/* Profile */}
         <div className="flex items-center space-x-2 pl-2 border-l border-slate-800">
-          <div className="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
-            O'
+          <div className={`w-7 h-7 rounded-lg text-white font-bold text-xs flex items-center justify-center ${user?.role === 'ADMIN' ? 'bg-amber-500 text-slate-950 font-black' : 'bg-emerald-600'}`}>
+            {user?.role === 'ADMIN' ? <ShieldCheck className="w-4 h-4" /> : user?.fullName.charAt(0).toUpperCase() || 'U'}
           </div>
-          <p className="text-xs font-bold text-slate-200">O'qituvchi</p>
+          <div className="hidden sm:block">
+            <p className="text-xs font-bold text-slate-200 leading-tight">{user?.fullName || 'Foydalanuvchi'}</p>
+            <p className="text-[10px] text-emerald-400 font-mono leading-tight">
+              {user?.role === 'ADMIN' ? 'Admin (1)' : user?.username || 'user'}
+            </p>
+          </div>
+          <button
+            onClick={logout}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer"
+            title="Chiqish"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </header>

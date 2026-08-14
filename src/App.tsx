@@ -18,37 +18,72 @@ import { ReportsPage } from './pages/ReportsPage';
 import { CommunicationsPage } from './pages/CommunicationsPage';
 import { TelegramPage } from './pages/TelegramPage';
 import { CalendarPage } from './pages/CalendarPage';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { LoginPage } from './pages/LoginPage';
+import { UsersManagementPage } from './pages/UsersManagementPage';
+import { LoadingSpinner } from './components/common/LoadingSpinner';
 import { seedInitialData } from './db';
 
-export const App: React.FC = () => {
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <LoadingSpinner label="Akkount ma'lumotlari tekshirilmoqda..." />;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+export const AppContent: React.FC = () => {
   useEffect(() => {
     seedInitialData().catch(console.error);
   }, []);
 
   return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<DashboardPage />} />
+        <Route path="groups" element={<GroupsPage />} />
+        <Route path="groups/:id" element={<GroupDetailPage />} />
+        <Route path="students" element={<StudentsPage />} />
+        <Route path="students/:id" element={<StudentDetailPage />} />
+        <Route path="attendance" element={<AttendancePage />} />
+        <Route path="homework-check" element={<HomeworkCheckPage />} />
+        <Route path="homework-add" element={<HomeworkAddPage />} />
+        <Route path="screenshots" element={<ScreenshotHubPage />} />
+        <Route path="payments" element={<PaymentsPage />} />
+        <Route path="workspace" element={<DailyWorkspacePage />} />
+        <Route path="tests" element={<TestsPage />} />
+        <Route path="files" element={<FilesPage />} />
+        <Route path="reports" element={<ReportsPage />} />
+        <Route path="communications" element={<CommunicationsPage />} />
+        <Route path="telegram" element={<TelegramPage />} />
+        <Route path="calendar" element={<CalendarPage />} />
+        <Route path="users" element={<UsersManagementPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<AppLayout />}>
-          <Route index element={<DashboardPage />} />
-          <Route path="groups" element={<GroupsPage />} />
-          <Route path="groups/:id" element={<GroupDetailPage />} />
-          <Route path="students" element={<StudentsPage />} />
-          <Route path="students/:id" element={<StudentDetailPage />} />
-          <Route path="attendance" element={<AttendancePage />} />
-          <Route path="homework-check" element={<HomeworkCheckPage />} />
-          <Route path="homework-add" element={<HomeworkAddPage />} />
-          <Route path="screenshots" element={<ScreenshotHubPage />} />
-          <Route path="payments" element={<PaymentsPage />} />
-          <Route path="workspace" element={<DailyWorkspacePage />} />
-          <Route path="tests" element={<TestsPage />} />
-          <Route path="files" element={<FilesPage />} />
-          <Route path="reports" element={<ReportsPage />} />
-          <Route path="communications" element={<CommunicationsPage />} />
-          <Route path="telegram" element={<TelegramPage />} />
-          <Route path="calendar" element={<CalendarPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-      </Routes>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </BrowserRouter>
   );
 };
