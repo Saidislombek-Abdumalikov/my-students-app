@@ -261,16 +261,28 @@ export const ScreenshotHubPage: React.FC = () => {
                 {sortedStudents.map((s, idx) => {
                   const dateTestIds = dateTests.map((t) => t.id);
                   const sResult = testResults.find((r) => r.studentId === s.id && dateTestIds.includes(r.testId));
+                  const parentTest = sResult ? dateTests.find((t) => t.id === sResult.testId) : null;
+                  const maxSc = parentTest?.maxScore || 100;
+                  const isIelts = parentTest?.category?.startsWith('IELTS');
 
                   let grade = '';
                   let gradeClass = 'text-slate-400';
+                  let displayStr = '';
+
                   if (sResult) {
-                    const sc = sResult.score;
-                    if (sc >= 90) { grade = 'Super'; gradeClass = 'bg-emerald-600 text-white font-black shadow-sm'; }
-                    else if (sc >= 80) { grade = "A'lo"; gradeClass = 'bg-emerald-600 text-white font-black shadow-sm'; }
-                    else if (sc >= 65) { grade = 'Yaxshi'; gradeClass = 'bg-blue-600 text-white font-black shadow-sm'; }
-                    else if (sc >= 50) { grade = 'Qoniqarli'; gradeClass = 'bg-amber-500 text-slate-950 font-black shadow-sm'; }
+                    const pct = sResult.percentage !== undefined
+                      ? sResult.percentage
+                      : isIelts
+                      ? Math.round((sResult.score / 9) * 100)
+                      : Math.round((sResult.score / maxSc) * 100);
+
+                    if (pct >= 90) { grade = 'Super'; gradeClass = 'bg-emerald-600 text-white font-black shadow-sm'; }
+                    else if (pct >= 80) { grade = "A'lo"; gradeClass = 'bg-emerald-600 text-white font-black shadow-sm'; }
+                    else if (pct >= 65) { grade = 'Yaxshi'; gradeClass = 'bg-blue-600 text-white font-black shadow-sm'; }
+                    else if (pct >= 50) { grade = 'Qoniqarli'; gradeClass = 'bg-amber-500 text-slate-950 font-black shadow-sm'; }
                     else { grade = 'Qoniqarsiz'; gradeClass = 'bg-rose-600 text-white font-black shadow-sm'; }
+
+                    displayStr = isIelts ? `${grade} (${sResult.score} Band)` : `${grade} (${sResult.score}/${maxSc} - ${pct}%)`;
                   }
 
                   return (
@@ -279,7 +291,7 @@ export const ScreenshotHubPage: React.FC = () => {
                       <td className="py-2.5 px-3 font-bold text-slate-900 border-r border-slate-200">{s.fullName}</td>
                       <td className="py-2.5 px-3 text-center">
                         {sResult ? (
-                          <span className={`px-3 py-1 text-[11px] rounded-md inline-block ${gradeClass}`}>{grade} ({sResult.score}%)</span>
+                          <span className={`px-3 py-1 text-[11px] rounded-md inline-block ${gradeClass}`}>{displayStr}</span>
                         ) : (<span className="text-[11px] font-medium text-slate-400">&mdash;</span>)}
                       </td>
                     </tr>

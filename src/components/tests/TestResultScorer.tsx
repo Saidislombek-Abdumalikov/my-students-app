@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../db';
+import { syncCollectionToCloud } from '../../services/firebase';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
@@ -53,19 +54,20 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
 
     activeStudentIds.forEach((sId) => {
       const res = existingResults?.find((r) => r.studentId === sId);
+      const defaultScore = isIELTS ? 6.5 : (test?.maxScore || 100);
       initialState[sId] = {
-        score: res ? res.score : 6.5,
-        listeningScore: res?.listeningScore || 7.0,
-        readingScore: res?.readingScore || 6.5,
-        writingScore: res?.writingScore || 6.0,
-        speakingScore: res?.speakingScore || 6.5,
+        score: res ? res.score : defaultScore,
+        listeningScore: res?.listeningScore || (isIELTS ? 7.0 : 0),
+        readingScore: res?.readingScore || (isIELTS ? 6.5 : 0),
+        writingScore: res?.writingScore || (isIELTS ? 6.0 : 0),
+        speakingScore: res?.speakingScore || (isIELTS ? 6.5 : 0),
         comment: res?.comment || '',
         screenshotUrl: res?.screenshotUrl || '',
       };
     });
 
     setScoresState(initialState);
-  }, [memberships, allStudents, existingResults]);
+  }, [memberships, allStudents, existingResults, test]);
 
   if (!test || !memberships || !allStudents) {
     return <LoadingSpinner label="Loading test scoring workspace..." />;
@@ -79,12 +81,13 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
 
   const updateStudentScore = (studentId: string, field: keyof StudentScoreItem, val: any) => {
     setScoresState((prev) => {
+      const defaultScore = isIELTS ? 6.5 : (test.maxScore || 100);
       const current = prev[studentId] || {
-        score: 6.5,
-        listeningScore: 7.0,
-        readingScore: 6.5,
-        writingScore: 6.0,
-        speakingScore: 6.5,
+        score: defaultScore,
+        listeningScore: isIELTS ? 7.0 : 0,
+        readingScore: isIELTS ? 6.5 : 0,
+        writingScore: isIELTS ? 6.0 : 0,
+        speakingScore: isIELTS ? 6.5 : 0,
         comment: '',
         screenshotUrl: '',
       };
@@ -135,6 +138,9 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
       });
 
       await db.testResults.bulkPut(entriesToSave);
+      const allResults = await db.testResults.toArray();
+      syncCollectionToCloud('testResults', allResults).catch(console.error);
+
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 3000);
     } catch (err) {
