@@ -30,7 +30,7 @@ export const LoginPage: React.FC = () => {
       if (success) {
         navigate('/', { replace: true });
       } else {
-        setError("Login yoki parol noto'g'ri. Qaytadan urinib ko'ring.");
+        setError("Bunday foydalanuvchi mavjud emas yoki login/parol noto'g'ri.");
       }
     } catch (err) {
       console.error('Login error:', err);
