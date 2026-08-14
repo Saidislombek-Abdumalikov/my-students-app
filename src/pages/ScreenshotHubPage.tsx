@@ -183,11 +183,11 @@ export const ScreenshotHubPage: React.FC = () => {
                       <td className="py-2.5 px-3 font-bold text-slate-900 border-r border-slate-200">{s.fullName}</td>
                       <td className="py-2.5 px-3 text-center">
                         {attStatus === 'PRESENT' ? (
-                          <span className="px-2.5 py-1 text-[11px] font-extrabold rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 inline-block">Keldi</span>
+                          <span className="px-3 py-1 text-[11px] font-black rounded-md bg-emerald-600 text-white shadow-sm inline-block">Keldi</span>
                         ) : attStatus === 'LATE' ? (
-                          <span className="px-2.5 py-1 text-[11px] font-extrabold rounded-md bg-amber-50 text-amber-900 border border-amber-200 inline-flex items-center gap-1"><Clock className="w-3 h-3 text-amber-600" /> Kechikdi: {lateMin} daq</span>
+                          <span className="px-3 py-1 text-[11px] font-black rounded-md bg-amber-500 text-slate-950 shadow-sm inline-flex items-center gap-1"><Clock className="w-3 h-3 text-slate-950" /> Kechikdi: {lateMin} daq</span>
                         ) : attStatus === 'ABSENT' ? (
-                          <span className="px-2.5 py-1 text-[11px] font-extrabold rounded-md bg-rose-50 text-rose-800 border border-rose-200 inline-block">Kelmadi</span>
+                          <span className="px-3 py-1 text-[11px] font-black rounded-md bg-rose-600 text-white shadow-sm inline-block">Kelmadi</span>
                         ) : (
                           <span className="text-[11px] font-medium text-slate-400">&mdash;</span>
                         )}
@@ -200,7 +200,6 @@ export const ScreenshotHubPage: React.FC = () => {
           </div>
         </Card>
 
-        {/* TABLE 2: UY VAZIFASI */}
         <Card className="space-y-3 bg-white border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-200 pb-2">
             <div className="flex items-center space-x-2">
@@ -228,7 +227,7 @@ export const ScreenshotHubPage: React.FC = () => {
                       <td className="py-2.5 px-3 font-bold text-slate-900 border-r border-slate-200">{s.fullName}</td>
                       <td className="py-2.5 px-3 text-center">
                         {hwPerc !== undefined ? (
-                          <span className={`px-2.5 py-1 text-[11px] font-extrabold rounded-md border ${hwPerc === 100 ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : hwPerc > 0 ? 'bg-amber-50 text-amber-900 border-amber-200' : 'bg-rose-50 text-rose-800 border-rose-200'}`}>
+                          <span className={`px-3 py-1 text-[11px] font-black rounded-md shadow-sm ${hwPerc === 100 ? 'bg-emerald-600 text-white' : hwPerc > 0 ? 'bg-amber-500 text-slate-950' : 'bg-rose-600 text-white'}`}>
                             {hwPerc}% ({hwPerc === 100 ? 'Bajarildi' : hwPerc > 0 ? 'Qisman' : 'Bajarilmadi'})
                           </span>
                         ) : (<span className="text-[11px] font-medium text-slate-400">&mdash;</span>)}
@@ -241,7 +240,6 @@ export const ScreenshotHubPage: React.FC = () => {
           </div>
         </Card>
 
-        {/* TABLE 3: IMTIHON NATIJALARI */}
         <Card className="space-y-3 bg-white border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-200 pb-2">
             <div className="flex items-center space-x-2">
@@ -268,11 +266,11 @@ export const ScreenshotHubPage: React.FC = () => {
                   let gradeClass = 'text-slate-400';
                   if (sResult) {
                     const sc = sResult.score;
-                    if (sc >= 90) { grade = 'Super'; gradeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200 font-extrabold'; }
-                    else if (sc >= 80) { grade = "A'lo"; gradeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200 font-bold'; }
-                    else if (sc >= 65) { grade = 'Yaxshi'; gradeClass = 'bg-blue-50 text-blue-800 border-blue-200 font-bold'; }
-                    else if (sc >= 50) { grade = 'Qoniqarli'; gradeClass = 'bg-amber-50 text-amber-900 border-amber-200 font-bold'; }
-                    else { grade = 'Qoniqarsiz'; gradeClass = 'bg-rose-50 text-rose-800 border-rose-200 font-extrabold'; }
+                    if (sc >= 90) { grade = 'Super'; gradeClass = 'bg-emerald-600 text-white font-black shadow-sm'; }
+                    else if (sc >= 80) { grade = "A'lo"; gradeClass = 'bg-emerald-600 text-white font-black shadow-sm'; }
+                    else if (sc >= 65) { grade = 'Yaxshi'; gradeClass = 'bg-blue-600 text-white font-black shadow-sm'; }
+                    else if (sc >= 50) { grade = 'Qoniqarli'; gradeClass = 'bg-amber-500 text-slate-950 font-black shadow-sm'; }
+                    else { grade = 'Qoniqarsiz'; gradeClass = 'bg-rose-600 text-white font-black shadow-sm'; }
                   }
 
                   return (
@@ -281,7 +279,7 @@ export const ScreenshotHubPage: React.FC = () => {
                       <td className="py-2.5 px-3 font-bold text-slate-900 border-r border-slate-200">{s.fullName}</td>
                       <td className="py-2.5 px-3 text-center">
                         {sResult ? (
-                          <span className={`px-2.5 py-1 text-[11px] rounded-md border inline-block ${gradeClass}`}>{grade} ({sResult.score}%)</span>
+                          <span className={`px-3 py-1 text-[11px] rounded-md inline-block ${gradeClass}`}>{grade} ({sResult.score}%)</span>
                         ) : (<span className="text-[11px] font-medium text-slate-400">&mdash;</span>)}
                       </td>
                     </tr>
@@ -292,7 +290,6 @@ export const ScreenshotHubPage: React.FC = () => {
           </div>
         </Card>
 
-        {/* TABLE 4: TO'LOVLAR */}
         <Card className="space-y-3 bg-white border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-200 pb-2">
             <div className="flex items-center space-x-2">
@@ -319,9 +316,9 @@ export const ScreenshotHubPage: React.FC = () => {
                       <td className="py-2.5 px-3 font-bold text-slate-900 border-r border-slate-200">{s.fullName}</td>
                       <td className="py-2.5 px-3 text-center">
                         {hasUnpaid ? (
-                          <span className="px-2.5 py-1 text-[11px] font-extrabold rounded-md bg-rose-50 text-rose-800 border border-rose-200 inline-flex items-center gap-1"><AlertCircle className="w-3 h-3 text-rose-600" /> QARZDOR</span>
+                          <span className="px-3 py-1 text-[11px] font-black rounded-md bg-rose-600 text-white shadow-sm inline-block">QARZDOR</span>
                         ) : (
-                          <span className="px-2.5 py-1 text-[11px] font-extrabold rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 inline-flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-emerald-600" /> To'langan</span>
+                          <span className="px-3 py-1 text-[11px] font-black rounded-md bg-emerald-600 text-white shadow-sm inline-block">To'langan</span>
                         )}
                       </td>
                     </tr>
