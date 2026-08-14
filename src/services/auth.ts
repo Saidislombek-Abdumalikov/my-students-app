@@ -72,7 +72,10 @@ export async function loginUser(username: string, password: string): Promise<Use
 export function logoutUser(): void {
   signOut(auth).catch(() => {});
   localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem('teacher_os_focused_group_id');
+  localStorage.removeItem('teacher_os_selected_group_id');
   window.dispatchEvent(new Event('auth_state_changed'));
+  window.dispatchEvent(new Event('workspace_group_changed'));
 }
 
 export async function getCurrentUser(): Promise<User | null> {

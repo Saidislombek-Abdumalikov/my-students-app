@@ -22,9 +22,9 @@ export const PaymentsPage: React.FC = () => {
   const groups = rawGroups?.filter((g) => {
     if (user?.role === 'ADMIN') return true;
     if (user?.id) {
-      return g.teacherId === user.id || g.teacherId === user.username || (user.subject === 'English' && (!g.teacherId || g.teacherId === 't-1'));
+      return g.teacherId === user.id || g.teacherId === user.username || (user.username === 'english' && (!g.teacherId || g.teacherId === 't-1'));
     }
-    return true;
+    return false;
   });
 
   const currentMonthStr = new Date().toISOString().slice(0, 7);

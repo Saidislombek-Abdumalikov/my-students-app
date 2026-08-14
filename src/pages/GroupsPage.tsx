@@ -41,7 +41,10 @@ export const GroupsPage: React.FC = () => {
   // Filter groups by active teacher ownership
   const myGroups = groups.filter((g) => {
     if (user?.role === 'ADMIN') return true;
-    return g.teacherId === user?.id || (!g.teacherId && user?.id === 't-1');
+    if (user?.id) {
+      return g.teacherId === user.id || g.teacherId === user.username || (user.username === 'english' && (!g.teacherId || g.teacherId === 't-1'));
+    }
+    return false;
   });
 
   const filteredGroups = myGroups.filter((g) => {
