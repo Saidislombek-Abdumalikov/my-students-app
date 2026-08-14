@@ -6,50 +6,71 @@ import { doc, getDoc } from 'firebase/firestore';
 
 const SESSION_KEY = 'teacher_os_active_user_id';
 
+const DEFAULT_BUILTIN_USERS: User[] = [
+  {
+    id: 'admin-1',
+    username: '1',
+    password: 'saidislomadmin1',
+    email: 'admin@learningcenter.com',
+    fullName: 'Administrator',
+    role: 'ADMIN',
+    createdAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    id: 't-1',
+    username: 'english',
+    password: '1',
+    email: 'english@learningcenter.com',
+    fullName: "Ingliz tili o'qituvchisi",
+    role: 'TEACHER',
+    subject: 'English',
+    createdAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    id: 't-math',
+    username: 'math',
+    password: '1',
+    email: 'math@learningcenter.com',
+    fullName: "Matematika o'qituvchisi",
+    role: 'TEACHER',
+    subject: 'Math',
+    createdAt: '2026-01-01T00:00:00.000Z',
+  },
+];
+
 export async function loginUser(username: string, password: string): Promise<User | null> {
   const cleanUsername = username.trim();
   const cleanPassword = password.trim();
 
-  // 1. Instant check against local DB (seeded admin/teacher accounts)
-  const allUsers = await db.users.toArray();
-  const matchedUser = allUsers.find(
+  // 1. Instant check against local IndexedDB (< 5ms response time)
+  let allUsers: User[] = [];
+  try {
+    allUsers = await db.users.toArray();
+  } catch {}
+
+  const matchedLocalUser = allUsers.find(
     (u) => u.username === cleanUsername && (u.password === cleanPassword || (!u.password && cleanPassword === '1'))
   );
 
-  if (matchedUser) {
-    localStorage.setItem(SESSION_KEY, matchedUser.id);
+  if (matchedLocalUser) {
+    localStorage.setItem(SESSION_KEY, matchedLocalUser.id);
     window.dispatchEvent(new Event('auth_state_changed'));
-    
-    // Background cloud sync/auth
-    try {
-      const email = usernameToEmail(cleanUsername);
-      signInWithEmailAndPassword(auth, email, cleanPassword).catch(() => {});
-    } catch {}
-
-    return matchedUser;
+    return matchedLocalUser;
   }
 
-  // 2. Fallback: Check Firebase Auth with timeout
-  try {
-    const email = usernameToEmail(cleanUsername);
-    const userCredential = await signInWithEmailAndPassword(auth, email, cleanPassword);
-    if (userCredential.user) {
-      const uid = userCredential.user.uid;
-      const userDocRef = doc(firestore, 'users', uid);
-      const userSnap = await getDoc(userDocRef);
-      if (userSnap.exists()) {
-        const u = userSnap.data() as User;
-        localStorage.setItem(SESSION_KEY, u.id);
-        await db.users.put(u);
-        window.dispatchEvent(new Event('auth_state_changed'));
-        return u;
-      }
-    }
-  } catch (err) {
-    console.log('[Firebase Auth Login Notice]:', err);
+  // 2. Instant check against Built-in Accounts (< 5ms response time)
+  const matchedBuiltin = DEFAULT_BUILTIN_USERS.find(
+    (u) => u.username === cleanUsername && u.password === cleanPassword
+  );
+
+  if (matchedBuiltin) {
+    localStorage.setItem(SESSION_KEY, matchedBuiltin.id);
+    await db.users.put(matchedBuiltin).catch(() => {});
+    window.dispatchEvent(new Event('auth_state_changed'));
+    return matchedBuiltin;
   }
 
-  // 3. Fallback: Check Cloud Firestore users collection
+  // 3. Fallback: Fast Cloud Firestore search
   try {
     const cloudUsers = await fetchCollectionFromCloud('users');
     const matchedCloudUser = cloudUsers.find(
@@ -58,7 +79,7 @@ export async function loginUser(username: string, password: string): Promise<Use
 
     if (matchedCloudUser) {
       localStorage.setItem(SESSION_KEY, matchedCloudUser.id);
-      await db.users.put(matchedCloudUser);
+      await db.users.put(matchedCloudUser).catch(() => {});
       window.dispatchEvent(new Event('auth_state_changed'));
       return matchedCloudUser;
     }
