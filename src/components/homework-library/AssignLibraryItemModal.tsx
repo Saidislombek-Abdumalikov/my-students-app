@@ -99,14 +99,14 @@ export const AssignLibraryItemModal: React.FC<AssignLibraryItemModalProps> = ({
     >
       <form onSubmit={handleAssign} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Target Class Group <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">
+            Target Class Group <span className="text-rose-600">*</span>
           </label>
           <select
             required
             value={groupId}
             onChange={(e) => setGroupId(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
           >
             <option value="">Select Group...</option>
             {groups.map((g) => (
@@ -118,28 +118,28 @@ export const AssignLibraryItemModal: React.FC<AssignLibraryItemModalProps> = ({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Submission Deadline <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">
+            Submission Deadline <span className="text-rose-600">*</span>
           </label>
           <input
             type="date"
             required
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
           />
         </div>
 
-        <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 space-y-1.5 text-xs">
-          <h4 className="font-bold text-brand-400">Included Tasks Preview ({libraryItem.tasks.length})</h4>
+        <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5 text-xs">
+          <h4 className="font-bold text-emerald-600">Included Tasks Preview ({libraryItem.tasks.length})</h4>
           {libraryItem.tasks.map((t, i) => (
-            <p key={i} className="text-slate-300">
+            <p key={i} className="text-slate-600">
               #{i + 1} <strong>[{t.taskType}]</strong> {t.title}
             </p>
           ))}
         </div>
 
-        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>

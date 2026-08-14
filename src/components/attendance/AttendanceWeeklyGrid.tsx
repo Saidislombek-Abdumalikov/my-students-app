@@ -38,17 +38,17 @@ export const AttendanceWeeklyGrid: React.FC<AttendanceWeeklyGridProps> = ({ grou
     <Card className="space-y-4 overflow-x-auto">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-bold text-slate-100">{group.name} — Weekly Matrix</h3>
-          <p className="text-xs text-slate-400">Student attendance across conducted lesson sessions.</p>
+          <h3 className="text-sm font-bold text-slate-900">{group.name} — Weekly Matrix</h3>
+          <p className="text-xs text-slate-500">Student attendance across conducted lesson sessions.</p>
         </div>
         <Badge variant="brand">{lessons.length} Total Lessons Recorded</Badge>
       </div>
 
       {enrolledStudents.length === 0 ? (
-        <p className="text-xs text-slate-400">No active students in group.</p>
+        <p className="text-xs text-slate-500">No active students in group.</p>
       ) : (
-        <table className="w-full text-xs text-left text-slate-300">
-          <thead className="bg-slate-900/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+        <table className="w-full text-xs text-left text-slate-600">
+          <thead className="bg-slate-50 text-slate-500 border-b border-slate-200 uppercase font-semibold">
             <tr>
               <th className="py-2.5 px-3">Student Name</th>
               {lessons.slice(-5).map((l) => (
@@ -60,7 +60,7 @@ export const AttendanceWeeklyGrid: React.FC<AttendanceWeeklyGridProps> = ({ grou
               <th className="py-2.5 px-3 text-right">Attendance %</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60">
+          <tbody className="divide-y divide-slate-200">
             {enrolledStudents.map((student) => {
               const studentAttendanceRecords = allAttendance.filter(
                 (a) => a.studentId === student.id && lessonMap.has(a.lessonId)
@@ -74,8 +74,8 @@ export const AttendanceWeeklyGrid: React.FC<AttendanceWeeklyGridProps> = ({ grou
                 totalSessions > 0 ? Math.round((presentSessions / totalSessions) * 100) : 100;
 
               return (
-                <tr key={student.id} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="py-2.5 px-3 font-semibold text-slate-200">{student.fullName}</td>
+                <tr key={student.id} className="hover:bg-slate-100 transition-colors">
+                  <td className="py-2.5 px-3 font-semibold text-slate-800">{student.fullName}</td>
                   {lessons.slice(-5).map((l) => {
                     const record = allAttendance.find(
                       (a) => a.studentId === student.id && a.lessonId === l.id
@@ -83,24 +83,24 @@ export const AttendanceWeeklyGrid: React.FC<AttendanceWeeklyGridProps> = ({ grou
 
                     const statusBadge = record ? (
                       record.status === 'PRESENT' ? (
-                        <span className="px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 font-bold text-[10px]">
+                        <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px]">
                           P
                         </span>
                       ) : record.status === 'ABSENT' ? (
-                        <span className="px-2 py-0.5 rounded bg-rose-950/80 text-rose-300 border border-rose-800/60 font-bold text-[10px]">
+                        <span className="px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 font-bold text-[10px]">
                           A
                         </span>
                       ) : record.status === 'LATE' ? (
-                        <span className="px-2 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-800/60 font-bold text-[10px]">
+                        <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 font-bold text-[10px]">
                           L
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded bg-sky-950/80 text-sky-300 border border-sky-800/60 font-bold text-[10px]">
+                        <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-bold text-[10px]">
                           E
                         </span>
                       )
                     ) : (
-                      <span className="text-slate-600 font-mono text-[10px]">—</span>
+                      <span className="text-slate-400 font-mono text-[10px]">—</span>
                     );
 
                     return (

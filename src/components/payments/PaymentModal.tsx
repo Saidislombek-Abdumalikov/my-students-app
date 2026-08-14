@@ -66,14 +66,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            O'quvchi <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">
+            O'quvchi <span className="text-rose-600">*</span>
           </label>
           <select
             required
             value={studentId}
             onChange={(e) => setStudentId(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-emerald-500 font-bold"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-500 font-bold"
           >
             <option value="">O'quvchini tanlang</option>
             {students.map((s) => (
@@ -85,14 +85,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Guruh <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">
+            Guruh <span className="text-rose-600">*</span>
           </label>
           <select
             required
             value={groupId}
             onChange={(e) => setGroupId(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-emerald-500 font-bold"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-500 font-bold"
           >
             <option value="">Guruhni tanlang</option>
             {groups.map((g) => (
@@ -104,19 +104,19 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">To'lov Oyi</label>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">To'lov Oyi</label>
           <input
             type="month"
             required
             value={periodMonth}
             onChange={(e) => setPeriodMonth(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-emerald-500 font-bold"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-500 font-bold"
           />
         </div>
 
         {/* Binary Status Toggle: To'lagan vs To'lashi Kerak */}
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1.5">To'lov Holati</label>
+          <label className="block text-xs font-semibold text-slate-600 mb-1.5">To'lov Holati</label>
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
@@ -124,7 +124,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
               className={`p-3 rounded-xl border text-xs font-extrabold flex items-center justify-center space-x-2 cursor-pointer ${
                 status === 'PAID'
                   ? 'bg-emerald-600 text-white border-emerald-500'
-                  : 'bg-slate-950 text-slate-400 border-slate-800'
+                  : 'bg-slate-100 text-slate-500 border-slate-300'
               }`}
             >
               <Check className="w-4 h-4" />
@@ -137,7 +137,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
               className={`p-3 rounded-xl border text-xs font-extrabold flex items-center justify-center space-x-2 cursor-pointer ${
                 status === 'UNPAID'
                   ? 'bg-red-600 text-white border-red-500'
-                  : 'bg-slate-950 text-slate-400 border-slate-800'
+                  : 'bg-slate-100 text-slate-500 border-slate-300'
               }`}
             >
               <AlertCircle className="w-4 h-4" />
@@ -146,7 +146,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) =
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200">
           <Button type="button" variant="ghost" onClick={onClose}>
             Bekor qilish
           </Button>

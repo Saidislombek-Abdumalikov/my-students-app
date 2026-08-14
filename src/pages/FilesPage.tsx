@@ -19,24 +19,24 @@ export const FilesPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <FileSpreadsheet className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <FileSpreadsheet className="w-6 h-6 text-emerald-600" />
             <span>Excel Usulidagi Taqqoslash Jadvali</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Ota-onalar va o'qituvchilar uchun o'quvchilarning Davomat, Baholari va To'lovlarini yonma-yon solishtirish jadvali.
           </p>
         </div>
       </div>
 
       {/* Filter Bar */}
-      <Card className="flex items-center justify-between bg-slate-900">
+      <Card className="flex items-center justify-between bg-white">
         <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <span className="text-xs font-semibold text-slate-300">Guruh:</span>
+          <span className="text-xs font-semibold text-slate-600">Guruh:</span>
           <select
             value={selectedGroupId}
             onChange={(e) => setSelectedGroupId(e.target.value)}
-            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64"
+            className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64"
           >
             <option value="ALL">Barcha Guruhlar</option>
             {groups.map((g) => (

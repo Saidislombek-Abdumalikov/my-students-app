@@ -104,18 +104,18 @@ export const CalendarPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <CalendarIcon className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <CalendarIcon className="w-6 h-6 text-emerald-600" />
             <span>Dars va Mashg'ulotlar Jadvali</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Kunlik darslar, vazifa muddatlari va imtihon kunlari taqvimi.
           </p>
         </div>
       </div>
 
       {/* Control Bar */}
-      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900">
+      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white">
         <div className="flex items-center space-x-2 w-full md:w-auto">
           <Button variant="secondary" size="sm" onClick={handlePrevMonth}>
             <ChevronLeft className="w-4 h-4" />
@@ -129,7 +129,7 @@ export const CalendarPage: React.FC = () => {
         </div>
 
         {/* Event Type Filter Pills */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-50 rounded-xl border border-slate-200">
           {[
             { id: 'ALL', label: 'Barchasi' },
             { id: 'LESSON', label: 'Darslar' },
@@ -143,7 +143,7 @@ export const CalendarPage: React.FC = () => {
               className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
                 eventFilter === item.id
                   ? 'bg-emerald-600 text-white font-extrabold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               {item.label}

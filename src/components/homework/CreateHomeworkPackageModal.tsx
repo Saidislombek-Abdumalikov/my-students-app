@@ -152,14 +152,14 @@ export const CreateHomeworkPackageModal: React.FC<CreateHomeworkPackageModalProp
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
-              Target Class Group <span className="text-rose-400">*</span>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
+              Target Class Group <span className="text-rose-600">*</span>
             </label>
             <select
               required
               value={groupId}
               onChange={(e) => setGroupId(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
             >
               <option value="">Select Group...</option>
               {groups.map((g) => (
@@ -171,22 +171,22 @@ export const CreateHomeworkPackageModal: React.FC<CreateHomeworkPackageModalProp
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
-              Submission Deadline <span className="text-rose-400">*</span>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
+              Submission Deadline <span className="text-rose-600">*</span>
             </label>
             <input
               type="date"
               required
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Package Title <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">
+            Package Title <span className="text-rose-600">*</span>
           </label>
           <input
             type="text"
@@ -194,12 +194,12 @@ export const CreateHomeworkPackageModal: React.FC<CreateHomeworkPackageModalProp
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g. Lesson 12: IELTS Cambridge 18 Prep Package"
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-semibold text-slate-600 mb-1">
             General Instructions / Overview
           </label>
           <input
@@ -207,15 +207,15 @@ export const CreateHomeworkPackageModal: React.FC<CreateHomeworkPackageModalProp
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="e.g. Complete all tasks by next Monday before 18:00"
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
           />
         </div>
 
         {/* Dynamic Homework Tasks Builder */}
-        <div className="space-y-3 pt-2 border-t border-slate-800">
+        <div className="space-y-3 pt-2 border-t border-slate-200">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-              <FileCheck className="w-4 h-4 text-brand-400" />
+            <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <FileCheck className="w-4 h-4 text-emerald-600" />
               <span>Homework Tasks ({tasks.length})</span>
             </h4>
             <Button
@@ -233,10 +233,10 @@ export const CreateHomeworkPackageModal: React.FC<CreateHomeworkPackageModalProp
             {tasks.map((task, idx) => (
               <div
                 key={idx}
-                className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 space-y-2 relative group"
+                className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2 relative group"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-bold text-brand-400 uppercase">
+                  <span className="text-[11px] font-bold text-emerald-600 uppercase">
                     Task #{idx + 1}
                   </span>
                   {tasks.length > 1 && (
@@ -244,7 +244,7 @@ export const CreateHomeworkPackageModal: React.FC<CreateHomeworkPackageModalProp
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="p-1 text-rose-400 hover:text-rose-300"
+                      className="p-1 text-rose-600 hover:text-rose-600"
                       onClick={() => handleRemoveTask(idx)}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -260,7 +260,7 @@ export const CreateHomeworkPackageModal: React.FC<CreateHomeworkPackageModalProp
                       value={task.title}
                       onChange={(e) => handleTaskChange(idx, 'title', e.target.value)}
                       placeholder="Task Title (e.g. Reading Passage 3)"
-                      className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-xs text-slate-100 focus:outline-none focus:border-brand-500"
+                      className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-brand-500"
                     />
                   </div>
 
@@ -268,7 +268,7 @@ export const CreateHomeworkPackageModal: React.FC<CreateHomeworkPackageModalProp
                     <select
                       value={task.taskType}
                       onChange={(e) => handleTaskChange(idx, 'taskType', e.target.value as HomeworkTaskType)}
-                      className="w-full px-2 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-xs text-slate-100 focus:outline-none focus:border-brand-500"
+                      className="w-full px-2 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-brand-500"
                     >
                       <option value="READING">READING</option>
                       <option value="LISTENING">LISTENING</option>
@@ -288,14 +288,14 @@ export const CreateHomeworkPackageModal: React.FC<CreateHomeworkPackageModalProp
                   value={task.instructions}
                   onChange={(e) => handleTaskChange(idx, 'instructions', e.target.value)}
                   placeholder="Task instructions (e.g. Answer questions 27-40)..."
-                  className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-xs text-slate-100 focus:outline-none focus:border-brand-500"
+                  className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-brand-500"
                 />
               </div>
             ))}
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>

@@ -158,14 +158,14 @@ export const AttendanceMarker: React.FC<AttendanceMarkerProps> = ({
   return (
     <div className="space-y-4">
       {/* Attendance Header & Quick Actions */}
-      <Card className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-slate-900/80">
+      <Card className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white">
         <div>
           <div className="flex items-center space-x-2">
-            <h3 className="text-base font-bold text-slate-100">{group.name}</h3>
+            <h3 className="text-base font-bold text-slate-900">{group.name}</h3>
             <Badge variant="info" size="sm">{group.courseSubject}</Badge>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Attendance Sheet for <span className="text-brand-400 font-semibold">{dateStr}</span> ({totalCount} Enrolled)
+          <p className="text-xs text-slate-500 mt-0.5">
+            Attendance Sheet for <span className="text-emerald-600 font-semibold">{dateStr}</span> ({totalCount} Enrolled)
           </p>
         </div>
 
@@ -173,7 +173,7 @@ export const AttendanceMarker: React.FC<AttendanceMarkerProps> = ({
           <Button
             size="sm"
             variant="ghost"
-            className="text-xs text-emerald-400 hover:bg-emerald-950/40"
+            className="text-xs text-emerald-600 hover:bg-emerald-50"
             onClick={() => markAll('PRESENT')}
           >
             Mark All Present
@@ -181,7 +181,7 @@ export const AttendanceMarker: React.FC<AttendanceMarkerProps> = ({
           <Button
             size="sm"
             variant="ghost"
-            className="text-xs text-rose-400 hover:bg-rose-950/40"
+            className="text-xs text-rose-600 hover:bg-rose-50"
             onClick={() => markAll('ABSENT')}
           >
             Mark All Absent
@@ -190,7 +190,7 @@ export const AttendanceMarker: React.FC<AttendanceMarkerProps> = ({
             size="sm"
             variant="primary"
             isLoading={isSaving}
-            leftIcon={isSaved ? <Check className="w-4 h-4 text-emerald-400" /> : <Save className="w-4 h-4" />}
+            leftIcon={isSaved ? <Check className="w-4 h-4 text-emerald-600" /> : <Save className="w-4 h-4" />}
             onClick={handleSave}
           >
             {isSaved ? 'Attendance Saved!' : 'Save Attendance'}
@@ -200,35 +200,35 @@ export const AttendanceMarker: React.FC<AttendanceMarkerProps> = ({
 
       {/* Metric Breakdown Pills */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-        <div className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-800/40 flex items-center justify-between">
-          <span className="text-emerald-300 font-semibold flex items-center gap-1.5">
+        <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
+          <span className="text-emerald-700 font-semibold flex items-center gap-1.5">
             <CheckCircle2 className="w-4 h-4" /> Present
           </span>
-          <span className="text-sm font-bold text-emerald-200">{presentCount}</span>
+          <span className="text-sm font-bold text-emerald-700">{presentCount}</span>
         </div>
-        <div className="p-2.5 rounded-xl bg-rose-950/40 border border-rose-800/40 flex items-center justify-between">
-          <span className="text-rose-300 font-semibold flex items-center gap-1.5">
+        <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-between">
+          <span className="text-rose-700 font-semibold flex items-center gap-1.5">
             <XCircle className="w-4 h-4" /> Absent
           </span>
-          <span className="text-sm font-bold text-rose-200">{absentCount}</span>
+          <span className="text-sm font-bold text-rose-700">{absentCount}</span>
         </div>
-        <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-800/40 flex items-center justify-between">
-          <span className="text-amber-300 font-semibold flex items-center gap-1.5">
+        <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-between">
+          <span className="text-amber-700 font-semibold flex items-center gap-1.5">
             <Clock className="w-4 h-4" /> Late
           </span>
-          <span className="text-sm font-bold text-amber-200">{lateCount}</span>
+          <span className="text-sm font-bold text-amber-700">{lateCount}</span>
         </div>
-        <div className="p-2.5 rounded-xl bg-sky-950/40 border border-sky-800/40 flex items-center justify-between">
-          <span className="text-sky-300 font-semibold flex items-center gap-1.5">
+        <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-between">
+          <span className="text-blue-700 font-semibold flex items-center gap-1.5">
             <Info className="w-4 h-4" /> Excused
           </span>
-          <span className="text-sm font-bold text-sky-200">{excusedCount}</span>
+          <span className="text-sm font-bold text-blue-700">{excusedCount}</span>
         </div>
       </div>
 
       {/* Student List Sheet */}
       {enrolledStudents.length === 0 ? (
-        <Card className="p-8 text-center text-slate-400">
+        <Card className="p-8 text-center text-slate-500">
           <p className="text-xs">No active students enrolled in this group.</p>
         </Card>
       ) : (
@@ -237,10 +237,10 @@ export const AttendanceMarker: React.FC<AttendanceMarkerProps> = ({
             const currentData = attendanceState[student.id] || { status: 'PRESENT', note: '' };
 
             const statusButtons: { status: AttendanceStatus; label: string; activeClass: string }[] = [
-              { status: 'PRESENT', label: 'Present', activeClass: 'bg-emerald-600 text-white shadow-emerald-900/50' },
-              { status: 'ABSENT', label: 'Absent', activeClass: 'bg-rose-600 text-white shadow-rose-900/50' },
-              { status: 'LATE', label: 'Late', activeClass: 'bg-amber-600 text-white shadow-amber-900/50' },
-              { status: 'EXCUSED', label: 'Excused', activeClass: 'bg-sky-600 text-white shadow-sky-900/50' },
+              { status: 'PRESENT', label: 'Present', activeClass: 'bg-emerald-600 text-white shadow-emerald-100' },
+              { status: 'ABSENT', label: 'Absent', activeClass: 'bg-rose-600 text-white shadow-rose-100' },
+              { status: 'LATE', label: 'Late', activeClass: 'bg-amber-600 text-white shadow-amber-100' },
+              { status: 'EXCUSED', label: 'Excused', activeClass: 'bg-sky-600 text-white shadow-sky-100' },
             ];
 
             return (
@@ -249,8 +249,8 @@ export const AttendanceMarker: React.FC<AttendanceMarkerProps> = ({
                 className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5"
               >
                 <div className="space-y-0.5 min-w-48">
-                  <h4 className="text-sm font-bold text-slate-100">{student.fullName}</h4>
-                  <p className="text-xs text-slate-400">{student.phone}</p>
+                  <h4 className="text-sm font-bold text-slate-900">{student.fullName}</h4>
+                  <p className="text-xs text-slate-500">{student.phone}</p>
                 </div>
 
                 {/* Status Toggle Button Group */}
@@ -263,7 +263,7 @@ export const AttendanceMarker: React.FC<AttendanceMarkerProps> = ({
                       className={`flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${
                         currentData.status === b.status
                           ? `${b.activeClass} shadow-md scale-[1.02]`
-                          : 'bg-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-700'
+                          : 'bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200'
                       }`}
                     >
                       {b.label}
@@ -278,7 +278,7 @@ export const AttendanceMarker: React.FC<AttendanceMarkerProps> = ({
                     value={currentData.note}
                     onChange={(e) => setNote(student.id, e.target.value)}
                     placeholder="Add note (e.g. 10m late)"
-                    className="w-full px-2.5 py-1 bg-slate-950 border border-slate-700/60 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-brand-500"
+                    className="w-full px-2.5 py-1 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </Card>

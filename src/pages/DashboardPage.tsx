@@ -73,8 +73,8 @@ export const DashboardPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100">Bosh Sahifa — O'qituvchi Boshqaruvi</h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h1 className="text-2xl font-bold text-slate-900">Bosh Sahifa — O'qituvchi Boshqaruvi</h1>
+          <p className="text-xs text-slate-500 mt-0.5">
             Guruhni tanlang va ishchi xonaga kirib, barcha davomat, vazifa va imtihonlarni faqat shu guruh bo'yicha kiriting.
           </p>
         </div>
@@ -87,7 +87,7 @@ export const DashboardPage: React.FC = () => {
               setSelectedGroupId(e.target.value);
               setSelectedGroupIdMemory(e.target.value);
             }}
-            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-bold focus:outline-none focus:border-emerald-500"
+            className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500"
           >
             {groups.map((g) => (
               <option key={g.id} value={g.id}>
@@ -110,12 +110,12 @@ export const DashboardPage: React.FC = () => {
 
       {/* ACTIVE FOCUSED WORKSPACE BANNER */}
       {focusedGroupId && focusedGroup && (
-        <Card className="p-4 bg-emerald-950/40 border border-emerald-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="flex items-center space-x-2.5 text-emerald-300">
-            <Layers className="w-5 h-5 flex-shrink-0 text-emerald-400" />
+        <Card className="p-4 bg-emerald-50 border border-emerald-300 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2.5 text-emerald-700">
+            <Layers className="w-5 h-5 flex-shrink-0 text-emerald-600" />
             <div>
               <span className="font-bold text-sm">Hozirda '{focusedGroup.name}' guruh ishchi xonasidasiz</span>
-              <p className="text-[11px] text-emerald-400/90 mt-0.5">
+              <p className="text-[11px] text-emerald-600 mt-0.5">
                 Barcha davomat, vazifa tekshirish, va imtihonlar faqat ushbu guruh bo'yicha ishlaydi. Guruhdan chiqish uchun tugmani bosing.
               </p>
             </div>
@@ -124,7 +124,7 @@ export const DashboardPage: React.FC = () => {
             <Button size="sm" variant="primary" onClick={() => navigate('/attendance')}>
               Davomatga O'tish
             </Button>
-            <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-400" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
+            <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-600" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
               Guruhdan chiqish
             </Button>
           </div>
@@ -134,54 +134,54 @@ export const DashboardPage: React.FC = () => {
       {/* Stats Metric Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Active Students */}
-        <Card className="p-4 bg-slate-900 border-slate-800 space-y-2">
+        <Card className="p-4 bg-white border-slate-200 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400">Jami O'quvchilar</span>
-            <div className="p-2 rounded-lg bg-emerald-950 border border-emerald-800 text-emerald-400">
+            <span className="text-xs font-semibold text-slate-500">Jami O'quvchilar</span>
+            <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600">
               <GraduationCap className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-slate-100">{students.length} nafar</p>
+          <p className="text-2xl font-bold text-slate-900">{students.length} nafar</p>
           <p className="text-[11px] text-slate-500 font-mono">Aktiv ta'lim olayotgan</p>
         </Card>
 
         {/* Active Class Groups */}
-        <Card className="p-4 bg-slate-900 border-slate-800 space-y-2">
+        <Card className="p-4 bg-white border-slate-200 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400">Guruhlar Soni</span>
-            <div className="p-2 rounded-lg bg-sky-950 border border-sky-800 text-sky-400">
+            <span className="text-xs font-semibold text-slate-500">Guruhlar Soni</span>
+            <div className="p-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-600">
               <Users className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-slate-100">{groups.length} ta guruh</p>
+          <p className="text-2xl font-bold text-slate-900">{groups.length} ta guruh</p>
           <p className="text-[11px] text-slate-500 font-mono">Dars jadvalidagi</p>
         </Card>
 
         {/* Unpaid Debtors Highlighted in BOLD RED */}
-        <Card className="p-4 bg-red-950/40 border-red-800 space-y-2">
+        <Card className="p-4 bg-rose-50 border-rose-200 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-red-400 flex items-center gap-1">
+            <span className="text-xs font-bold text-rose-600 flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5" /> To'lashi Kerak
             </span>
             <span className="px-2 py-0.5 text-[10px] font-extrabold uppercase rounded bg-red-600 text-white">
               QARZDOR
             </span>
           </div>
-          <p className="text-2xl font-extrabold text-red-500">{unpaidPayments.length} ta o'quvchi</p>
-          <p className="text-[11px] font-bold text-red-400 font-mono">
+          <p className="text-2xl font-extrabold text-rose-600">{unpaidPayments.length} ta o'quvchi</p>
+          <p className="text-[11px] font-bold text-rose-600 font-mono">
             To'lovini amalga oshirishi kerak
           </p>
         </Card>
 
         {/* Total Lessons */}
-        <Card className="p-4 bg-slate-900 border-slate-800 space-y-2">
+        <Card className="p-4 bg-white border-slate-200 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-400">Darslar Nazorati</span>
-            <div className="p-2 rounded-lg bg-amber-950 border border-amber-800 text-amber-400">
+            <span className="text-xs font-semibold text-slate-500">Darslar Nazorati</span>
+            <div className="p-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-600">
               <CalendarCheck className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-slate-100">{lessons.length} ta dars</p>
+          <p className="text-2xl font-bold text-slate-900">{lessons.length} ta dars</p>
           <p className="text-[11px] text-slate-500 font-mono">Tizimga kiritilgan</p>
         </Card>
       </div>
@@ -189,37 +189,37 @@ export const DashboardPage: React.FC = () => {
       {/* Main Grid: Unpaid Debtor List & Quick Groups Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Unpaid Debtors Red Alert Drawer */}
-        <Card className="lg:col-span-2 space-y-4 bg-slate-900 border-slate-800 p-5">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <Card className="lg:col-span-2 space-y-4 bg-white border-slate-200 p-5">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div className="flex items-center space-x-2">
-              <AlertCircle className="w-5 h-5 text-red-500" />
+              <AlertCircle className="w-5 h-5 text-rose-600" />
               <div>
-                <h3 className="text-sm font-bold text-slate-100">To'lov Qilishi Kerak Bo'lgan O'quvchilar</h3>
-                <p className="text-xs text-slate-400">Tezkor nazorat ro'yxati.</p>
+                <h3 className="text-sm font-bold text-slate-900">To'lov Qilishi Kerak Bo'lgan O'quvchilar</h3>
+                <p className="text-xs text-slate-500">Tezkor nazorat ro'yxati.</p>
               </div>
             </div>
             <Link to="/payments">
-              <Button size="sm" variant="ghost" className="text-xs text-red-400 hover:text-red-300">
+              <Button size="sm" variant="ghost" className="text-xs text-rose-600 hover:text-rose-600">
                 To'liq Ro'yxat
               </Button>
             </Link>
           </div>
 
           {unpaidPayments.length === 0 ? (
-            <div className="p-6 text-center text-slate-400 space-y-1">
-              <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
-              <p className="text-xs font-bold text-emerald-400">Barcha o'quvchilar to'lovni amalga oshirgan!</p>
+            <div className="p-6 text-center text-slate-500 space-y-1">
+              <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
+              <p className="text-xs font-bold text-emerald-600">Barcha o'quvchilar to'lovni amalga oshirgan!</p>
             </div>
           ) : (
             <div className="space-y-2">
               {unpaidPayments.map((p) => {
                 const s = studentMap.get(p.studentId);
                 return (
-                  <div key={p.id} className="p-3 bg-slate-950 rounded-xl border border-red-900 flex items-center justify-between">
+                  <div key={p.id} className="p-3 bg-slate-50 rounded-xl border border-rose-200 flex items-center justify-between">
                     <div>
-                      <h4 className="text-xs font-bold text-slate-100">{s?.fullName || 'O\'quvchi'}</h4>
-                      <p className="text-[11px] text-slate-400">
-                        Ota-onasi: <strong className="text-slate-200">{s?.parentName}</strong>
+                      <h4 className="text-xs font-bold text-slate-900">{s?.fullName || 'O\'quvchi'}</h4>
+                      <p className="text-[11px] text-slate-500">
+                        Ota-onasi: <strong className="text-slate-800">{s?.parentName}</strong>
                       </p>
                     </div>
 
@@ -236,11 +236,11 @@ export const DashboardPage: React.FC = () => {
         </Card>
 
         {/* Active Groups Overview with Direct Workspace Entry Buttons */}
-        <Card className="space-y-4 bg-slate-900 border-slate-800 p-5">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-bold text-slate-100">Guruhlarim</h3>
+        <Card className="space-y-4 bg-white border-slate-200 p-5">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+            <h3 className="text-sm font-bold text-slate-900">Guruhlarim</h3>
             <Link to="/groups">
-              <Button size="sm" variant="ghost" className="text-xs text-emerald-400">
+              <Button size="sm" variant="ghost" className="text-xs text-emerald-600">
                 Boshqarish
               </Button>
             </Link>
@@ -248,15 +248,15 @@ export const DashboardPage: React.FC = () => {
 
           <div className="space-y-3">
             {groups.map((g) => (
-              <div key={g.id} className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+              <div key={g.id} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-slate-100">{g.name}</h4>
-                  <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+                  <h4 className="text-xs font-bold text-slate-900">{g.name}</h4>
+                  <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-50 text-emerald-600 border border-emerald-200">
                     {g.scheduleDescription}
                   </span>
                 </div>
                 <div className="flex items-center justify-between pt-1">
-                  <span className="text-[11px] text-slate-400">Dars jadvali: {g.scheduleDescription}</span>
+                  <span className="text-[11px] text-slate-500">Dars jadvali: {g.scheduleDescription}</span>
                   <Button
                     size="sm"
                     variant="outline"

@@ -61,11 +61,11 @@ export const StudentsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <GraduationCap className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <GraduationCap className="w-6 h-6 text-emerald-600" />
             <span>O'quvchilar Ro'yxati ({students.length} nafar)</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Guruhdagi o'quvchilarning dars va ta'lim nazorati.
           </p>
         </div>
@@ -75,7 +75,7 @@ export const StudentsPage: React.FC = () => {
             <Button
               variant="outline"
               size="sm"
-              className="text-rose-400 hover:bg-rose-950 border-rose-900"
+              className="text-rose-600 hover:bg-rose-50 border-rose-200"
               leftIcon={<Trash2 className="w-4 h-4" />}
               onClick={handleClearAllStudents}
             >
@@ -94,13 +94,13 @@ export const StudentsPage: React.FC = () => {
       </div>
 
       {/* Control Bar: Filters */}
-      <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900 p-4">
+      <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4">
         <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <span className="text-xs font-semibold text-slate-300">Guruh:</span>
+          <span className="text-xs font-semibold text-slate-600">Guruh:</span>
           <select
             value={selectedGroupId}
             onChange={(e) => setSelectedGroupId(e.target.value)}
-            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-56"
+            className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-56"
           >
             <option value="ALL">Barcha Guruhlar</option>
             {groups.map((g) => (
@@ -118,14 +118,14 @@ export const StudentsPage: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="O'quvchi ismini qidirish..."
-            className="w-full pl-9 pr-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 focus:outline-none focus:border-emerald-500"
+            className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
           />
         </div>
       </Card>
 
       {/* Students Grid */}
       {filteredStudents.length === 0 ? (
-        <Card className="p-8 text-center text-slate-400">
+        <Card className="p-8 text-center text-slate-500">
           <p className="text-xs">O'quvchilar topilmadi.</p>
         </Card>
       ) : (
@@ -137,21 +137,21 @@ export const StudentsPage: React.FC = () => {
             const groupNames = sGroupIds.map((id) => groupMap.get(id)?.name).filter(Boolean).join(', ') || 'Guruhsiz';
 
             return (
-              <Card key={s.id} className="p-4 bg-slate-900 border-slate-800 space-y-3">
+              <Card key={s.id} className="p-4 bg-white border-slate-200 space-y-3">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-sm font-bold text-slate-100">{s.fullName}</h3>
-                    <p className="text-xs text-emerald-400 font-mono mt-0.5">{groupNames}</p>
-                    <p className="text-[11px] text-slate-400">Tel: {s.phone}</p>
+                    <h3 className="text-sm font-bold text-slate-900">{s.fullName}</h3>
+                    <p className="text-xs text-emerald-600 font-mono mt-0.5">{groupNames}</p>
+                    <p className="text-[11px] text-slate-500">Tel: {s.phone}</p>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-50 text-emerald-600 border border-emerald-200">
                       Faol
                     </span>
                     <button
                       type="button"
                       onClick={(e) => handleDeleteStudent(s.id, s.fullName, e)}
-                      className="p-1 text-slate-500 hover:text-rose-400 rounded hover:bg-slate-800 cursor-pointer"
+                      className="p-1 text-slate-500 hover:text-rose-600 rounded hover:bg-slate-100 cursor-pointer"
                       title="O'quvchini o'chirish"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -159,9 +159,9 @@ export const StudentsPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800 flex justify-end">
+                <div className="pt-2 border-t border-slate-200 flex justify-end">
                   <Link to={`/students/${s.id}`}>
-                    <Button size="sm" variant="ghost" className="text-xs text-emerald-400">
+                    <Button size="sm" variant="ghost" className="text-xs text-emerald-600">
                       Batafsil ko'rish
                     </Button>
                   </Link>

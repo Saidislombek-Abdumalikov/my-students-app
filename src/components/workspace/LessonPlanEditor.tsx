@@ -83,13 +83,13 @@ export const LessonPlanEditor: React.FC<LessonPlanEditorProps> = ({ lessonId }) 
   };
 
   return (
-    <Card className="space-y-4 bg-slate-900/90 border-slate-800">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+    <Card className="space-y-4 bg-white border-slate-200">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
         <div className="flex items-center space-x-2">
-          <BookOpen className="w-5 h-5 text-brand-400" />
+          <BookOpen className="w-5 h-5 text-emerald-600" />
           <div>
-            <h3 className="text-sm font-bold text-slate-100">Planned Lesson Syllabus (PLANNED)</h3>
-            <p className="text-xs text-slate-400">Target objectives and planned materials for this lesson session.</p>
+            <h3 className="text-sm font-bold text-slate-900">Planned Lesson Syllabus (PLANNED)</h3>
+            <p className="text-xs text-slate-500">Target objectives and planned materials for this lesson session.</p>
           </div>
         </div>
         <Badge variant="info">PLANNED</Badge>
@@ -98,20 +98,20 @@ export const LessonPlanEditor: React.FC<LessonPlanEditorProps> = ({ lessonId }) 
       <form onSubmit={handleSave} className="space-y-4 text-xs">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block font-semibold text-slate-300 mb-1 flex items-center gap-1">
-              <Target className="w-3.5 h-3.5 text-brand-400" /> Lesson Topic
+            <label className="block font-semibold text-slate-600 mb-1 flex items-center gap-1">
+              <Target className="w-3.5 h-3.5 text-emerald-600" /> Lesson Topic
             </label>
             <input
               type="text"
               value={formData.topic || ''}
               onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
               placeholder="e.g. IELTS Reading Passage 3 & Essay Structure"
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">
+            <label className="block font-semibold text-slate-600 mb-1">
               Learning Objectives
             </label>
             <input
@@ -119,99 +119,99 @@ export const LessonPlanEditor: React.FC<LessonPlanEditorProps> = ({ lessonId }) 
               value={formData.objectives || ''}
               onChange={(e) => setFormData({ ...formData, objectives: e.target.value })}
               placeholder="e.g. Students will learn scanning strategies and essay outlines"
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Target Vocabulary</label>
+            <label className="block font-semibold text-slate-600 mb-1">Target Vocabulary</label>
             <input
               type="text"
               value={formData.vocabulary || ''}
               onChange={(e) => setFormData({ ...formData, vocabulary: e.target.value })}
               placeholder="Word list..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Grammar Focus</label>
+            <label className="block font-semibold text-slate-600 mb-1">Grammar Focus</label>
             <input
               type="text"
               value={formData.grammar || ''}
               onChange={(e) => setFormData({ ...formData, grammar: e.target.value })}
               placeholder="Grammar topics..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Reading Passage</label>
+            <label className="block font-semibold text-slate-600 mb-1">Reading Passage</label>
             <input
               type="text"
               value={formData.reading || ''}
               onChange={(e) => setFormData({ ...formData, reading: e.target.value })}
               placeholder="Reading text..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Listening Task</label>
+            <label className="block font-semibold text-slate-600 mb-1">Listening Task</label>
             <input
               type="text"
               value={formData.listening || ''}
               onChange={(e) => setFormData({ ...formData, listening: e.target.value })}
               placeholder="Listening audio..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Speaking Cards</label>
+            <label className="block font-semibold text-slate-600 mb-1">Speaking Cards</label>
             <input
               type="text"
               value={formData.speaking || ''}
               onChange={(e) => setFormData({ ...formData, speaking: e.target.value })}
               placeholder="Speaking topics..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Writing Prompt</label>
+            <label className="block font-semibold text-slate-600 mb-1">Writing Prompt</label>
             <input
               type="text"
               value={formData.writing || ''}
               onChange={(e) => setFormData({ ...formData, writing: e.target.value })}
               placeholder="Writing task..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
         </div>
 
         <div>
-          <label className="block font-semibold text-slate-300 mb-1 flex items-center gap-1">
-            <FileText className="w-3.5 h-3.5 text-brand-400" /> Planned Homework
+          <label className="block font-semibold text-slate-600 mb-1 flex items-center gap-1">
+            <FileText className="w-3.5 h-3.5 text-emerald-600" /> Planned Homework
           </label>
           <input
             type="text"
             value={formData.plannedHomework || ''}
             onChange={(e) => setFormData({ ...formData, plannedHomework: e.target.value })}
             placeholder="Intended homework for students..."
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
           />
         </div>
 
-        <div className="flex justify-end pt-2 border-t border-slate-800">
+        <div className="flex justify-end pt-2 border-t border-slate-200">
           <Button
             type="submit"
             size="sm"
             variant="primary"
             isLoading={isSaving}
-            leftIcon={isSaved ? <Check className="w-4 h-4 text-emerald-400" /> : <Save className="w-4 h-4" />}
+            leftIcon={isSaved ? <Check className="w-4 h-4 text-emerald-600" /> : <Save className="w-4 h-4" />}
           >
             {isSaved ? 'Lesson Plan Saved!' : 'Save Lesson Plan'}
           </Button>

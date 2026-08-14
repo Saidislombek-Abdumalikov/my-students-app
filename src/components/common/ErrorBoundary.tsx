@@ -33,17 +33,17 @@ export class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-950 p-6">
-          <div className="max-w-md w-full glass-panel p-6 rounded-2xl text-center space-y-4 border border-rose-900/40">
-            <div className="w-12 h-12 rounded-full bg-rose-950/80 border border-rose-800/60 flex items-center justify-center mx-auto text-rose-400">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+          <div className="max-w-md w-full glass-panel p-6 rounded-2xl text-center space-y-4 border border-rose-200 bg-white shadow-lg">
+            <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto text-rose-600">
               <AlertTriangle className="w-6 h-6" />
             </div>
-            <h2 className="text-xl font-bold text-slate-100">Something went wrong</h2>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h2 className="text-xl font-bold text-slate-900">Something went wrong</h2>
+            <p className="text-xs text-slate-500 leading-relaxed">
               An unhandled application error occurred. You can reload the page or return to the main dashboard.
             </p>
             {this.state.error && (
-              <div className="p-3 bg-slate-900/80 rounded-lg text-left text-xs font-mono text-rose-300 overflow-x-auto border border-slate-800">
+              <div className="p-3 bg-slate-100 rounded-lg text-left text-xs font-mono text-rose-600 overflow-x-auto border border-slate-200">
                 {this.state.error.message}
               </div>
             )}

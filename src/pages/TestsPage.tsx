@@ -200,11 +200,11 @@ export const TestsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <Award className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <Award className="w-6 h-6 text-emerald-600" />
             <span>Kunlik Quiz va Haftalik Imtihonlar Boshqaruvi</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Kunlik dars lug'at quizlari va har 4 darsda o'tkaziladigan haftalik nazorat imtihonlari.
           </p>
         </div>
@@ -219,13 +219,13 @@ export const TestsPage: React.FC = () => {
       </div>
 
       {/* Control Bar: Group & Type Filter */}
-      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900 p-4">
+      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4">
         <div className="flex items-center space-x-2 w-full md:w-auto">
-          <span className="text-xs font-semibold text-slate-300 min-w-16">Guruh:</span>
+          <span className="text-xs font-semibold text-slate-600 min-w-16">Guruh:</span>
           <select
             value={selectedGroupId}
             onChange={(e) => setSelectedGroupId(e.target.value)}
-            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64"
+            className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64"
           >
             {groups.map((g) => (
               <option key={g.id} value={g.id}>
@@ -236,7 +236,7 @@ export const TestsPage: React.FC = () => {
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center space-x-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800">
+        <div className="flex items-center space-x-1.5 p-1 bg-slate-50 rounded-xl border border-slate-200">
           {[
             { id: 'ALL', label: 'Barcha Testlar' },
             { id: 'DAILY', label: 'Kunlik Quizlar' },
@@ -248,7 +248,7 @@ export const TestsPage: React.FC = () => {
               className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
                 filterType === item.id
                   ? 'bg-emerald-600 text-white font-extrabold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               {item.label}
@@ -258,9 +258,9 @@ export const TestsPage: React.FC = () => {
       </Card>
 
       {/* Created Tests List */}
-      <Card className="space-y-3 bg-slate-900 border-slate-800 p-5">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-          <h3 className="text-xs font-extrabold text-slate-100 uppercase tracking-wider">
+      <Card className="space-y-3 bg-white border-slate-200 p-5">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+          <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider">
             {selectedGroup?.name} — Imtihonlar & Quizlar Ro'yxati
           </h3>
           <span className="px-2.5 py-0.5 text-xs font-bold rounded bg-emerald-600 text-white">
@@ -269,29 +269,29 @@ export const TestsPage: React.FC = () => {
         </div>
 
         {groupTests.length === 0 ? (
-          <p className="text-xs text-slate-400 p-4 text-center">Ushbu guruh yoki tanlangan kunda imtihon o'tkazilmagan.</p>
+          <p className="text-xs text-slate-500 p-4 text-center">Ushbu guruh yoki tanlangan kunda imtihon o'tkazilmagan.</p>
         ) : (
           <div className="space-y-2">
             {groupTests.map((test) => {
               const isWeekly = test.title.toLowerCase().includes('haftalik') || test.category === 'IELTS_OVERALL';
 
               return (
-                <div key={test.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+                <div key={test.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
                   <div className="space-y-0.5">
                     <div className="flex items-center space-x-2">
-                      <h4 className="text-xs font-bold text-slate-100">{test.title}</h4>
+                      <h4 className="text-xs font-bold text-slate-900">{test.title}</h4>
                       <span className={`px-2 py-0.5 text-[10px] font-extrabold rounded ${isWeekly ? 'bg-amber-500 text-slate-950' : 'bg-sky-600 text-white'}`}>
                         {isWeekly ? 'Haftalik Imtihon' : 'Kunlik Quiz'}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 font-mono">Sana: {test.date} | Maksimal ball: {test.maxScore}</p>
+                    <p className="text-[11px] text-slate-500 font-mono">Sana: {test.date} | Maksimal ball: {test.maxScore}</p>
                   </div>
 
                   <div className="flex items-center space-x-2">
                     <Button
                       size="sm"
                       variant={activeTest?.id === test.id ? 'primary' : 'outline'}
-                      leftIcon={<Play className="w-3.5 h-3.5 text-emerald-400" />}
+                      leftIcon={<Play className="w-3.5 h-3.5 text-emerald-600" />}
                       onClick={() => handleStartTest(test)}
                     >
                       {activeTest?.id === test.id ? 'Aktiv Mode' : 'Start (Boshlash)'}
@@ -299,7 +299,7 @@ export const TestsPage: React.FC = () => {
 
                     <button
                       onClick={() => handleOpenEditModal(test)}
-                      className="p-1.5 text-slate-400 hover:text-slate-100 rounded bg-slate-900 border border-slate-800 cursor-pointer"
+                      className="p-1.5 text-slate-500 hover:text-slate-900 rounded bg-slate-100 border border-slate-300 cursor-pointer"
                       title="Tahrirlash"
                     >
                       <Edit className="w-3.5 h-3.5" />
@@ -307,7 +307,7 @@ export const TestsPage: React.FC = () => {
 
                     <button
                       onClick={() => handleDeleteTest(test.id)}
-                      className="p-1.5 text-rose-400 hover:text-rose-300 rounded bg-slate-900 border border-slate-800 cursor-pointer"
+                      className="p-1.5 text-rose-600 hover:text-rose-600 rounded bg-slate-100 border border-slate-300 cursor-pointer"
                       title="O'chirish"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -322,14 +322,14 @@ export const TestsPage: React.FC = () => {
 
       {/* LIVE SCORING SHEET FOR ACTIVE TEST */}
       {activeTest && (
-        <Card className="space-y-4 bg-slate-900 border-slate-800 p-5">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <Card className="space-y-4 bg-white border-slate-200 p-5">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div>
-              <span className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-widest">
+              <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-widest">
                 Baholash Varakasi (Start Mode)
               </span>
-              <h2 className="text-base font-extrabold text-slate-100">{activeTest.title}</h2>
-              <p className="text-xs text-slate-400 font-mono">Sana: {activeTest.date}</p>
+              <h2 className="text-base font-extrabold text-slate-900">{activeTest.title}</h2>
+              <p className="text-xs text-slate-500 font-mono">Sana: {activeTest.date}</p>
             </div>
 
             <Button
@@ -343,7 +343,7 @@ export const TestsPage: React.FC = () => {
           </div>
 
           {groupStudents.length === 0 ? (
-            <p className="text-xs text-slate-400 p-4 text-center">Guruhda o'quvchilar topilmadi.</p>
+            <p className="text-xs text-slate-500 p-4 text-center">Guruhda o'quvchilar topilmadi.</p>
           ) : (
             <div className="space-y-3">
               {groupStudents.map((s, idx) => {
@@ -359,13 +359,13 @@ export const TestsPage: React.FC = () => {
                 else grade = "Qoniqarsiz";
 
                 return (
-                  <div key={s.id} className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2.5">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <div key={s.id} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
+                    <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                       <div className="flex items-center space-x-2">
-                        <span className="w-5 h-5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-bold flex items-center justify-center font-mono">
+                        <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold flex items-center justify-center font-mono">
                           {idx + 1}
                         </span>
-                        <h4 className="text-xs font-bold text-slate-100">{s.fullName}</h4>
+                        <h4 className="text-xs font-bold text-slate-900">{s.fullName}</h4>
                       </div>
 
                       <span className={`px-3 py-0.5 text-xs rounded-lg ${gradeBadgeClass}`}>
@@ -375,7 +375,7 @@ export const TestsPage: React.FC = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-400 mb-1">
+                        <label className="block text-xs font-semibold text-slate-500 mb-1">
                           Ball (0 - {activeTest.maxScore})
                         </label>
                         <input
@@ -384,18 +384,18 @@ export const TestsPage: React.FC = () => {
                           max={activeTest.maxScore}
                           value={current.score}
                           onChange={(e) => updateScore(s.id, Number(e.target.value))}
-                          className="w-full px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs font-bold text-emerald-400 focus:outline-none focus:border-emerald-500"
+                          className="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-emerald-600 focus:outline-none focus:border-emerald-500"
                         />
                       </div>
 
                       <div className="sm:col-span-2">
-                        <label className="block text-xs font-semibold text-slate-400 mb-1">O'qituvchi Izohi</label>
+                        <label className="block text-xs font-semibold text-slate-500 mb-1">O'qituvchi Izohi</label>
                         <input
                           type="text"
                           value={current.comment}
                           onChange={(e) => updateComment(s.id, e.target.value)}
                           placeholder="Imtihon natijasi bo'yicha izoh..."
-                          className="w-full px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+                          className="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
                         />
                       </div>
                     </div>
@@ -416,13 +416,13 @@ export const TestsPage: React.FC = () => {
       >
         <form onSubmit={handleSaveTestForm} className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Imtihon / Quiz Turi</label>
+            <label className="block font-semibold text-slate-600 mb-1">Imtihon / Quiz Turi</label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setFormType('DAILY')}
                 className={`p-2.5 rounded-xl border text-xs font-bold cursor-pointer ${
-                  formType === 'DAILY' ? 'bg-sky-600 text-white border-sky-500' : 'bg-slate-950 text-slate-400 border-slate-800'
+                  formType === 'DAILY' ? 'bg-sky-600 text-white border-sky-500' : 'bg-slate-100 text-slate-500 border-slate-300'
                 }`}
               >
                 Kunlik Quiz (Lug'at)
@@ -431,7 +431,7 @@ export const TestsPage: React.FC = () => {
                 type="button"
                 onClick={() => setFormType('WEEKLY')}
                 className={`p-2.5 rounded-xl border text-xs font-bold cursor-pointer ${
-                  formType === 'WEEKLY' ? 'bg-amber-500 text-slate-950 border-amber-400' : 'bg-slate-950 text-slate-400 border-slate-800'
+                  formType === 'WEEKLY' ? 'bg-amber-500 text-slate-950 border-amber-400' : 'bg-slate-100 text-slate-500 border-slate-300'
                 }`}
               >
                 Haftalik Imtihon (Har 4 darsda)
@@ -440,41 +440,41 @@ export const TestsPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Imtihon Sarlavhasi</label>
+            <label className="block font-semibold text-slate-600 mb-1">Imtihon Sarlavhasi</label>
             <input
               type="text"
               required
               value={formTitle}
               onChange={(e) => setFormTitle(e.target.value)}
               placeholder="Masalan: Unit 3 Vocabulary Quiz"
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 focus:outline-none focus:border-emerald-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Imtihon Sanasi</label>
+            <label className="block font-semibold text-slate-600 mb-1">Imtihon Sanasi</label>
             <input
               type="date"
               required
               value={formDate}
               onChange={(e) => setFormDate(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 focus:outline-none focus:border-emerald-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Maksimal Ball</label>
+            <label className="block font-semibold text-slate-600 mb-1">Maksimal Ball</label>
             <input
               type="number"
               required
               min="1"
               value={formMaxScore}
               onChange={(e) => setFormMaxScore(Number(e.target.value))}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs font-bold text-slate-100 focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 focus:outline-none focus:border-emerald-500"
             />
           </div>
 
-          <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+          <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200">
             <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)}>
               Bekor qilish
             </Button>

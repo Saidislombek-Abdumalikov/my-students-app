@@ -154,11 +154,11 @@ export const ReportsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-emerald-600" />
             <span>To'liq Hisobotlar & Yuklab Olish (Izohlar Bilan)</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Bitta guruh yoki barcha guruhlar ma'lumotlarini o'qituvchi izohlari bilan Excel (CSV) faylda yuklab oling.
           </p>
         </div>
@@ -166,7 +166,7 @@ export const ReportsPage: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
-            leftIcon={<Download className="w-4 h-4 text-emerald-400" />}
+            leftIcon={<Download className="w-4 h-4 text-emerald-600" />}
             onClick={handleExportSelectedGroup}
           >
             Tanlangan Guruh (CSV)
@@ -183,9 +183,9 @@ export const ReportsPage: React.FC = () => {
       </div>
 
       {/* Control Bar: Group Selector */}
-      <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900 p-4">
+      <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4">
         <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <span className="text-xs font-semibold text-slate-300 min-w-16">Guruh:</span>
+          <span className="text-xs font-semibold text-slate-600 min-w-16">Guruh:</span>
           <select
             disabled={!!focusedGroupId}
             value={selectedGroupId}
@@ -193,7 +193,7 @@ export const ReportsPage: React.FC = () => {
               setSelectedGroupId(e.target.value);
               setSelectedGroupIdMemory(e.target.value);
             }}
-            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64 disabled:opacity-80"
+            className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64 disabled:opacity-80"
           >
             {groups.map((g) => (
               <option key={g.id} value={g.id}>
@@ -204,25 +204,25 @@ export const ReportsPage: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <span className="text-xs font-semibold text-slate-300 min-w-24">Hisobot Nomi:</span>
+          <span className="text-xs font-semibold text-slate-600 min-w-24">Hisobot Nomi:</span>
           <input
             type="text"
             value={reportTitle}
             onChange={(e) => setReportTitle(e.target.value)}
-            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64"
+            className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64"
           />
         </div>
       </Card>
 
       {/* FULL REPORT SHEET WITH TEACHER COMMENTS */}
-      <Card className="space-y-4 bg-slate-900 border-slate-800 p-5 max-w-5xl mx-auto">
-        <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
+      <Card className="space-y-4 bg-white border-slate-200 p-5 max-w-5xl mx-auto">
+        <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-widest">
+            <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-widest">
               Guruh Natijalari (A'lo O'quvchilar Yuqorida)
             </span>
-            <h2 className="text-base font-extrabold text-slate-100">{selectedGroup?.name}</h2>
-            <p className="text-xs text-slate-400 font-mono">{reportTitle}</p>
+            <h2 className="text-base font-extrabold text-slate-900">{selectedGroup?.name}</h2>
+            <p className="text-xs text-slate-500 font-mono">{reportTitle}</p>
           </div>
 
           <span className="px-2.5 py-1 text-xs font-bold rounded bg-emerald-600 text-white">
@@ -231,21 +231,21 @@ export const ReportsPage: React.FC = () => {
         </div>
 
         {sortedStudents.length === 0 ? (
-          <p className="text-xs text-slate-400 p-4 text-center">Guruhda o'quvchilar topilmadi.</p>
+          <p className="text-xs text-slate-500 p-4 text-center">Guruhda o'quvchilar topilmadi.</p>
         ) : (
-          <table className="w-full text-xs text-left text-slate-200 border-collapse">
-            <thead className="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase font-bold text-[10px]">
+          <table className="w-full text-xs text-left text-slate-800 border-collapse">
+            <thead className="bg-slate-50 text-slate-500 border-b border-slate-200 uppercase font-bold text-[10px]">
               <tr>
-                <th className="py-2.5 px-3 border-r border-slate-800">#</th>
-                <th className="py-2.5 px-3 border-r border-slate-800">O'quvchi Ismi</th>
-                <th className="py-2.5 px-3 border-r border-slate-800 text-center">Davomat</th>
-                <th className="py-2.5 px-3 border-r border-slate-800 text-center">Vazifa %</th>
-                <th className="py-2.5 px-3 border-r border-slate-800 text-center">Imtihon</th>
-                <th className="py-2.5 px-3 border-r border-slate-800 text-center">To'lov</th>
+                <th className="py-2.5 px-3 border-r border-slate-200">#</th>
+                <th className="py-2.5 px-3 border-r border-slate-200">O'quvchi Ismi</th>
+                <th className="py-2.5 px-3 border-r border-slate-200 text-center">Davomat</th>
+                <th className="py-2.5 px-3 border-r border-slate-200 text-center">Vazifa %</th>
+                <th className="py-2.5 px-3 border-r border-slate-200 text-center">Imtihon</th>
+                <th className="py-2.5 px-3 border-r border-slate-200 text-center">To'lov</th>
                 <th className="py-2.5 px-3">O'qituvchi Izohi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800 font-sans">
+            <tbody className="divide-y divide-slate-200 font-sans">
               {sortedStudents.map((s, idx) => {
                 const sAtt = attendanceLogs.find((a) => a.studentId === s.id);
                 const attStatus = sAtt ? sAtt.status : 'PRESENT';
@@ -270,16 +270,16 @@ export const ReportsPage: React.FC = () => {
                 const hasUnpaid = payments.some((p) => p.studentId === s.id && p.status === 'UNPAID');
 
                 return (
-                  <tr key={s.id} className="hover:bg-slate-800/40">
-                    <td className="py-2.5 px-3 border-r border-slate-800 font-mono text-[11px] text-slate-400">
+                  <tr key={s.id} className="hover:bg-slate-100">
+                    <td className="py-2.5 px-3 border-r border-slate-200 font-mono text-[11px] text-slate-500">
                       {idx + 1}
                     </td>
 
-                    <td className="py-2.5 px-3 font-bold text-slate-100 border-r border-slate-800">
+                    <td className="py-2.5 px-3 font-bold text-slate-900 border-r border-slate-200">
                       {s.fullName}
                     </td>
 
-                    <td className="py-2.5 px-3 text-center border-r border-slate-800">
+                    <td className="py-2.5 px-3 text-center border-r border-slate-200">
                       {attStatus === 'PRESENT' ? (
                         <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-600 text-white">
                           Keldi
@@ -295,19 +295,19 @@ export const ReportsPage: React.FC = () => {
                       )}
                     </td>
 
-                    <td className="py-2.5 px-3 text-center border-r border-slate-800">
+                    <td className="py-2.5 px-3 text-center border-r border-slate-200">
                       <span className={`px-2 py-0.5 text-[10px] font-extrabold rounded ${hwPerc === 100 ? 'bg-emerald-600 text-white' : hwPerc > 0 ? 'bg-amber-500 text-slate-950' : 'bg-red-600 text-white'}`}>
                         {hwPerc}%
                       </span>
                     </td>
 
-                    <td className="py-2.5 px-3 text-center border-r border-slate-800">
+                    <td className="py-2.5 px-3 text-center border-r border-slate-200">
                       <span className={`px-2 py-0.5 text-[10px] rounded ${gradeClass}`}>
                         {grade}
                       </span>
                     </td>
 
-                    <td className="py-2.5 px-3 text-center border-r border-slate-800">
+                    <td className="py-2.5 px-3 text-center border-r border-slate-200">
                       {hasUnpaid ? (
                         <span className="px-2 py-0.5 text-[10px] font-extrabold rounded bg-red-600 text-white inline-flex items-center gap-1">
                           <AlertCircle className="w-3 h-3" /> QARZDOR
@@ -325,7 +325,7 @@ export const ReportsPage: React.FC = () => {
                         value={teacherComments[s.id] || ''}
                         onChange={(e) => setTeacherComments((prev) => ({ ...prev, [s.id]: e.target.value }))}
                         placeholder="O'qituvchi izohi..."
-                        className="w-full px-2 py-1 bg-slate-950 border border-slate-800 rounded text-[11px] text-slate-100 focus:outline-none focus:border-emerald-500"
+                        className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[11px] text-slate-900 focus:outline-none focus:border-emerald-500"
                       />
                     </td>
                   </tr>

@@ -80,8 +80,8 @@ export const SaveToLibraryModal: React.FC<SaveToLibraryModalProps> = ({ isOpen, 
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Template Title <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">
+            Template Title <span className="text-rose-600">*</span>
           </label>
           <input
             type="text"
@@ -89,17 +89,17 @@ export const SaveToLibraryModal: React.FC<SaveToLibraryModalProps> = ({ isOpen, 
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             placeholder="e.g. IELTS Reading Passage 3 & Essay Structure"
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+            className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Subject</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Subject</label>
             <select
               value={formData.courseSubject}
               onChange={(e) => setFormData({ ...formData, courseSubject: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
             >
               <option value="IELTS Preparation">IELTS Preparation</option>
               <option value="General English">General English</option>
@@ -109,30 +109,30 @@ export const SaveToLibraryModal: React.FC<SaveToLibraryModalProps> = ({ isOpen, 
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Level</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Level</label>
             <input
               type="text"
               value={formData.level}
               onChange={(e) => setFormData({ ...formData, level: e.target.value })}
               placeholder="e.g. Upper-Intermediate"
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Category</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Category</label>
             <input
               type="text"
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
               placeholder="e.g. Reading, Writing, Grammar"
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-semibold text-slate-700 mb-1">
             Tags (comma separated)
           </label>
           <input
@@ -140,11 +140,11 @@ export const SaveToLibraryModal: React.FC<SaveToLibraryModalProps> = ({ isOpen, 
             value={formData.tagsStr}
             onChange={(e) => setFormData({ ...formData, tagsStr: e.target.value })}
             placeholder="cambridge, reading, essay"
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+            className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
           />
         </div>
 
-        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>

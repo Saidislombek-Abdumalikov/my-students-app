@@ -5,22 +5,23 @@ import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
-import { PlusCircle, Save, Trash2, History, ChevronLeft, ChevronRight, LogOut, Layers, AlertTriangle, Plus } from 'lucide-react';
+import { PlusCircle, Save, Trash2, History, ChevronLeft, ChevronRight, LogOut, Layers, AlertTriangle, Plus, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
 import { getFocusedGroupId, clearFocusedGroupId } from '../utils/workspaceContext';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { HomeworkPackage, HomeworkTask } from '../types';
 import { syncCollectionToCloud } from '../services/firebase';
+import { useAuth } from '../context/AuthContext';
 
 interface MultiTaskItem {
   id: string;
   name: string;
 }
 
-import { useAuth } from '../context/AuthContext';
-
 export const HomeworkAddPage: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const rawGroups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
   const packages = useLiveQuery(() => db.homeworkPackages.toArray());
 
@@ -32,14 +33,16 @@ export const HomeworkAddPage: React.FC = () => {
   const todayStr = new Date().toISOString().split('T')[0];
 
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
-  const [title, setTitle] = useState('Unit 3: Vocabulary & Workbook Homework');
+  const [title, setTitle] = useState("Vazifalar to'plami");
   const [deadline, setDeadline] = useState(todayStr);
   const [tasks, setTasks] = useState<MultiTaskItem[]>([
-    { id: 't-1', name: "So'zlar yodlash (Vocabulary 15 ta)" },
-    { id: 't-2', name: 'WorkBook 20-bet 1-3 mashqlar' },
+    { id: 't-1', name: "So'zlar yodlash (Vocabulary)" },
+    { id: 't-2', name: 'WorkBook mashqlari' },
+    { id: 't-3', name: "O'qib kelish (Reading)" },
   ]);
   const [newTaskName, setNewTaskName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [focusedGroupId, setFocusedGroupIdState] = useState<string | null>(getFocusedGroupId());
 
   // Listen to workspace focus changes
@@ -69,6 +72,29 @@ export const HomeworkAddPage: React.FC = () => {
       setDeadline(nextDay);
     }
   }, [selectedGroupId, groups, todayStr]);
+
+  // Load existing package and tasks from DB if one exists for selectedGroupId + deadline
+  useEffect(() => {
+    if (!selectedGroupId || !deadline) return;
+    const pkgId = `hp-${selectedGroupId}-${deadline}`;
+
+    db.homeworkPackages.get(pkgId).then(async (foundPkg) => {
+      if (foundPkg) {
+        setTitle(foundPkg.title);
+        const dbTasks = await db.homeworkTasks.where('packageId').equals(pkgId).toArray();
+        if (dbTasks.length > 0) {
+          setTasks(dbTasks.map((t, idx) => ({ id: t.id || `t-${idx}`, name: t.title })));
+        }
+      } else {
+        setTitle("Bugungi va keyingi dars vazifalari");
+        setTasks([
+          { id: 't-1', name: "So'zlar yodlash (Vocabulary)" },
+          { id: 't-2', name: 'WorkBook mashqlari' },
+          { id: 't-3', name: "O'qib kelish (Reading)" },
+        ]);
+      }
+    });
+  }, [selectedGroupId, deadline]);
 
   if (!groups || !packages) {
     return <LoadingSpinner label="Vazifa qo'shish sahifasi yuklanmoqda..." />;
@@ -111,12 +137,23 @@ export const HomeworkAddPage: React.FC = () => {
 
   const handleSaveHomeworkPackage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedGroupId || tasks.length === 0) {
+
+    let currentTasks = [...tasks];
+    if (newTaskName.trim()) {
+      const pendingItem = { id: `t-${Date.now()}`, name: newTaskName.trim() };
+      currentTasks.push(pendingItem);
+      setTasks(currentTasks);
+      setNewTaskName('');
+    }
+
+    if (!selectedGroupId || currentTasks.length === 0) {
       alert("Iltimos, kamida bitta vazifa topshirig'ini kiriting.");
       return;
     }
 
     setIsSaving(true);
+    setSaveSuccess(false);
+
     try {
       const pkgId = `hp-${selectedGroupId}-${deadline}`;
       const now = new Date().toISOString();
@@ -126,13 +163,14 @@ export const HomeworkAddPage: React.FC = () => {
         groupId: selectedGroupId,
         lessonId: `l-${selectedGroupId}-${deadline}`,
         title,
-        description: tasks.map((t) => t.name).join('; '),
+        description: currentTasks.map((t) => t.name).join('; '),
         deadline,
         createdAt: now,
       };
 
-      const newTasks: HomeworkTask[] = tasks.map((t, idx) => ({
-        id: `ht-${pkgId}-${idx}-${Date.now()}`,
+      // Stable task IDs based on package ID and index
+      const newTasks: HomeworkTask[] = currentTasks.map((t, idx) => ({
+        id: `ht-${pkgId}-${idx}`,
         packageId: pkgId,
         title: t.name,
         taskType: 'CUSTOM',
@@ -155,8 +193,8 @@ export const HomeworkAddPage: React.FC = () => {
       syncCollectionToCloud('homeworkPackages', allPkgs).catch(console.error);
       syncCollectionToCloud('homeworkTasks', allTasks).catch(console.error);
 
-      alert(`"${title}" muvaffaqiyatli saqlandi! (${newTasks.length} ta topshiriq bilan)`);
-      setTitle(`Unit ${groupPackages.length + 2}: Homework Package`);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 5000);
     } catch (err) {
       console.error('Vazifani saqlashda xatolik:', err);
       alert('Vazifani saqlashda xatolik yuz berdi. Qaytadan urinib ko\'ring.');
@@ -170,29 +208,53 @@ export const HomeworkAddPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <PlusCircle className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <PlusCircle className="w-6 h-6 text-emerald-600" />
             <span>Keyingi Darsga Vazifa Berish</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Keyingi dars uchun vazifalar topshirig'ini yaratish va saqlab qo'yish paneli.
           </p>
         </div>
+        
+        <Link to="/homework-check">
+          <Button variant="outline" size="sm" rightIcon={<ArrowRight className="w-4 h-4" />}>
+            Vazifalarni Tekshirish Bo'limiga O'tish
+          </Button>
+        </Link>
       </div>
+
+      {/* SUCCESS ALERTS BANNER */}
+      {saveSuccess && (
+        <Card className="p-4 bg-emerald-50 border border-emerald-300 flex items-center justify-between text-xs text-emerald-800 animate-fade-in">
+          <div className="flex items-center space-x-2">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+            <div>
+              <span className="font-extrabold text-sm">Vazifa to'plami saqlandi!</span>
+              <p className="text-[11px] text-emerald-700">
+                Guruh uchun vazifalar muvaffaqiyatli saqlandi. Endi "Vazifalarni Tekshirish" sahifasida o'quvchilarni baholashingiz mumkin.
+              </p>
+            </div>
+          </div>
+          <Button size="sm" variant="primary" onClick={() => navigate('/homework-check')}>
+            Tekshirishga o'tish →
+          </Button>
+        </Card>
+      )}
 
       {/* FOCUSED WORKSPACE BANNER */}
       {focusedGroupId && selectedGroup && (
-        <Card className="p-4 bg-emerald-950/40 border border-emerald-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="flex items-center space-x-2 text-emerald-300">
-            <Layers className="w-5 h-5 flex-shrink-0 text-emerald-400" />
+        <Card className="p-4 bg-emerald-50 border border-emerald-300 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-emerald-700">
+            <Layers className="w-5 h-5 flex-shrink-0 text-emerald-600" />
             <div>
               <span className="font-bold text-sm">Hozirda '{selectedGroup.name}' guruh ishchi xonasidasiz</span>
-              <p className="text-[11px] text-emerald-400/90 mt-0.5">
+              <p className="text-[11px] text-emerald-600 mt-0.5">
                 Ushbu guruh bilan ishlamoqdasiz. Boshqa guruhga o'tish uchun guruh ishchi xonasidan chiqishingiz mumkin.
               </p>
             </div>
           </div>
-          <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-400" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
+          <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-600" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
             Guruh ishchi xonasidan chiqish
           </Button>
         </Card>
@@ -200,12 +262,12 @@ export const HomeworkAddPage: React.FC = () => {
 
       {/* NON-LESSON DAY WARNING & FIXING BANNER */}
       {!isValidDay && (
-        <Card className="p-4 bg-amber-950/40 border border-amber-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="flex items-center space-x-2 text-amber-300">
+        <Card className="p-4 bg-amber-50 border border-amber-300 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-amber-700">
             <AlertTriangle className="w-5 h-5 flex-shrink-0" />
             <div>
               <span className="font-bold text-sm">Bu kunda dars mavjud emas!</span>
-              <p className="text-[11px] text-amber-400/90 mt-0.5">
+              <p className="text-[11px] text-amber-600 mt-0.5">
                 Ushbu guruhning dars jadvallari bo'yicha {deadline} ({dayName}) dars kuni emas. Agar ushbu kunda dars o'tgan bo'lsangiz, uni kalendarga biriktirishingiz mumkin.
               </p>
             </div>
@@ -219,21 +281,21 @@ export const HomeworkAddPage: React.FC = () => {
       {/* Main Grid: Form + History */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Create New Homework Form */}
-        <Card className="lg:col-span-2 space-y-4 bg-slate-900 border-slate-800 p-5">
-          <div className="border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-bold text-slate-100">Yangi Uy Vazifasini Kiritish</h3>
-            <p className="text-xs text-slate-400">Guruh uchun keyingi dars vazifalarini shakllantirish.</p>
+        <Card className="lg:col-span-2 space-y-4 bg-white border-slate-200 p-5">
+          <div className="border-b border-slate-200 pb-3">
+            <h3 className="text-sm font-bold text-slate-900">Yangi Uy Vazifasini Kiritish</h3>
+            <p className="text-xs text-slate-500">Guruh uchun keyingi dars vazifalarini shakllantirish.</p>
           </div>
 
           <form onSubmit={handleSaveHomeworkPackage} className="space-y-4 text-xs">
             <div>
-              <label className="block font-semibold text-slate-300 mb-1">Guruhni Tanlang</label>
+              <label className="block font-semibold text-slate-600 mb-1">Guruhni Tanlang</label>
               <select
                 required
                 disabled={!!focusedGroupId}
                 value={selectedGroupId}
                 onChange={(e) => setSelectedGroupId(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-bold focus:outline-none focus:border-emerald-500 disabled:opacity-80"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500 disabled:opacity-80"
               >
                 {groups.map((g) => (
                   <option key={g.id} value={g.id}>
@@ -244,38 +306,39 @@ export const HomeworkAddPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-300 mb-1">Vazifa Sarlavhasi</label>
+              <label className="block font-semibold text-slate-600 mb-1">Vazifa Sarlavhasi</label>
               <input
                 type="text"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-bold focus:outline-none focus:border-emerald-500"
+                placeholder="Masalan: Unit 4: Vocabulary & Workbook Homework"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500"
               />
             </div>
 
             {/* Schedule-Aware Next Lesson Deadline Picker */}
             <div>
-              <label className="block font-semibold text-slate-300 mb-1">Topshirish Muddati (Keyingi Dars Kuni)</label>
+              <label className="block font-semibold text-slate-600 mb-1">Topshirish Muddati (Keyingi Dars Kuni)</label>
               <div className="flex items-center space-x-2">
                 <button
                   type="button"
                   onClick={() => setDeadline(getPrevLessonDate(deadline, schedule))}
-                  className="p-2 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-emerald-400 cursor-pointer"
+                  className="p-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-600 hover:text-emerald-600 cursor-pointer"
                   title="Oldingi dars kuni"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
 
-                <div className="flex-1 flex items-center space-x-2 bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5">
+                <div className="flex-1 flex items-center space-x-2 bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5">
                   <input
                     type="date"
                     required
                     value={deadline}
                     onChange={(e) => setDeadline(e.target.value)}
-                    className="bg-transparent text-xs text-slate-100 font-semibold focus:outline-none flex-1"
+                    className="bg-transparent text-xs text-slate-900 font-semibold focus:outline-none flex-1"
                   />
-                  <span className={`text-[11px] font-bold ${isValidDay ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  <span className={`text-[11px] font-bold ${isValidDay ? 'text-emerald-600' : 'text-rose-600'}`}>
                     {dayName} {isValidDay ? '(Dars kuni)' : '(Dars kuni emas!)'}
                   </span>
                 </div>
@@ -283,7 +346,7 @@ export const HomeworkAddPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setDeadline(getNextLessonDate(deadline, schedule))}
-                  className="p-2 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-emerald-400 cursor-pointer"
+                  className="p-2 rounded-lg bg-slate-50 border border-slate-300 text-slate-600 hover:text-emerald-600 cursor-pointer"
                   title="Keyingi dars kuni"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -292,39 +355,50 @@ export const HomeworkAddPage: React.FC = () => {
             </div>
 
             {/* Task Items List */}
-            <div className="space-y-2 pt-2 border-t border-slate-800">
-              <label className="block font-semibold text-slate-300">Vazifa Turlari Ro'yxati:</label>
-              {tasks.map((task, idx) => (
-                <div key={task.id} className="flex items-center justify-between p-2.5 bg-slate-950 rounded-lg border border-slate-800">
-                  <span className="font-bold text-slate-200">
-                    {idx + 1}. {task.name}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTask(task.id)}
-                    className="text-rose-400 hover:text-rose-300 p-1 cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+            <div className="space-y-2 pt-2 border-t border-slate-200">
+              <label className="block font-semibold text-slate-600">Vazifa Turlari Ro'yxati ({tasks.length} ta):</label>
+              {tasks.length === 0 ? (
+                <p className="text-xs text-slate-400 italic">Vazifalar kiritilmagan. Quyidagi maydonga yozib, Qo'shish tugmasini bosing.</p>
+              ) : (
+                tasks.map((task, idx) => (
+                  <div key={task.id} className="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+                    <span className="font-bold text-slate-800">
+                      {idx + 1}. {task.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTask(task.id)}
+                      className="text-rose-600 hover:text-rose-700 p-1 cursor-pointer"
+                      title="O'chirish"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
 
-            {/* Add New Task Input */}
+            {/* Add New Task Input with ENTER Key Support */}
             <div className="flex items-center space-x-2 pt-2">
               <input
                 type="text"
                 value={newTaskName}
                 onChange={(e) => setNewTaskName(e.target.value)}
-                placeholder="Yangi vazifa bandini yozing..."
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 focus:outline-none focus:border-emerald-500"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddTask();
+                  }
+                }}
+                placeholder="Yangi vazifa bandini yozing (Enter bosing)..."
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
               />
               <Button type="button" size="sm" variant="outline" onClick={handleAddTask}>
                 Qo'shish
               </Button>
             </div>
 
-            <div className="flex justify-end pt-3 border-t border-slate-800">
+            <div className="flex justify-end pt-3 border-t border-slate-200">
               <Button type="submit" variant="primary" isLoading={isSaving} leftIcon={<Save className="w-4 h-4" />}>
                 Vazifani Saqlash
               </Button>
@@ -333,26 +407,26 @@ export const HomeworkAddPage: React.FC = () => {
         </Card>
 
         {/* Saved Homework History Drawer */}
-        <Card className="space-y-3 bg-slate-900 border-slate-800 p-5">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+        <Card className="space-y-3 bg-white border-slate-200 p-5">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
             <div className="flex items-center space-x-2">
-              <History className="w-4 h-4 text-emerald-400" />
-              <h3 className="text-xs font-bold text-slate-200">Saqlangan Vazifalar</h3>
+              <History className="w-4 h-4 text-emerald-600" />
+              <h3 className="text-xs font-bold text-slate-800">Saqlangan Vazifalar</h3>
             </div>
             <Badge variant="brand">{groupPackages.length} Ta</Badge>
           </div>
 
           {groupPackages.length === 0 ? (
-            <p className="text-xs text-slate-400 p-2">Saqlangan vazifalar yo'q.</p>
+            <p className="text-xs text-slate-500 p-2">Saqlangan vazifalar yo'q.</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2 max-h-[500px] overflow-y-auto">
               {groupPackages.map((pkg) => (
-                <div key={pkg.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs space-y-1">
+                <div key={pkg.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-100">{pkg.title}</h4>
-                    <span className="text-[10px] font-mono text-slate-500">{pkg.deadline}</span>
+                    <h4 className="font-bold text-slate-900">{pkg.title}</h4>
+                    <span className="text-[10px] font-mono font-bold text-emerald-600">{pkg.deadline}</span>
                   </div>
-                  <p className="text-[11px] text-slate-400">{pkg.description}</p>
+                  <p className="text-[11px] text-slate-500">{pkg.description}</p>
                 </div>
               ))}
             </div>
@@ -362,3 +436,4 @@ export const HomeworkAddPage: React.FC = () => {
     </div>
   );
 };
+

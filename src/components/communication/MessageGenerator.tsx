@@ -141,16 +141,16 @@ export const MessageGenerator: React.FC<MessageGeneratorProps> = ({
   return (
     <div className="space-y-4">
       {/* 5-Step Workflow Status Bar */}
-      <Card className="flex items-center justify-between bg-slate-900/90 border-brand-500/30 p-4">
-        <div className="flex items-center space-x-2 text-xs font-semibold text-slate-300">
-          <Sparkles className="w-4 h-4 text-brand-400" />
+      <Card className="flex items-center justify-between bg-white border-brand-500/30 p-4">
+        <div className="flex items-center space-x-2 text-xs font-semibold text-slate-600">
+          <Sparkles className="w-4 h-4 text-emerald-600" />
           <span>Workflow Step:</span>
           <div className="flex items-center space-x-1.5 font-mono">
-            <span className={step === 'GENERATE' ? 'text-brand-400 font-bold' : 'text-slate-500'}>1. Generate</span>
-            <span className="text-slate-600">→</span>
-            <span className={step === 'PREVIEW' ? 'text-brand-400 font-bold' : 'text-slate-500'}>2. Preview/Edit</span>
-            <span className="text-slate-600">→</span>
-            <span className={step === 'CONFIRMED' ? 'text-emerald-400 font-bold' : 'text-slate-500'}>3. Confirm & Share</span>
+            <span className={step === 'GENERATE' ? 'text-emerald-600 font-bold' : 'text-slate-500'}>1. Generate</span>
+            <span className="text-slate-400">→</span>
+            <span className={step === 'PREVIEW' ? 'text-emerald-600 font-bold' : 'text-slate-500'}>2. Preview/Edit</span>
+            <span className="text-slate-400">→</span>
+            <span className={step === 'CONFIRMED' ? 'text-emerald-600 font-bold' : 'text-slate-500'}>3. Confirm & Share</span>
           </div>
         </div>
 
@@ -162,8 +162,8 @@ export const MessageGenerator: React.FC<MessageGeneratorProps> = ({
       {/* Action Workspace */}
       {step === 'GENERATE' && (
         <Card className="p-8 text-center space-y-4">
-          <p className="text-xs text-slate-300">
-            Click below to generate an formatted parent update message for <strong className="text-brand-400">{group?.name || 'Class Group'}</strong>.
+          <p className="text-xs text-slate-600">
+            Click below to generate an formatted parent update message for <strong className="text-emerald-600">{group?.name || 'Class Group'}</strong>.
           </p>
           <Button
             variant="primary"
@@ -176,15 +176,15 @@ export const MessageGenerator: React.FC<MessageGeneratorProps> = ({
       )}
 
       {(step === 'PREVIEW' || step === 'CONFIRMED') && (
-        <Card className="space-y-4 bg-slate-900/90 border-slate-800">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <Card className="space-y-4 bg-white border-slate-200">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div className="flex items-center space-x-2">
-              <Edit3 className="w-4 h-4 text-brand-400" />
-              <h3 className="text-sm font-bold text-slate-100">
+              <Edit3 className="w-4 h-4 text-emerald-600" />
+              <h3 className="text-sm font-bold text-slate-900">
                 {step === 'CONFIRMED' ? 'Confirmed Parent Message' : 'Preview & Edit Message Text'}
               </h3>
             </div>
-            <span className="text-[10px] text-slate-400 italic">Teacher confirmation required before sending</span>
+            <span className="text-[10px] text-slate-500 italic">Teacher confirmation required before sending</span>
           </div>
 
           {/* Editable Text Area */}
@@ -194,7 +194,7 @@ export const MessageGenerator: React.FC<MessageGeneratorProps> = ({
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               disabled={step === 'CONFIRMED'}
-              className="w-full p-4 bg-slate-950 border border-slate-700/60 rounded-xl text-xs font-mono text-slate-100 focus:outline-none focus:border-brand-500 leading-relaxed shadow-inner"
+              className="w-full p-4 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:border-brand-500 leading-relaxed shadow-inner"
             />
           </div>
 

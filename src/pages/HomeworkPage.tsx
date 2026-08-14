@@ -38,11 +38,11 @@ export const HomeworkPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <FileCheck className="w-6 h-6 text-brand-400" />
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <FileCheck className="w-6 h-6 text-emerald-600" />
             <span>Multi-Task Homework System</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Assign multi-task packages per lesson date and evaluate individual student submissions.
           </p>
         </div>
@@ -57,18 +57,18 @@ export const HomeworkPage: React.FC = () => {
       </div>
 
       {/* Selector Bar: Group & Homework Package */}
-      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900/90">
+      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
           {/* Group Filter */}
           <div className="flex items-center space-x-2 w-full sm:w-auto">
-            <span className="text-xs font-semibold text-slate-300 min-w-16">Group:</span>
+            <span className="text-xs font-semibold text-slate-600 min-w-16">Group:</span>
             <select
               value={selectedGroupId}
               onChange={(e) => {
                 setSelectedGroupId(e.target.value);
                 setSelectedPackageId('');
               }}
-              className="px-3 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-brand-500 w-full sm:w-56"
+              className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-brand-500 w-full sm:w-56"
             >
               <option value="ALL">All Groups</option>
               {groups.map((g) => (
@@ -81,11 +81,11 @@ export const HomeworkPage: React.FC = () => {
 
           {/* Package Selector */}
           <div className="flex items-center space-x-2 w-full sm:w-auto">
-            <span className="text-xs font-semibold text-slate-300 min-w-16">Package:</span>
+            <span className="text-xs font-semibold text-slate-600 min-w-16">Package:</span>
             <select
               value={selectedPackageId}
               onChange={(e) => setSelectedPackageId(e.target.value)}
-              className="px-3 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-brand-500 w-full sm:w-64"
+              className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-brand-500 w-full sm:w-64"
             >
               {filteredPackages.length === 0 ? (
                 <option value="">No packages available</option>
@@ -107,7 +107,7 @@ export const HomeworkPage: React.FC = () => {
 
       {/* Homework Checker Matrix Workspace */}
       {filteredPackages.length === 0 || !selectedPackageId ? (
-        <Card className="p-8 text-center text-slate-400">
+        <Card className="p-8 text-center text-slate-500">
           <p className="text-xs">No homework packages found. Click "Create Homework Package" to assign your first package.</p>
         </Card>
       ) : (

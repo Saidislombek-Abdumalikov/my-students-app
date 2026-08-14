@@ -103,8 +103,8 @@ export const StudentModal: React.FC<StudentModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Student Full Name <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">
+            Student Full Name <span className="text-rose-600">*</span>
           </label>
           <input
             type="text"
@@ -112,13 +112,13 @@ export const StudentModal: React.FC<StudentModalProps> = ({
             value={formData.fullName}
             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
             placeholder="e.g. Jasur Karimov"
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
               Student Phone Number
             </label>
             <input
@@ -126,28 +126,28 @@ export const StudentModal: React.FC<StudentModalProps> = ({
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               placeholder="+998 90 123 4567"
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
               Enrollment Date
             </label>
             <input
               type="date"
               value={formData.enrollmentDate}
               onChange={(e) => setFormData({ ...formData, enrollmentDate: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
         </div>
 
-        <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800 space-y-3">
-          <h4 className="text-xs font-bold text-slate-200">Parent / Guardian Information</h4>
+        <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+          <h4 className="text-xs font-bold text-slate-800">Parent / Guardian Information</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
                 Parent Full Name
               </label>
               <input
@@ -155,12 +155,12 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                 value={formData.parentName}
                 onChange={(e) => setFormData({ ...formData, parentName: e.target.value })}
                 placeholder="e.g. Otabek Karimov"
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
                 Parent Telegram / Phone
               </label>
               <input
@@ -168,7 +168,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                 value={formData.parentPhone}
                 onChange={(e) => setFormData({ ...formData, parentPhone: e.target.value })}
                 placeholder="+998 90 765 4321"
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
               />
             </div>
           </div>
@@ -176,22 +176,21 @@ export const StudentModal: React.FC<StudentModalProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
               Student Status
             </label>
             <select
               value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value as 'ACTIVE' | 'INACTIVE' | 'ARCHIVED' })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              onChange={(e) => setFormData({ ...formData, status: e.target.value as 'ACTIVE' | 'INACTIVE' })}
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
             >
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="INACTIVE">INACTIVE</option>
-              <option value="ARCHIVED">ARCHIVED</option>
+              <option value="ACTIVE">FAOL</option>
+              <option value="INACTIVE">NOFAOL</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
               Teacher Notes
             </label>
             <input
@@ -199,12 +198,12 @@ export const StudentModal: React.FC<StudentModalProps> = ({
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               placeholder="Target score, learning difficulties..."
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>

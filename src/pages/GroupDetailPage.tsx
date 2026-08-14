@@ -54,13 +54,6 @@ export const GroupDetailPage: React.FC = () => {
     }
   };
 
-  const handleArchiveGroup = async () => {
-    if (confirm(`"${group.name}" guruhini arxivlashni xohlaysizmi?`)) {
-      await db.groups.update(group.id, { status: 'ARCHIVED' });
-      navigate('/groups');
-    }
-  };
-
   const handleDeleteGroup = async () => {
     if (confirm(`Ushbu "${group.name}" guruhini BUTUNLAY O'CHIRIB tashlamoqchimisiz? Qayta tiklab bo'lmaydi.`)) {
       await db.groups.delete(group.id);
@@ -83,12 +76,12 @@ export const GroupDetailPage: React.FC = () => {
           </Button>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-2xl font-bold text-slate-100">{group.name}</h1>
-              <Badge variant={group.status === 'ACTIVE' ? 'success' : 'neutral'} dot>
-                {group.status === 'ACTIVE' ? 'FAOL' : 'ARXIV'}
+              <h1 className="text-2xl font-bold text-slate-900">{group.name}</h1>
+              <Badge variant="success" dot>
+                FAOL
               </Badge>
             </div>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">
+            <p className="text-xs text-slate-500 font-mono mt-0.5">
               {group.courseSubject} • Level: {group.level}
             </p>
           </div>
@@ -106,15 +99,7 @@ export const GroupDetailPage: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="text-amber-400 hover:text-amber-300"
-            onClick={handleArchiveGroup}
-          >
-            Arxivlash
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-rose-400 hover:text-rose-300"
+            className="text-rose-600 hover:text-rose-600"
             leftIcon={<Trash2 className="w-4 h-4" />}
             onClick={handleDeleteGroup}
           >
@@ -126,25 +111,25 @@ export const GroupDetailPage: React.FC = () => {
       {/* Overview Cards Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="space-y-1">
-          <p className="text-xs text-slate-400 font-medium">Schedule</p>
-          <p className="text-sm font-semibold text-slate-200 flex items-center gap-1.5">
-            <Calendar className="w-4 h-4 text-brand-400" />
+          <p className="text-xs text-slate-500 font-medium">Schedule</p>
+          <p className="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+            <Calendar className="w-4 h-4 text-emerald-600" />
             <span>{group.scheduleDescription}</span>
           </p>
-          <p className="text-[11px] text-slate-400 font-mono">Started: {group.startDate}</p>
+          <p className="text-[11px] text-slate-500 font-mono">Started: {group.startDate}</p>
         </Card>
 
         <Card className="space-y-1">
-          <p className="text-xs text-slate-400 font-medium">Enrolled Students</p>
-          <p className="text-sm font-semibold text-slate-200 flex items-center gap-1.5">
-            <Users className="w-4 h-4 text-emerald-400" />
+          <p className="text-xs text-slate-500 font-medium">Enrolled Students</p>
+          <p className="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+            <Users className="w-4 h-4 text-emerald-600" />
             <span>{enrolledStudents.length} Active Members</span>
           </p>
-          <p className="text-[11px] text-slate-400">Class capacity target: 12</p>
+          <p className="text-[11px] text-slate-500">Class capacity target: 12</p>
         </Card>
 
         <Card className="space-y-1">
-          <p className="text-xs text-slate-400 font-medium">Quick Workspace</p>
+          <p className="text-xs text-slate-500 font-medium">Quick Workspace</p>
           <Link to="/workspace">
             <Button size="sm" variant="primary" className="mt-1 w-full justify-center" leftIcon={<BookOpenCheck className="w-4 h-4" />}>
               Open Group Workspace
@@ -155,17 +140,17 @@ export const GroupDetailPage: React.FC = () => {
 
       {/* Teacher Notes */}
       {group.notes && (
-        <Card className="bg-slate-900/60 border-slate-800 p-4">
-          <h4 className="text-xs font-bold text-slate-300 mb-1">Group Notes & Exam Targets</h4>
-          <p className="text-xs text-slate-400 leading-relaxed">{group.notes}</p>
+        <Card className="bg-slate-50 border-slate-200 p-4">
+          <h4 className="text-xs font-bold text-slate-600 mb-1">Group Notes & Exam Targets</h4>
+          <p className="text-xs text-slate-500 leading-relaxed">{group.notes}</p>
         </Card>
       )}
 
       {/* Enrolled Students Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-slate-200 flex items-center gap-2">
-            <GraduationCap className="w-5 h-5 text-emerald-400" />
+          <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
+            <GraduationCap className="w-5 h-5 text-emerald-600" />
             <span>Enrolled Students ({enrolledStudents.length})</span>
           </h2>
 
@@ -190,7 +175,7 @@ export const GroupDetailPage: React.FC = () => {
         </div>
 
         {enrolledStudents.length === 0 ? (
-          <Card className="p-8 text-center text-slate-400">
+          <Card className="p-8 text-center text-slate-500">
             <p className="text-xs">No students currently enrolled in this group.</p>
           </Card>
         ) : (
@@ -199,25 +184,25 @@ export const GroupDetailPage: React.FC = () => {
               <Card key={student.id} hoverable className="flex items-center justify-between">
                 <Link to={`/students/${student.id}`} className="space-y-1 flex-1">
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-sm font-bold text-slate-100 hover:text-brand-400 transition-colors">
+                    <h3 className="text-sm font-bold text-slate-900 hover:text-emerald-600 transition-colors">
                       {student.fullName}
                     </h3>
                     <Badge variant="success" size="sm">{student.status}</Badge>
                   </div>
-                  <p className="text-xs text-slate-400">{student.phone}</p>
-                  <p className="text-[11px] text-slate-400">Parent: {student.parentName} ({student.parentPhone})</p>
+                  <p className="text-xs text-slate-500">{student.phone}</p>
+                  <p className="text-[11px] text-slate-500">Parent: {student.parentName} ({student.parentPhone})</p>
                 </Link>
 
                 <div className="flex items-center space-x-2">
                   <Link to={`/students/${student.id}`}>
-                    <Button variant="ghost" size="sm" className="p-1.5 text-slate-400 hover:text-slate-200">
+                    <Button variant="ghost" size="sm" className="p-1.5 text-slate-500 hover:text-slate-900">
                       <ChevronRight className="w-4 h-4" />
                     </Button>
                   </Link>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="p-1.5 text-rose-400 hover:text-rose-300"
+                    className="p-1.5 text-rose-600 hover:text-rose-600"
                     title="Remove from group"
                     onClick={() => handleRemoveStudent(student.id, student.fullName)}
                   >

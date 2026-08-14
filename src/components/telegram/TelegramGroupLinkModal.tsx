@@ -60,8 +60,8 @@ export const TelegramGroupLinkModal: React.FC<TelegramGroupLinkModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Telegram Group / Channel Link <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">
+            Telegram Group / Channel Link <span className="text-rose-600">*</span>
           </label>
           <div className="relative">
             <LinkIcon className="w-4 h-4 absolute left-3 top-2.5 text-slate-500" />
@@ -71,21 +71,21 @@ export const TelegramGroupLinkModal: React.FC<TelegramGroupLinkModalProps> = ({
               value={telegramLink}
               onChange={(e) => setTelegramLink(e.target.value)}
               placeholder="https://t.me/ielts_65_parents or t.me/+AbCdEfGhIjK"
-              className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
         </div>
 
-        <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-1">
-          <p className="font-bold text-sky-400 flex items-center gap-1">
+        <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-1">
+          <p className="font-bold text-blue-600 flex items-center gap-1">
             <Send className="w-3.5 h-3.5" /> Direct Telegram Shortcut
           </p>
-          <p className="text-[11px] text-slate-400">
+          <p className="text-[11px] text-slate-500">
             Once saved, clicking "Share to Telegram" will automatically launch Telegram and direct you to this group chat.
           </p>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>

@@ -180,11 +180,11 @@ export const AttendancePage: React.FC = () => {
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <CalendarCheck className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <CalendarCheck className="w-6 h-6 text-emerald-600" />
             <span>Davomat Kiritish</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Darsda o'quvchilar qatnashishi hamda kechikish daqiqalarini kiritish paneli.
           </p>
         </div>
@@ -197,27 +197,27 @@ export const AttendancePage: React.FC = () => {
 
       {/* FOCUSED WORKSPACE BANNER */}
       {focusedGroupId && selectedGroup && (
-        <Card className="p-4 bg-emerald-950/40 border border-emerald-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="flex items-center space-x-2 text-emerald-300">
-            <Layers className="w-5 h-5 flex-shrink-0 text-emerald-400" />
+        <Card className="p-4 bg-emerald-50 border border-emerald-300 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-emerald-700">
+            <Layers className="w-5 h-5 flex-shrink-0 text-emerald-600" />
             <div>
               <span className="font-bold text-sm">Hozirda '{selectedGroup.name}' guruh ishchi xonasidasiz</span>
-              <p className="text-[11px] text-emerald-400/90 mt-0.5">
+              <p className="text-[11px] text-emerald-600 mt-0.5">
                 Ushbu guruh bilan ishlamoqdasiz. Boshqa guruhga o'tish uchun guruh ishchi xonasidan chiqishingiz mumkin.
               </p>
             </div>
           </div>
-          <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-400" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
+          <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-600" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
             Guruh ishchi xonasidan chiqish
           </Button>
         </Card>
       )}
 
       {/* Control Bar: Group & Date Selector */}
-      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900 p-4">
+      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
           <div className="flex items-center space-x-2 w-full sm:w-auto">
-            <span className="text-xs font-semibold text-slate-300 min-w-16">Guruh:</span>
+            <span className="text-xs font-semibold text-slate-600 min-w-16">Guruh:</span>
             <select
               disabled={!!focusedGroupId}
               value={selectedGroupId}
@@ -225,7 +225,7 @@ export const AttendancePage: React.FC = () => {
                 setSelectedGroupId(e.target.value);
                 setSelectedGroupIdMemory(e.target.value);
               }}
-              className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-56 disabled:opacity-80"
+              className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-56 disabled:opacity-80"
             >
               {groups.map((g) => (
                 <option key={g.id} value={g.id}>{g.name}</option>
@@ -234,35 +234,35 @@ export const AttendancePage: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-1.5 w-full sm:w-auto">
-            <button onClick={() => setSelectedDate(getPrevLessonDate(selectedDate, schedule))} className="p-1.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-emerald-400 cursor-pointer" title="Oldingi dars kuni">
+            <button onClick={() => setSelectedDate(getPrevLessonDate(selectedDate, schedule))} className="p-1.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-600 hover:text-emerald-600 cursor-pointer" title="Oldingi dars kuni">
               <ChevronLeft className="w-4 h-4" />
             </button>
             <div className="flex flex-col items-center">
-              <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500" />
-              <span className={`text-[10px] font-bold mt-0.5 ${isEffectiveLessonDay ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-500" />
+              <span className={`text-[10px] font-bold mt-0.5 ${isEffectiveLessonDay ? 'text-emerald-600' : 'text-rose-600'}`}>
                 {dayName} {isEffectiveLessonDay ? '(Dars kuni)' : '(Dars kuni emas!)'}
               </span>
             </div>
-            <button onClick={() => setSelectedDate(getNextLessonDate(selectedDate, schedule))} className="p-1.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-emerald-400 cursor-pointer" title="Keyingi dars kuni">
+            <button onClick={() => setSelectedDate(getNextLessonDate(selectedDate, schedule))} className="p-1.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-600 hover:text-emerald-600 cursor-pointer" title="Keyingi dars kuni">
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         <div className="flex items-center space-x-2">
-          <Button size="sm" variant="ghost" className="text-xs text-emerald-400" onClick={() => handleMarkAll('PRESENT')}>Barchasi Keldi</Button>
-          <Button size="sm" variant="ghost" className="text-xs text-rose-400" onClick={() => handleMarkAll('ABSENT')}>Barchasi Kelmadi</Button>
+          <Button size="sm" variant="ghost" className="text-xs text-emerald-600" onClick={() => handleMarkAll('PRESENT')}>Barchasi Keldi</Button>
+          <Button size="sm" variant="ghost" className="text-xs text-rose-600" onClick={() => handleMarkAll('ABSENT')}>Barchasi Kelmadi</Button>
         </div>
       </Card>
 
       {/* NON-LESSON DAY WARNING & FIXING BANNER */}
       {!isEffectiveLessonDay && (
-        <Card className="p-4 bg-amber-950/40 border border-amber-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="flex items-center space-x-2 text-amber-300">
+        <Card className="p-4 bg-amber-50 border border-amber-300 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-amber-700">
             <AlertTriangle className="w-5 h-5 flex-shrink-0" />
             <div>
               <span className="font-bold text-sm">Bu kunda dars mavjud emas!</span>
-              <p className="text-[11px] text-amber-400/90 mt-0.5">
+              <p className="text-[11px] text-amber-600 mt-0.5">
                 Ushbu guruhning dars jadvallari bo'yicha {selectedDate} ({dayName}) dars kuni emas. Agar ushbu kunda dars o'tgan bo'lsangiz, uni kalendarga biriktirishingiz mumkin.
               </p>
             </div>
@@ -274,25 +274,25 @@ export const AttendancePage: React.FC = () => {
       )}
 
       {/* Attendance Sheet */}
-      <Card className="space-y-4 bg-slate-900 border-slate-800 p-5">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <Card className="space-y-4 bg-white border-slate-200 p-5">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div>
-            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Guruh Davomati</span>
-            <h2 className="text-base font-extrabold text-slate-100">{selectedGroup?.name}</h2>
-            <p className="text-xs text-slate-400 font-mono">Dars Sanasi: {selectedDate} ({dayName})</p>
+            <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Guruh Davomati</span>
+            <h2 className="text-base font-extrabold text-slate-900">{selectedGroup?.name}</h2>
+            <p className="text-xs text-slate-500 font-mono">Dars Sanasi: {selectedDate} ({dayName})</p>
           </div>
           <div className="flex items-center space-x-2 text-xs font-bold">
-            <span className="px-2.5 py-1 rounded bg-emerald-600 text-white">Keldi: {presentCount}</span>
-            <span className="px-2.5 py-1 rounded bg-amber-500 text-slate-950">Kechikdi: {lateCount}</span>
-            <span className="px-2.5 py-1 rounded bg-red-600 text-white">Kelmadi: {absentCount}</span>
+            <span className="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200">Keldi: {presentCount}</span>
+            <span className="px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 border border-amber-200">Kechikdi: {lateCount}</span>
+            <span className="px-2.5 py-1 rounded-md bg-rose-50 text-rose-800 border border-rose-200">Kelmadi: {absentCount}</span>
           </div>
         </div>
 
         {!isEffectiveLessonDay ? (
           <div className="p-8 text-center space-y-2">
             <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto opacity-80" />
-            <h3 className="text-sm font-bold text-slate-200">Ushbu kunda ({selectedDate}, {dayName}) dars mavjud emas</h3>
-            <p className="text-xs text-slate-400 max-w-md mx-auto">
+            <h3 className="text-sm font-bold text-slate-800">Ushbu kunda ({selectedDate}, {dayName}) dars mavjud emas</h3>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
               {selectedGroup?.name} guruhining dars jadvali bo'yicha bu kunda dars rejalashtirilmagan.
             </p>
             <div className="pt-2">
@@ -302,34 +302,34 @@ export const AttendancePage: React.FC = () => {
             </div>
           </div>
         ) : groupStudents.length === 0 ? (
-          <p className="text-xs text-slate-400 p-4 text-center">Ushbu guruhda o'quvchilar mavjud emas.</p>
+          <p className="text-xs text-slate-500 p-4 text-center">Ushbu guruhda o'quvchilar mavjud emas.</p>
         ) : (
           <div className="space-y-2">
             {groupStudents.map((s, idx) => {
               const currentStatus = attendanceState[s.id] || 'PRESENT';
               const currentMinutes = lateMinutesState[s.id] || 10;
               return (
-                <div key={s.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+                <div key={s.id} className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between shadow-sm hover:bg-slate-50 transition-colors">
                   <div className="flex items-center space-x-3">
-                    <span className="w-6 h-6 rounded-full bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center font-mono">{idx + 1}</span>
-                    <h4 className="text-sm font-bold text-slate-100">{s.fullName}</h4>
+                    <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs font-bold flex items-center justify-center font-mono border border-slate-200">{idx + 1}</span>
+                    <h4 className="text-sm font-bold text-slate-900">{s.fullName}</h4>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <button onClick={() => setAttendanceState((prev) => ({ ...prev, [s.id]: 'PRESENT' }))} className={`px-3 py-1 rounded-lg text-xs font-extrabold flex items-center space-x-1 cursor-pointer ${currentStatus === 'PRESENT' ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-slate-400 border border-slate-800'}`}>
+                    <button onClick={() => setAttendanceState((prev) => ({ ...prev, [s.id]: 'PRESENT' }))} className={`px-3 py-1 rounded-lg text-xs font-extrabold flex items-center space-x-1 cursor-pointer transition-all ${currentStatus === 'PRESENT' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-50 text-slate-700 border border-slate-300 hover:bg-slate-100'}`}>
                       <Check className="w-3.5 h-3.5" /><span>Keldi</span>
                     </button>
                     <div className="flex items-center space-x-1">
-                      <button onClick={() => setAttendanceState((prev) => ({ ...prev, [s.id]: 'LATE' }))} className={`px-3 py-1 rounded-lg text-xs font-extrabold flex items-center space-x-1 cursor-pointer ${currentStatus === 'LATE' ? 'bg-amber-500 text-slate-950' : 'bg-slate-900 text-slate-400 border border-slate-800'}`}>
+                      <button onClick={() => setAttendanceState((prev) => ({ ...prev, [s.id]: 'LATE' }))} className={`px-3 py-1 rounded-lg text-xs font-extrabold flex items-center space-x-1 cursor-pointer transition-all ${currentStatus === 'LATE' ? 'bg-amber-500 text-slate-950 shadow-sm' : 'bg-slate-50 text-slate-700 border border-slate-300 hover:bg-slate-100'}`}>
                         <Clock className="w-3.5 h-3.5" /><span>Kechikdi</span>
                       </button>
                       {currentStatus === 'LATE' && (
-                        <div className="flex items-center space-x-1 bg-slate-900 border border-amber-500/50 rounded-lg px-2 py-0.5">
-                          <input type="number" min="1" max="120" value={currentMinutes} onChange={(e) => setLateMinutesState((prev) => ({ ...prev, [s.id]: Number(e.target.value) }))} className="w-10 bg-transparent text-xs font-bold text-amber-400 text-center focus:outline-none" />
-                          <span className="text-[10px] text-amber-400 font-bold">daq</span>
+                        <div className="flex items-center space-x-1 bg-white border border-amber-300 rounded-lg px-2 py-0.5">
+                          <input type="number" min="1" max="120" value={currentMinutes} onChange={(e) => setLateMinutesState((prev) => ({ ...prev, [s.id]: Number(e.target.value) }))} className="w-10 bg-transparent text-xs font-bold text-amber-600 text-center focus:outline-none" />
+                          <span className="text-[10px] text-amber-600 font-bold">daq</span>
                         </div>
                       )}
                     </div>
-                    <button onClick={() => setAttendanceState((prev) => ({ ...prev, [s.id]: 'ABSENT' }))} className={`px-3 py-1 rounded-lg text-xs font-extrabold flex items-center space-x-1 cursor-pointer ${currentStatus === 'ABSENT' ? 'bg-red-600 text-white' : 'bg-slate-900 text-slate-400 border border-slate-800'}`}>
+                    <button onClick={() => setAttendanceState((prev) => ({ ...prev, [s.id]: 'ABSENT' }))} className={`px-3 py-1 rounded-lg text-xs font-extrabold flex items-center space-x-1 cursor-pointer transition-all ${currentStatus === 'ABSENT' ? 'bg-rose-600 text-white shadow-sm' : 'bg-slate-50 text-slate-700 border border-slate-300 hover:bg-slate-100'}`}>
                       <X className="w-3.5 h-3.5" /><span>Kelmadi</span>
                     </button>
                   </div>

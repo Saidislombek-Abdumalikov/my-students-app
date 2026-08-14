@@ -259,11 +259,11 @@ export const HomeworkCheckPage: React.FC = () => {
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <FileCheck className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <FileCheck className="w-6 h-6 text-emerald-600" />
             <span>Vazifa Tekshirish</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Darsda o'quvchilardan berilgan vazifalarni yakka-yakka tekshiring. Har bir vazifani ustiga bossangiz darhol saqlanadi.
           </p>
         </div>
@@ -274,25 +274,25 @@ export const HomeworkCheckPage: React.FC = () => {
 
       {/* FOCUSED WORKSPACE BANNER */}
       {focusedGroupId && selectedGroup && (
-        <Card className="p-4 bg-emerald-950/40 border border-emerald-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="flex items-center space-x-2 text-emerald-300">
-            <Layers className="w-5 h-5 flex-shrink-0 text-emerald-400" />
+        <Card className="p-4 bg-emerald-50 border border-emerald-300 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-emerald-700">
+            <Layers className="w-5 h-5 flex-shrink-0 text-emerald-600" />
             <div>
               <span className="font-bold text-sm">Hozirda '{selectedGroup.name}' guruh ishchi xonasidasiz</span>
-              <p className="text-[11px] text-emerald-400/90 mt-0.5">
+              <p className="text-[11px] text-emerald-600 mt-0.5">
                 Ushbu guruh bilan ishlamoqdasiz. Boshqa guruhga o'tish uchun guruh ishchi xonasidan chiqishingiz mumkin.
               </p>
             </div>
           </div>
-          <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-400" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
+          <Button size="sm" variant="outline" leftIcon={<LogOut className="w-3.5 h-3.5 text-rose-600" />} onClick={handleLeaveWorkspace} className="whitespace-nowrap">
             Guruh ishchi xonasidan chiqish
           </Button>
         </Card>
       )}
 
-      <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900 p-4">
+      <Card className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4">
         <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <span className="text-xs font-semibold text-slate-300 min-w-16">Guruh:</span>
+          <span className="text-xs font-semibold text-slate-600 min-w-16">Guruh:</span>
           <select
             disabled={!!focusedGroupId}
             value={selectedGroupId}
@@ -300,7 +300,7 @@ export const HomeworkCheckPage: React.FC = () => {
               setSelectedGroupId(e.target.value);
               setSelectedGroupIdMemory(e.target.value);
             }}
-            className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64 disabled:opacity-80"
+            className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-64 disabled:opacity-80"
           >
             {groups.map((g) => (
               <option key={g.id} value={g.id}>{g.name}</option>
@@ -309,16 +309,16 @@ export const HomeworkCheckPage: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-1.5 w-full sm:w-auto">
-          <button onClick={() => setSelectedDate(getPrevLessonDate(selectedDate, schedule))} className="p-1.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-emerald-400 cursor-pointer" title="Oldingi dars kuni">
+          <button onClick={() => setSelectedDate(getPrevLessonDate(selectedDate, schedule))} className="p-1.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-600 hover:text-emerald-600 cursor-pointer" title="Oldingi dars kuni">
             <ChevronLeft className="w-4 h-4" />
           </button>
           <div className="flex flex-col items-center">
-            <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500" />
-            <span className={`text-[10px] font-bold mt-0.5 ${isEffectiveLessonDay ? 'text-emerald-400' : 'text-rose-400'}`}>
+            <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-500" />
+            <span className={`text-[10px] font-bold mt-0.5 ${isEffectiveLessonDay ? 'text-emerald-600' : 'text-rose-600'}`}>
               {dayName} {isEffectiveLessonDay ? '(Dars kuni)' : '(Dars kuni emas)'}
             </span>
           </div>
-          <button onClick={() => setSelectedDate(getNextLessonDate(selectedDate, schedule))} className="p-1.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-emerald-400 cursor-pointer" title="Keyingi dars kuni">
+          <button onClick={() => setSelectedDate(getNextLessonDate(selectedDate, schedule))} className="p-1.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-600 hover:text-emerald-600 cursor-pointer" title="Keyingi dars kuni">
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -326,12 +326,12 @@ export const HomeworkCheckPage: React.FC = () => {
 
       {/* NON-LESSON DAY WARNING BANNER (INFORMATIONAL ONLY, DOES NOT BLOCK MATRIX) */}
       {!isEffectiveLessonDay && (
-        <Card className="p-4 bg-amber-950/40 border border-amber-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="flex items-center space-x-2 text-amber-300">
+        <Card className="p-4 bg-amber-50 border border-amber-300 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-amber-700">
             <AlertTriangle className="w-5 h-5 flex-shrink-0" />
             <div>
               <span className="font-bold text-sm">Eslatma: {selectedDate} ({dayName}) guruh dars jadvallarida dars kuni sifatida ko'rsatilmadi</span>
-              <p className="text-[11px] text-amber-400/90 mt-0.5">
+              <p className="text-[11px] text-amber-600 mt-0.5">
                 Vazifalarni baribir tekshirishingiz mumkin. Agar ushbu kunga rasmiy dars qo'shmoqchi bo'lsangiz, "Qo'shimcha dars biriktirish" tugmasini bosing.
               </p>
             </div>
@@ -342,18 +342,18 @@ export const HomeworkCheckPage: React.FC = () => {
         </Card>
       )}
 
-      <Card className="space-y-4 bg-slate-900 border-slate-800 p-5">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <Card className="space-y-4 bg-white border-slate-200 p-5">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div>
-            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">{selectedGroup?.name}</span>
-            <h3 className="text-sm font-extrabold text-slate-100">Vazifani Tekshirish Varakasi</h3>
-            <p className="text-xs text-slate-400 font-mono">Sana: {selectedDate} ({dayName})</p>
+            <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">{selectedGroup?.name}</span>
+            <h3 className="text-sm font-extrabold text-slate-900">Vazifani Tekshirish Varakasi</h3>
+            <p className="text-xs text-slate-500 font-mono">Sana: {selectedDate} ({dayName})</p>
           </div>
           <Badge variant="brand">{assignedTasks.length} ta topshiriq</Badge>
         </div>
 
         {groupStudents.length === 0 ? (
-          <p className="text-xs text-slate-400 p-4 text-center">Guruhda o'quvchilar topilmadi.</p>
+          <p className="text-xs text-slate-500 p-4 text-center">Guruhda o'quvchilar topilmadi.</p>
         ) : (
           <div className="space-y-3">
             {groupStudents.map((s) => {
@@ -370,9 +370,9 @@ export const HomeworkCheckPage: React.FC = () => {
                   : 'bg-red-600 text-white font-extrabold';
 
               return (
-                <div key={s.id} className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2.5">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                    <h4 className="text-sm font-bold text-slate-100">{s.fullName}</h4>
+                <div key={s.id} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                    <h4 className="text-sm font-bold text-slate-900">{s.fullName}</h4>
                     <span className={`px-3 py-0.5 text-xs rounded-lg ${statusBadgeClass}`}>
                       {percentage}% ({completedCount}/{totalTasks} Bajarildi)
                     </span>
@@ -389,13 +389,13 @@ export const HomeworkCheckPage: React.FC = () => {
                           className={`p-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition-all cursor-pointer border select-none ${
                             isDone
                               ? 'bg-emerald-600 text-white border-emerald-500 font-bold shadow-md'
-                              : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500 hover:text-white'
+                              : 'bg-white text-slate-600 border-slate-300 hover:border-slate-400 hover:text-slate-900'
                           }`}
                         >
                           <span className="truncate mr-1 text-xs">{task.name}</span>
                           <span
                             className={`px-2 py-0.5 text-[10px] font-extrabold rounded-md flex items-center gap-1 ${
-                              isDone ? 'bg-white text-emerald-800' : 'bg-slate-800 text-rose-400 border border-rose-900/50'
+                              isDone ? 'bg-white text-emerald-800' : 'bg-slate-100 text-rose-600 border border-rose-200'
                             }`}
                           >
                             {isDone ? '✓ Bajarildi' : '✕ Bajarilmadi'}

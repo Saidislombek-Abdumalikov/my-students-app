@@ -96,8 +96,8 @@ export const GroupModal: React.FC<GroupModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Guruh Nomi <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">
+            Guruh Nomi <span className="text-rose-600">*</span>
           </label>
           <input
             type="text"
@@ -105,18 +105,18 @@ export const GroupModal: React.FC<GroupModalProps> = ({
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             placeholder="Masalan: Pre-Intermediate 08:00 - 10:00"
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-sm text-slate-100 font-bold focus:outline-none focus:border-emerald-500"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 font-bold focus:outline-none focus:border-emerald-500"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Dars Kunlari va Vaqti (Jadval) <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">
+            Dars Kunlari va Vaqti (Jadval) <span className="text-rose-600">*</span>
           </label>
           <select
             value={formData.scheduleDescription}
             onChange={(e) => setFormData({ ...formData, scheduleDescription: e.target.value })}
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-bold focus:outline-none focus:border-emerald-500"
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500"
           >
             <option value="Dushanba / Chorshanba / Juma (08:00 - 10:00)">
               Dushanba / Chorshanba / Juma (08:00 - 10:00)
@@ -141,13 +141,13 @@ export const GroupModal: React.FC<GroupModalProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
               Kurs Yo'nalishi
             </label>
             <select
               value={formData.courseSubject}
               onChange={(e) => setFormData({ ...formData, courseSubject: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-bold focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500"
             >
               <option value="General English">General English</option>
               <option value="Kids English">Kids English</option>
@@ -157,7 +157,7 @@ export const GroupModal: React.FC<GroupModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
               Daraja (Level)
             </label>
             <input
@@ -165,12 +165,12 @@ export const GroupModal: React.FC<GroupModalProps> = ({
               value={formData.level}
               onChange={(e) => setFormData({ ...formData, level: e.target.value })}
               placeholder="Masalan: Pre-Intermediate"
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-bold focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500"
             />
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200">
           <Button type="button" variant="ghost" onClick={onClose}>
             Bekor qilish
           </Button>

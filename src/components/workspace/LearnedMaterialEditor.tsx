@@ -73,13 +73,13 @@ export const LearnedMaterialEditor: React.FC<LearnedMaterialEditorProps> = ({ le
   };
 
   return (
-    <Card className="space-y-4 bg-slate-900/90 border-slate-800">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+    <Card className="space-y-4 bg-white border-slate-200">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
         <div className="flex items-center space-x-2">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <CheckCircle2 className="w-5 h-5 text-emerald-600" />
           <div>
-            <h3 className="text-sm font-bold text-slate-100">What Was Actually Learned (ACTUALLY LEARNED)</h3>
-            <p className="text-xs text-slate-400">Record the exact material, passages, and techniques taught in class today.</p>
+            <h3 className="text-sm font-bold text-slate-900">What Was Actually Learned (ACTUALLY LEARNED)</h3>
+            <p className="text-xs text-slate-500">Record the exact material, passages, and techniques taught in class today.</p>
           </div>
         </div>
         <Badge variant="success">ACTUALLY LEARNED</Badge>
@@ -88,105 +88,105 @@ export const LearnedMaterialEditor: React.FC<LearnedMaterialEditorProps> = ({ le
       <form onSubmit={handleSave} className="space-y-4 text-xs">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block font-semibold text-slate-300 mb-1 flex items-center gap-1">
-              <Award className="w-3.5 h-3.5 text-emerald-400" /> Vocabulary Taught
+            <label className="block font-semibold text-slate-600 mb-1 flex items-center gap-1">
+              <Award className="w-3.5 h-3.5 text-emerald-600" /> Vocabulary Taught
             </label>
             <input
               type="text"
               value={formData.vocabulary || ''}
               onChange={(e) => setFormData({ ...formData, vocabulary: e.target.value })}
               placeholder="Exact words covered today..."
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Grammar Taught</label>
+            <label className="block font-semibold text-slate-600 mb-1">Grammar Taught</label>
             <input
               type="text"
               value={formData.grammar || ''}
               onChange={(e) => setFormData({ ...formData, grammar: e.target.value })}
               placeholder="Grammar points mastered..."
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Reading Passage Completed</label>
+            <label className="block font-semibold text-slate-600 mb-1">Reading Passage Completed</label>
             <input
               type="text"
               value={formData.readingPassage || ''}
               onChange={(e) => setFormData({ ...formData, readingPassage: e.target.value })}
               placeholder="Text/passage details..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Listening Activity Done</label>
+            <label className="block font-semibold text-slate-600 mb-1">Listening Activity Done</label>
             <input
               type="text"
               value={formData.listeningActivity || ''}
               onChange={(e) => setFormData({ ...formData, listeningActivity: e.target.value })}
               placeholder="Listening section..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Speaking Topic Discussed</label>
+            <label className="block font-semibold text-slate-600 mb-1">Speaking Topic Discussed</label>
             <input
               type="text"
               value={formData.speakingTopic || ''}
               onChange={(e) => setFormData({ ...formData, speakingTopic: e.target.value })}
               placeholder="Speaking cards..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Writing Technique Taught</label>
+            <label className="block font-semibold text-slate-600 mb-1">Writing Technique Taught</label>
             <input
               type="text"
               value={formData.writingTechnique || ''}
               onChange={(e) => setFormData({ ...formData, writingTechnique: e.target.value })}
               placeholder="Writing structure..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Exam Strategies Covered</label>
+            <label className="block font-semibold text-slate-600 mb-1">Exam Strategies Covered</label>
             <input
               type="text"
               value={formData.examStrategy || ''}
               onChange={(e) => setFormData({ ...formData, examStrategy: e.target.value })}
               placeholder="Exam tricks & timing..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-300 mb-1">Teacher Lesson Notes</label>
+            <label className="block font-semibold text-slate-600 mb-1">Teacher Lesson Notes</label>
             <input
               type="text"
               value={formData.customNotes || ''}
               onChange={(e) => setFormData({ ...formData, customNotes: e.target.value })}
               placeholder="Observations on group..."
-              className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-brand-500"
             />
           </div>
         </div>
 
-        <div className="flex justify-end pt-2 border-t border-slate-800">
+        <div className="flex justify-end pt-2 border-t border-slate-200">
           <Button
             type="submit"
             size="sm"
             variant="success"
             isLoading={isSaving}
-            leftIcon={isSaved ? <Check className="w-4 h-4 text-emerald-400" /> : <Save className="w-4 h-4" />}
+            leftIcon={isSaved ? <Check className="w-4 h-4 text-emerald-600" /> : <Save className="w-4 h-4" />}
           >
             {isSaved ? 'Learned Record Saved!' : 'Save Learned Record'}
           </Button>

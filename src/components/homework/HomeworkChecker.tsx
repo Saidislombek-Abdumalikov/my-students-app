@@ -145,14 +145,14 @@ export const HomeworkChecker: React.FC<HomeworkCheckerProps> = ({ packageId }) =
   return (
     <div className="space-y-4">
       {/* Package Header Bar */}
-      <Card className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-slate-900/90">
+      <Card className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white border-slate-200">
         <div>
           <div className="flex items-center space-x-2">
-            <h3 className="text-base font-bold text-slate-100">{pkg.title}</h3>
+            <h3 className="text-base font-bold text-slate-900">{pkg.title}</h3>
             <Badge variant="brand" size="sm">{tasks.length} Tasks Package</Badge>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Deadline: <span className="text-amber-400 font-semibold">{pkg.deadline}</span> • {pkg.description}
+          <p className="text-xs text-slate-500 mt-0.5">
+            Deadline: <span className="text-amber-600 font-semibold">{pkg.deadline}</span> • {pkg.description}
           </p>
         </div>
 
@@ -160,7 +160,7 @@ export const HomeworkChecker: React.FC<HomeworkCheckerProps> = ({ packageId }) =
           size="sm"
           variant="primary"
           isLoading={isSaving}
-          leftIcon={isSaved ? <Check className="w-4 h-4 text-emerald-400" /> : <Save className="w-4 h-4" />}
+          leftIcon={isSaved ? <Check className="w-4 h-4 text-emerald-600" /> : <Save className="w-4 h-4" />}
           onClick={handleSaveSubmissions}
         >
           {isSaved ? 'Homework Saved!' : 'Save All Homework Checks'}
@@ -170,15 +170,15 @@ export const HomeworkChecker: React.FC<HomeworkCheckerProps> = ({ packageId }) =
       {/* Task Summary Badges */}
       <div className="flex flex-wrap gap-2 text-xs">
         {tasks.map((t, i) => (
-          <span key={t.id} className="px-3 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-200">
-            <strong className="text-brand-400">#{i + 1} [{t.taskType}]</strong>: {t.title}
+          <span key={t.id} className="px-3 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-800">
+            <strong className="text-emerald-600">#{i + 1} [{t.taskType}]</strong>: {t.title}
           </span>
         ))}
       </div>
 
       {/* Granular Checking Matrix */}
       {enrolledStudents.length === 0 ? (
-        <Card className="p-8 text-center text-slate-400">
+        <Card className="p-8 text-center text-slate-500">
           <p className="text-xs">No active students in group.</p>
         </Card>
       ) : (
@@ -187,10 +187,10 @@ export const HomeworkChecker: React.FC<HomeworkCheckerProps> = ({ packageId }) =
             const studentTasks = submissionsState[student.id] || {};
 
             return (
-              <Card key={student.id} className="space-y-3 p-4">
-                <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
-                  <h4 className="text-sm font-bold text-slate-100">{student.fullName}</h4>
-                  <span className="text-xs text-slate-400">{student.phone}</span>
+              <Card key={student.id} className="space-y-3 p-4 bg-white border-slate-200">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <h4 className="text-sm font-bold text-slate-900">{student.fullName}</h4>
+                  <span className="text-xs text-slate-500">{student.phone}</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -207,10 +207,10 @@ export const HomeworkChecker: React.FC<HomeworkCheckerProps> = ({ packageId }) =
                     return (
                       <div
                         key={t.id}
-                        className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2 text-xs"
+                        className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold text-slate-200">
+                          <span className="font-semibold text-slate-800">
                             Task #{idx + 1}: {t.title}
                           </span>
                           <span className="text-[10px] text-slate-500 font-mono">[{t.taskType}]</span>
@@ -226,7 +226,7 @@ export const HomeworkChecker: React.FC<HomeworkCheckerProps> = ({ packageId }) =
                               className={`flex-1 py-1 px-1.5 text-[11px] font-bold rounded transition-all cursor-pointer ${
                                 taskData.status === s.status
                                   ? s.class
-                                  : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                                  : 'bg-slate-100 text-slate-500 hover:text-slate-900'
                               }`}
                             >
                               {s.label}
@@ -240,7 +240,7 @@ export const HomeworkChecker: React.FC<HomeworkCheckerProps> = ({ packageId }) =
                           value={taskData.comment}
                           onChange={(e) => setTaskComment(student.id, t.id, e.target.value)}
                           placeholder="Teacher feedback comment..."
-                          className="w-full px-2 py-1 bg-slate-900 border border-slate-700/60 rounded text-[11px] text-slate-200 focus:outline-none focus:border-brand-500"
+                          className="w-full px-2 py-1 bg-white border border-slate-300 rounded text-[11px] text-slate-900 focus:outline-none focus:border-brand-500"
                         />
                       </div>
                     );

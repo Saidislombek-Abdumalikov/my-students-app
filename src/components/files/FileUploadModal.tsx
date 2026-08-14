@@ -88,8 +88,8 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            File / Screenshot Name <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">
+            File / Screenshot Name <span className="text-rose-600">*</span>
           </label>
           <input
             type="text"
@@ -97,38 +97,38 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
             value={fileName}
             onChange={(e) => setFileName(e.target.value)}
             placeholder="e.g. Sardor_IELTS_Mock1_Result_Screenshot.png"
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+            className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Screenshot / File Image URL <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">
+            Screenshot / File Image URL <span className="text-rose-600">*</span>
           </label>
           <div className="relative">
-            <LinkIcon className="w-4 h-4 absolute left-3 top-2.5 text-slate-500" />
+            <LinkIcon className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
             <input
               type="text"
               required
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://images.unsplash.com/... or data:image/png..."
-              className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
             />
           </div>
           <div className="flex items-center space-x-2 mt-1.5">
-            <span className="text-[10px] text-slate-400">Sample presets:</span>
+            <span className="text-[10px] text-slate-500">Sample presets:</span>
             <button
               type="button"
               onClick={() => handleQuickPreset('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600', 'IELTS_Exam_Sheet.jpg')}
-              className="text-[10px] text-brand-400 hover:underline cursor-pointer"
+              className="text-[10px] text-emerald-600 hover:underline cursor-pointer"
             >
               Preset 1 (Exam Sheet)
             </button>
             <button
               type="button"
               onClick={() => handleQuickPreset('https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=600', 'Score_Breakdown_Screenshot.png')}
-              className="text-[10px] text-emerald-400 hover:underline cursor-pointer"
+              className="text-[10px] text-emerald-600 hover:underline cursor-pointer"
             >
               Preset 2 (Score Breakdown)
             </button>
@@ -137,11 +137,11 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Associate Student</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Associate Student</label>
             <select
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
             >
               <option value="">All / General</option>
               {students.map((s) => (
@@ -153,11 +153,11 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Associate Group</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Associate Group</label>
             <select
               value={groupId}
               onChange={(e) => setGroupId(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
             >
               <option value="">All Groups</option>
               {groups.map((g) => (
@@ -169,11 +169,11 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Associate Test</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Associate Test</label>
             <select
               value={testId}
               onChange={(e) => setTestId(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
             >
               <option value="">None / General</option>
               {tests.map((t) => (
@@ -185,7 +185,7 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>

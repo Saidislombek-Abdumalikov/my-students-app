@@ -67,14 +67,14 @@ export const CreateTestModal: React.FC<CreateTestModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Target Class Group <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">
+            Target Class Group <span className="text-rose-600">*</span>
           </label>
           <select
             required
             value={formData.groupId}
             onChange={(e) => setFormData({ ...formData, groupId: e.target.value })}
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+            className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
           >
             <option value="">Select Group...</option>
             {groups.map((g) => (
@@ -86,8 +86,8 @@ export const CreateTestModal: React.FC<CreateTestModalProps> = ({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
-            Test Title <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">
+            Test Title <span className="text-rose-600">*</span>
           </label>
           <input
             type="text"
@@ -95,24 +95,24 @@ export const CreateTestModal: React.FC<CreateTestModalProps> = ({
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             placeholder="e.g. Monthly Progress Test #3"
-            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+            className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Date</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Date</label>
             <input
               type="date"
               required
               value={formData.date}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Category</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Category</label>
             <select
               value={formData.category}
               onChange={(e) => {
@@ -123,7 +123,7 @@ export const CreateTestModal: React.FC<CreateTestModalProps> = ({
                   maxScore: cat.startsWith('IELTS') ? 9.0 : 100,
                 });
               }}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
             >
               <option value="IELTS_OVERALL">IELTS Full (All Skills)</option>
               <option value="IELTS_LISTENING">IELTS Listening</option>
@@ -135,19 +135,19 @@ export const CreateTestModal: React.FC<CreateTestModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Max Score</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Max Score</label>
             <input
               type="number"
               step="0.5"
               required
               value={formData.maxScore}
               onChange={(e) => setFormData({ ...formData, maxScore: Number(e.target.value) })}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700/70 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-brand-500"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-emerald-600"
             />
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end space-x-3 pt-3 border-t border-slate-200">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>

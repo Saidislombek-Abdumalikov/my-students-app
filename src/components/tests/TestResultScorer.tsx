@@ -147,14 +147,14 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
   return (
     <div className="space-y-4">
       {/* Test Scorer Header */}
-      <Card className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-slate-900/90">
+      <Card className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white border-slate-200">
         <div>
           <div className="flex items-center space-x-2">
-            <h3 className="text-base font-bold text-slate-100">{test.title}</h3>
+            <h3 className="text-base font-bold text-slate-900">{test.title}</h3>
             <Badge variant="brand" size="sm">{test.category}</Badge>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Date: <span className="text-brand-400 font-semibold">{test.date}</span> • Max Score: {test.maxScore}
+          <p className="text-xs text-slate-500 mt-0.5">
+            Date: <span className="text-emerald-600 font-semibold">{test.date}</span> • Max Score: {test.maxScore}
           </p>
         </div>
 
@@ -162,7 +162,7 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
           size="sm"
           variant="primary"
           isLoading={isSaving}
-          leftIcon={isSaved ? <Check className="w-4 h-4 text-emerald-400" /> : <Save className="w-4 h-4" />}
+          leftIcon={isSaved ? <Check className="w-4 h-4 text-emerald-600" /> : <Save className="w-4 h-4" />}
           onClick={handleSaveAll}
         >
           {isSaved ? 'Scores Saved!' : 'Save All Test Results'}
@@ -171,7 +171,7 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
 
       {/* Student Scoring Sheet */}
       {enrolledStudents.length === 0 ? (
-        <Card className="p-8 text-center text-slate-400">
+        <Card className="p-8 text-center text-slate-500">
           <p className="text-xs">No active students in group.</p>
         </Card>
       ) : (
@@ -191,10 +191,10 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
 
             return (
               <Card key={student.id} className="p-4 space-y-3">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
                   <div>
-                    <h4 className="text-sm font-bold text-slate-100">{student.fullName}</h4>
-                    <p className="text-xs text-slate-400">{student.phone}</p>
+                    <h4 className="text-sm font-bold text-slate-900">{student.fullName}</h4>
+                    <p className="text-xs text-slate-500">{student.phone}</p>
                   </div>
 
                   <div className="flex items-center space-x-3">
@@ -207,8 +207,8 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
                 {/* IELTS Subskills Grid or Raw Score */}
                 {isIELTS ? (
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                    <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
-                      <label className="text-[11px] font-semibold text-slate-400">Listening (0-9)</label>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                      <label className="text-[11px] font-semibold text-slate-500">Listening (0-9)</label>
                       <input
                         type="number"
                         step="0.5"
@@ -216,12 +216,12 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
                         max="9"
                         value={data.listeningScore}
                         onChange={(e) => updateStudentScore(student.id, 'listeningScore', e.target.value)}
-                        className="w-full px-2 py-1 bg-slate-900 border border-slate-700/60 rounded font-bold text-brand-300 text-sm"
+                        className="w-full px-2 py-1 bg-white border border-slate-300 rounded font-bold text-emerald-700 text-sm"
                       />
                     </div>
 
-                    <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
-                      <label className="text-[11px] font-semibold text-slate-400">Reading (0-9)</label>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                      <label className="text-[11px] font-semibold text-slate-500">Reading (0-9)</label>
                       <input
                         type="number"
                         step="0.5"
@@ -229,12 +229,12 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
                         max="9"
                         value={data.readingScore}
                         onChange={(e) => updateStudentScore(student.id, 'readingScore', e.target.value)}
-                        className="w-full px-2 py-1 bg-slate-900 border border-slate-700/60 rounded font-bold text-sky-300 text-sm"
+                        className="w-full px-2 py-1 bg-white border border-slate-300 rounded font-bold text-blue-700 text-sm"
                       />
                     </div>
 
-                    <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
-                      <label className="text-[11px] font-semibold text-slate-400">Writing (0-9)</label>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                      <label className="text-[11px] font-semibold text-slate-500">Writing (0-9)</label>
                       <input
                         type="number"
                         step="0.5"
@@ -242,12 +242,12 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
                         max="9"
                         value={data.writingScore}
                         onChange={(e) => updateStudentScore(student.id, 'writingScore', e.target.value)}
-                        className="w-full px-2 py-1 bg-slate-900 border border-slate-700/60 rounded font-bold text-emerald-300 text-sm"
+                        className="w-full px-2 py-1 bg-white border border-slate-300 rounded font-bold text-emerald-700 text-sm"
                       />
                     </div>
 
-                    <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
-                      <label className="text-[11px] font-semibold text-slate-400">Speaking (0-9)</label>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                      <label className="text-[11px] font-semibold text-slate-500">Speaking (0-9)</label>
                       <input
                         type="number"
                         step="0.5"
@@ -255,19 +255,19 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
                         max="9"
                         value={data.speakingScore}
                         onChange={(e) => updateStudentScore(student.id, 'speakingScore', e.target.value)}
-                        className="w-full px-2 py-1 bg-slate-900 border border-slate-700/60 rounded font-bold text-amber-300 text-sm"
+                        className="w-full px-2 py-1 bg-white border border-slate-300 rounded font-bold text-amber-700 text-sm"
                       />
                     </div>
                   </div>
                 ) : (
                   <div className="w-48 text-xs">
-                    <label className="block font-semibold text-slate-400 mb-1">Score / {test.maxScore}</label>
+                    <label className="block font-semibold text-slate-500 mb-1">Score / {test.maxScore}</label>
                     <input
                       type="number"
                       step="1"
                       value={data.score}
                       onChange={(e) => updateStudentScore(student.id, 'score', Number(e.target.value))}
-                      className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded font-bold text-brand-300 text-sm"
+                      className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded font-bold text-emerald-700 text-sm"
                     />
                   </div>
                 )}
@@ -280,7 +280,7 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
                       value={data.comment}
                       onChange={(e) => updateStudentScore(student.id, 'comment', e.target.value)}
                       placeholder="Teacher comment (e.g. Needs work on Task 2 writing structure)..."
-                      className="w-full px-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-200 focus:outline-none focus:border-brand-500"
+                      className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-brand-500"
                     />
                   </div>
 
@@ -291,7 +291,7 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
                       value={data.screenshotUrl}
                       onChange={(e) => updateStudentScore(student.id, 'screenshotUrl', e.target.value)}
                       placeholder="Attach result screenshot URL / file link..."
-                      className="w-full pl-8 pr-2.5 py-1.5 bg-slate-950 border border-slate-700/60 rounded-lg text-slate-200 focus:outline-none focus:border-brand-500"
+                      className="w-full pl-8 pr-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-brand-500"
                     />
                   </div>
                 </div>

@@ -45,13 +45,6 @@ export const StudentDetailPage: React.FC = () => {
 
   const enrolledGroups = groups.filter(g => enrolledGroupIds.has(g.id));
 
-  const handleArchiveStudent = async () => {
-    if (confirm(`"${student.fullName}" o'quvchisini arxivlashni tasdiqlaysizmi?`)) {
-      await db.students.update(student.id, { status: 'ARCHIVED' });
-      navigate('/students');
-    }
-  };
-
   const handleDeleteStudentPermanently = async () => {
     if (confirm(`Ushbu "${student.fullName}" o'quvchisini va uning barcha to'lov hamda dars yozuvlarini BUTUNLAY O'CHIRIB tashlamoqchimisiz? Qayta tiklab bo'lmaydi.`)) {
       await db.students.delete(student.id);
@@ -74,21 +67,19 @@ export const StudentDetailPage: React.FC = () => {
           </Button>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-2xl font-bold text-slate-100">{student.fullName}</h1>
+              <h1 className="text-2xl font-bold text-slate-900">{student.fullName}</h1>
               <Badge
                 variant={
                   student.status === 'ACTIVE'
                     ? 'success'
-                    : student.status === 'INACTIVE'
-                    ? 'warning'
-                    : 'neutral'
+                    : 'warning'
                 }
                 dot
               >
-                {student.status === 'ACTIVE' ? 'FAOL' : student.status === 'ARCHIVED' ? 'ARXIV' : 'NOPAO' }
+                {student.status === 'ACTIVE' ? 'FAOL' : 'NOFAOL'}
               </Badge>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5 font-mono">
+            <p className="text-xs text-slate-500 mt-0.5 font-mono">
               Enrolled: {student.enrollmentDate} • Student ID: {student.id}
             </p>
           </div>
@@ -106,15 +97,7 @@ export const StudentDetailPage: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="text-amber-400 hover:text-amber-300"
-            onClick={handleArchiveStudent}
-          >
-            Arxivlash
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-rose-400 hover:text-rose-300"
+            className="text-rose-600 hover:text-rose-600"
             leftIcon={<Trash2 className="w-4 h-4" />}
             onClick={handleDeleteStudentPermanently}
           >
@@ -126,28 +109,28 @@ export const StudentDetailPage: React.FC = () => {
       {/* Info Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="space-y-1.5">
-          <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
-            <Phone className="w-3.5 h-3.5 text-brand-400" />
+          <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
+            <Phone className="w-3.5 h-3.5 text-emerald-600" />
             <span>Student Contact</span>
           </p>
-          <p className="text-sm font-semibold text-slate-200">{student.phone || 'No phone recorded'}</p>
+          <p className="text-sm font-semibold text-slate-800">{student.phone || 'No phone recorded'}</p>
         </Card>
 
         <Card className="space-y-1.5">
-          <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
-            <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
+            <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span>Parent / Guardian</span>
           </p>
-          <p className="text-sm font-semibold text-slate-200">{student.parentName || 'N/A'}</p>
-          <p className="text-xs text-slate-400">{student.parentPhone}</p>
+          <p className="text-sm font-semibold text-slate-800">{student.parentName || 'N/A'}</p>
+          <p className="text-xs text-slate-500">{student.parentPhone}</p>
         </Card>
 
         <Card className="space-y-1.5">
-          <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-sky-400" />
+          <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
+            <Users className="w-3.5 h-3.5 text-blue-600" />
             <span>Enrolled Classes</span>
           </p>
-          <p className="text-sm font-semibold text-slate-200">
+          <p className="text-sm font-semibold text-slate-800">
             {enrolledGroups.length} Active {enrolledGroups.length === 1 ? 'Group' : 'Groups'}
           </p>
         </Card>
@@ -155,15 +138,15 @@ export const StudentDetailPage: React.FC = () => {
 
       {/* Teacher Notes */}
       {student.notes && (
-        <Card className="bg-slate-900/60 border-slate-800 p-4">
-          <h4 className="text-xs font-bold text-slate-300 mb-1">Teacher Notes & Performance Goals</h4>
-          <p className="text-xs text-slate-400 leading-relaxed">{student.notes}</p>
+        <Card className="bg-slate-50 border-slate-200 p-4">
+          <h4 className="text-xs font-bold text-slate-600 mb-1">Teacher Notes & Performance Goals</h4>
+          <p className="text-xs text-slate-500 leading-relaxed">{student.notes}</p>
         </Card>
       )}
 
       {/* Profile Sub-Tabs Navigation */}
       <div className="space-y-4">
-        <div className="flex border-b border-slate-800 space-x-4">
+        <div className="flex border-b border-slate-200 space-x-4">
           {[
             { id: 'TIMELINE', label: 'Timeline & History', icon: <Clock className="w-4 h-4" /> },
             { id: 'GROUPS', label: `Groups (${enrolledGroups.length})`, icon: <Users className="w-4 h-4" /> },
@@ -175,8 +158,8 @@ export const StudentDetailPage: React.FC = () => {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center space-x-2 py-3 px-1 text-xs font-bold border-b-2 transition-colors cursor-pointer ${
                 activeTab === tab.id
-                  ? 'border-brand-500 text-brand-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-brand-500 text-emerald-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-900'
               }`}
             >
               {tab.icon}
@@ -191,17 +174,17 @@ export const StudentDetailPage: React.FC = () => {
         {activeTab === 'GROUPS' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {enrolledGroups.length === 0 ? (
-              <p className="text-xs text-slate-400 col-span-2">Not currently enrolled in any class group.</p>
+              <p className="text-xs text-slate-500 col-span-2">Not currently enrolled in any class group.</p>
             ) : (
               enrolledGroups.map((group) => (
                 <Card key={group.id} hoverable className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-bold text-slate-100">{group.name}</h4>
+                    <h4 className="text-sm font-bold text-slate-900">{group.name}</h4>
                     <Badge variant="info" size="sm">{group.courseSubject}</Badge>
                   </div>
-                  <p className="text-xs text-slate-400">{group.scheduleDescription}</p>
+                  <p className="text-xs text-slate-500">{group.scheduleDescription}</p>
                   <Link to={`/groups/${group.id}`}>
-                    <Button variant="ghost" size="sm" className="mt-2 text-xs text-brand-400">
+                    <Button variant="ghost" size="sm" className="mt-2 text-xs text-emerald-600">
                       View Group →
                     </Button>
                   </Link>
@@ -214,13 +197,13 @@ export const StudentDetailPage: React.FC = () => {
         {activeTab === 'ATTENDANCE' && (
           <div className="space-y-2">
             {attendanceLogs.length === 0 ? (
-              <p className="text-xs text-slate-400">No attendance logs found.</p>
+              <p className="text-xs text-slate-500">No attendance logs found.</p>
             ) : (
               attendanceLogs.map((log) => (
                 <div key={log.id} className="glass-panel p-3 rounded-lg flex items-center justify-between text-xs">
                   <div>
-                    <p className="font-semibold text-slate-200">Date: {log.updatedAt.split('T')[0]}</p>
-                    {log.note && <p className="text-slate-400">{log.note}</p>}
+                    <p className="font-semibold text-slate-800">Date: {log.updatedAt.split('T')[0]}</p>
+                    {log.note && <p className="text-slate-500">{log.note}</p>}
                   </div>
                   <Badge
                     variant={
@@ -242,15 +225,15 @@ export const StudentDetailPage: React.FC = () => {
         {activeTab === 'PAYMENTS' && (
           <div className="space-y-2">
             {paymentLogs.length === 0 ? (
-              <p className="text-xs text-slate-400">No payment logs found.</p>
+              <p className="text-xs text-slate-500">No payment logs found.</p>
             ) : (
               paymentLogs.map((pay) => (
                 <div key={pay.id} className="glass-panel p-3 rounded-lg flex items-center justify-between text-xs">
                   <div>
-                    <p className="font-semibold text-slate-200">
+                    <p className="font-semibold text-slate-800">
                       Amount: {pay.amount.toLocaleString()} UZS
                     </p>
-                    <p className="text-slate-400">
+                    <p className="text-slate-500">
                       Period: {pay.periodMonth} • Method: {pay.paymentMethod}
                     </p>
                   </div>

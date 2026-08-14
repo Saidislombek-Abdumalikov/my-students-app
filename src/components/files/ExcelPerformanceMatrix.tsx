@@ -32,13 +32,13 @@ export const ExcelPerformanceMatrix: React.FC<ExcelPerformanceMatrixProps> = ({ 
   });
 
   return (
-    <Card className="space-y-4 overflow-x-auto bg-slate-900 border-slate-800 p-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+    <Card className="space-y-4 overflow-x-auto bg-white border-slate-200 p-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
         <div className="flex items-center space-x-2">
-          <FileSpreadsheet className="w-5 h-5 text-emerald-400" />
+          <FileSpreadsheet className="w-5 h-5 text-emerald-600" />
           <div>
-            <h3 className="text-sm font-bold text-slate-100">Excel Usulida O'quvchilar Natijalari Jadvali</h3>
-            <p className="text-xs text-slate-400">
+            <h3 className="text-sm font-bold text-slate-900">Excel Usulida O'quvchilar Natijalari Jadvali</h3>
+            <p className="text-xs text-slate-500">
               Davomat %, Imtihon Baholari, va To'lov holati (To'langan / Qarzdor) bo'yicha solishtirma jadval.
             </p>
           </div>
@@ -49,20 +49,20 @@ export const ExcelPerformanceMatrix: React.FC<ExcelPerformanceMatrixProps> = ({ 
       </div>
 
       {filteredStudents.length === 0 ? (
-        <p className="text-xs text-slate-400 p-4 text-center">Tanlangan guruhda o'quvchilar topilmadi.</p>
+        <p className="text-xs text-slate-500 p-4 text-center">Tanlangan guruhda o'quvchilar topilmadi.</p>
       ) : (
-        <table className="w-full text-xs text-left text-slate-200 border-collapse">
-          <thead className="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase font-bold text-[11px]">
+        <table className="w-full text-xs text-left text-slate-800 border-collapse">
+          <thead className="bg-slate-50 text-slate-500 border-b border-slate-200 uppercase font-bold text-[11px]">
             <tr>
-              <th className="py-3 px-3 border-r border-slate-800">O'quvchi Ismi</th>
-              <th className="py-3 px-3 border-r border-slate-800">Guruh</th>
-              <th className="py-3 px-3 border-r border-slate-800 text-center">Davomat %</th>
-              <th className="py-3 px-3 border-r border-slate-800 text-center">Imtihon Bahosi</th>
-              <th className="py-3 px-3 border-r border-slate-800 text-center">To'lov Holati</th>
+              <th className="py-3 px-3 border-r border-slate-200">O'quvchi Ismi</th>
+              <th className="py-3 px-3 border-r border-slate-200">Guruh</th>
+              <th className="py-3 px-3 border-r border-slate-200 text-center">Davomat %</th>
+              <th className="py-3 px-3 border-r border-slate-200 text-center">Imtihon Bahosi</th>
+              <th className="py-3 px-3 border-r border-slate-200 text-center">To'lov Holati</th>
               <th className="py-3 px-3 text-center">Holat</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800 font-sans">
+          <tbody className="divide-y divide-slate-200 font-sans">
             {filteredStudents.map((student) => {
               // Group Name
               const sGroupIds = memberships
@@ -106,19 +106,19 @@ export const ExcelPerformanceMatrix: React.FC<ExcelPerformanceMatrixProps> = ({ 
               const hasUnpaid = sPayments.some((p) => p.status === 'UNPAID');
 
               return (
-                <tr key={student.id} className="hover:bg-slate-800/40">
+                <tr key={student.id} className="hover:bg-slate-100">
                   {/* Student Name */}
-                  <td className="py-3 px-3 font-bold text-slate-100 border-r border-slate-800/80">
+                  <td className="py-3 px-3 font-bold text-slate-900 border-r border-slate-200">
                     {student.fullName}
                   </td>
 
                   {/* Group */}
-                  <td className="py-3 px-3 text-slate-300 border-r border-slate-800/80 font-mono text-[11px]">
+                  <td className="py-3 px-3 text-slate-600 border-r border-slate-200 font-mono text-[11px]">
                     {groupNames}
                   </td>
 
                   {/* Attendance Rate */}
-                  <td className="py-3 px-3 text-center border-r border-slate-800/80">
+                  <td className="py-3 px-3 text-center border-r border-slate-200">
                     <span
                       className={`px-2.5 py-1 text-xs font-bold rounded ${
                         attRate >= 80
@@ -131,14 +131,14 @@ export const ExcelPerformanceMatrix: React.FC<ExcelPerformanceMatrixProps> = ({ 
                   </td>
 
                   {/* Test Grade Background Color Scheme */}
-                  <td className="py-3 px-3 text-center border-r border-slate-800/80">
+                  <td className="py-3 px-3 text-center border-r border-slate-200">
                     <span className={`px-3 py-1 text-xs rounded ${gradeClass}`}>
                       {grade} ({latestTest?.score || 85}%)
                     </span>
                   </td>
 
                   {/* Payment Status: To'langan vs QARZDOR Red */}
-                  <td className="py-3 px-3 text-center border-r border-slate-800/80">
+                  <td className="py-3 px-3 text-center border-r border-slate-200">
                     {hasUnpaid ? (
                       <span className="px-3 py-1 text-xs font-extrabold rounded bg-red-600 text-white inline-flex items-center gap-1">
                         <AlertCircle className="w-3.5 h-3.5" /> QARZDOR

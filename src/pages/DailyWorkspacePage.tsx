@@ -151,11 +151,11 @@ export const DailyWorkspacePage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <BookOpenCheck className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <BookOpenCheck className="w-6 h-6 text-emerald-600" />
             <span>Kunlik Dars & Vazifa Boshqaruvi (Foizlar bilan)</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Dars ishchi maydoni — vazifalarni yakka-yakka tekshirish va avtomatik foizlar (%0-%100) hisoblash.
           </p>
         </div>
@@ -171,14 +171,14 @@ export const DailyWorkspacePage: React.FC = () => {
       </div>
 
       {/* Control Bar: Group & Date Selector */}
-      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900">
+      <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
           <div className="flex items-center space-x-2 w-full sm:w-auto">
-            <span className="text-xs font-semibold text-slate-300 min-w-16">Guruh:</span>
+            <span className="text-xs font-semibold text-slate-600 min-w-16">Guruh:</span>
             <select
               value={selectedGroupId}
               onChange={(e) => setSelectedGroupId(e.target.value)}
-              className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-56"
+              className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-500 w-full sm:w-56"
             >
               {groups.map((g) => (
                 <option key={g.id} value={g.id}>
@@ -189,12 +189,12 @@ export const DailyWorkspacePage: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-2 w-full sm:w-auto">
-            <span className="text-xs font-semibold text-slate-300 min-w-20">Dars Sanasi:</span>
+            <span className="text-xs font-semibold text-slate-600 min-w-20">Dars Sanasi:</span>
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500"
+              className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-500"
             />
           </div>
         </div>
@@ -203,10 +203,10 @@ export const DailyWorkspacePage: React.FC = () => {
       {/* Main Grid: Multi-Task Homework Assigning & Granular Checker */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 1. Assign Multi-Task Homework for Next Lesson */}
-        <Card className="space-y-4 bg-slate-900 border-slate-800 p-5">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-emerald-400" />
+        <Card className="space-y-4 bg-white border-slate-200 p-5">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-emerald-600" />
               <span>Keyingi Darsga Vazifa Berish</span>
             </h3>
             <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-600 text-white">
@@ -216,26 +216,26 @@ export const DailyWorkspacePage: React.FC = () => {
 
           <div className="space-y-3 text-xs">
             <div>
-              <label className="block font-semibold text-slate-300 mb-1">Dars Mavzusi</label>
+              <label className="block font-semibold text-slate-600 mb-1">Dars Mavzusi</label>
               <input
                 type="text"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                className="w-full px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-bold focus:outline-none focus:border-emerald-500"
+                className="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500"
               />
             </div>
 
             {/* Task Items List */}
             <div className="space-y-2">
-              <label className="block font-semibold text-slate-300">Beriladigan Vazifalar Turlari:</label>
+              <label className="block font-semibold text-slate-600">Beriladigan Vazifalar Turlari:</label>
               {assignedTasks.map((task, idx) => (
-                <div key={task.id} className="flex items-center justify-between p-2 bg-slate-950 rounded-lg border border-slate-800 text-xs">
-                  <span className="font-semibold text-slate-200">
+                <div key={task.id} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg border border-slate-200 text-xs">
+                  <span className="font-semibold text-slate-800">
                     {idx + 1}. {task.name}
                   </span>
                   <button
                     onClick={() => handleRemoveTask(task.id)}
-                    className="text-rose-400 hover:text-rose-300 p-1 cursor-pointer"
+                    className="text-rose-600 hover:text-rose-600 p-1 cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -244,15 +244,15 @@ export const DailyWorkspacePage: React.FC = () => {
             </div>
 
             {/* Add New Task Input */}
-            <div className="flex items-center space-x-2 pt-2 border-t border-slate-800">
+            <div className="flex items-center space-x-2 pt-2 border-t border-slate-200">
               <input
                 type="text"
                 value={newTaskName}
                 onChange={(e) => setNewTaskName(e.target.value)}
                 placeholder="Yangi vazifa turi..."
-                className="w-full px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 focus:outline-none focus:border-emerald-500"
+                className="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
               />
-              <Button size="sm" variant="outline" leftIcon={<Plus className="w-3.5 h-3.5 text-emerald-400" />} onClick={handleAddTask}>
+              <Button size="sm" variant="outline" leftIcon={<Plus className="w-3.5 h-3.5 text-emerald-600" />} onClick={handleAddTask}>
                 Qo'shish
               </Button>
             </div>
@@ -260,17 +260,17 @@ export const DailyWorkspacePage: React.FC = () => {
         </Card>
 
         {/* 2. Granular Multi-Task Student Homework Checker with Automatic Percentages % */}
-        <Card className="lg:col-span-2 space-y-4 bg-slate-900 border-slate-800 p-5">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-              <FileCheck className="w-4 h-4 text-emerald-400" />
+        <Card className="lg:col-span-2 space-y-4 bg-white border-slate-200 p-5">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <FileCheck className="w-4 h-4 text-emerald-600" />
               <span>O'quvchilar Vazifalarini Tekshirish (% Foizlar Bilan)</span>
             </h3>
-            <span className="text-xs text-slate-400">Har bir vazifani belgilang</span>
+            <span className="text-xs text-slate-500">Har bir vazifani belgilang</span>
           </div>
 
           {groupStudents.length === 0 ? (
-            <p className="text-xs text-slate-400 p-4 text-center">Guruhda o'quvchilar topilmadi.</p>
+            <p className="text-xs text-slate-500 p-4 text-center">Guruhda o'quvchilar topilmadi.</p>
           ) : (
             <div className="space-y-3">
               {groupStudents.map((s) => {
@@ -287,9 +287,9 @@ export const DailyWorkspacePage: React.FC = () => {
                     : 'bg-red-600 text-white';
 
                 return (
-                  <div key={s.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-                      <h4 className="text-xs font-bold text-slate-100">{s.fullName}</h4>
+                  <div key={s.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                      <h4 className="text-xs font-bold text-slate-900">{s.fullName}</h4>
                       <span className={`px-2.5 py-0.5 text-xs font-extrabold rounded ${statusBadgeClass}`}>
                         {percentage}% ({completedCount}/{totalTasks} Bajarildi)
                       </span>
@@ -307,11 +307,11 @@ export const DailyWorkspacePage: React.FC = () => {
                             className={`p-2 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer border ${
                               isDone
                                 ? 'bg-emerald-600 text-white border-emerald-500 font-bold'
-                                : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                                : 'bg-slate-100 text-slate-500 border-slate-300 hover:text-slate-900'
                             }`}
                           >
                             <span className="truncate mr-1 text-[11px]">{task.name}</span>
-                            <span className={`px-1.5 py-0.5 text-[10px] font-extrabold rounded ${isDone ? 'bg-white text-emerald-700' : 'bg-rose-950 text-rose-400'}`}>
+                            <span className={`px-1.5 py-0.5 text-[10px] font-extrabold rounded ${isDone ? 'bg-white text-emerald-700' : 'bg-rose-50 text-rose-600'}`}>
                               {isDone ? 'Bajarildi' : 'Bajarilmadi'}
                             </span>
                           </button>
@@ -327,24 +327,24 @@ export const DailyWorkspacePage: React.FC = () => {
       </div>
 
       {/* Past Saved Homeworks Drawer */}
-      <Card className="space-y-3 bg-slate-900 border-slate-800 p-5">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+      <Card className="space-y-3 bg-white border-slate-200 p-5">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-2">
           <div className="flex items-center space-x-2">
-            <History className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-xs font-bold text-slate-200">Saqlangan O'tgan Uy Vazifalari</h3>
+            <History className="w-4 h-4 text-emerald-600" />
+            <h3 className="text-xs font-bold text-slate-800">Saqlangan O'tgan Uy Vazifalari</h3>
           </div>
           <Badge variant="brand">{groupPackages.length} Ta Saqlangan</Badge>
         </div>
 
         {groupPackages.length === 0 ? (
-          <p className="text-xs text-slate-400 p-2">Saqlangan pastki vazifalar topilmadi.</p>
+          <p className="text-xs text-slate-500 p-2">Saqlangan pastki vazifalar topilmadi.</p>
         ) : (
           <div className="space-y-2">
             {groupPackages.map((pkg) => (
-              <div key={pkg.id} className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs flex items-center justify-between">
+              <div key={pkg.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs flex items-center justify-between">
                 <div>
-                  <h4 className="font-bold text-slate-100">{pkg.title}</h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{pkg.description}</p>
+                  <h4 className="font-bold text-slate-900">{pkg.title}</h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5">{pkg.description}</p>
                 </div>
                 <span className="text-[10px] font-mono text-slate-500">{pkg.createdAt.split('T')[0]}</span>
               </div>

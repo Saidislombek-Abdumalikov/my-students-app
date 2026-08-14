@@ -77,7 +77,7 @@ export const AddStudentToGroupModal: React.FC<AddStudentToGroupModalProps> = ({
     >
       <div className="space-y-4">
         {availableStudents.length === 0 ? (
-          <div className="p-6 text-center text-slate-400 bg-slate-900/40 rounded-xl border border-slate-800">
+          <div className="p-6 text-center text-slate-500 bg-slate-50 rounded-xl border border-slate-200">
             <p className="text-xs">All active students are already enrolled in this group.</p>
           </div>
         ) : (
@@ -90,19 +90,19 @@ export const AddStudentToGroupModal: React.FC<AddStudentToGroupModalProps> = ({
                   onClick={() => toggleStudent(student.id)}
                   className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-brand-950/60 border-brand-500/60 text-white'
-                      : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 text-slate-200'
+                      ? 'bg-emerald-50 border-emerald-300 text-slate-900'
+                      : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
                   }`}
                 >
                   <div className="space-y-0.5">
                     <p className="text-sm font-semibold">{student.fullName}</p>
-                    <p className="text-xs text-slate-400">{student.phone} • Parent: {student.parentName}</p>
+                    <p className="text-xs text-slate-500">{student.phone} • Parent: {student.parentName}</p>
                   </div>
                   <div>
                     {isSelected ? (
-                      <CheckCircle2 className="w-5 h-5 text-brand-400" />
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                     ) : (
-                      <div className="w-5 h-5 rounded-full border border-slate-600" />
+                      <div className="w-5 h-5 rounded-full border border-slate-300" />
                     )}
                   </div>
                 </div>
@@ -111,7 +111,7 @@ export const AddStudentToGroupModal: React.FC<AddStudentToGroupModalProps> = ({
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-3 border-t border-slate-800">
+        <div className="flex items-center justify-between pt-3 border-t border-slate-200">
           <Badge variant="brand">{selectedStudentIds.length} Selected</Badge>
           <div className="flex space-x-3">
             <Button variant="ghost" onClick={onClose}>
