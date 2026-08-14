@@ -7,9 +7,20 @@ import { Button } from '../common/Button';
 import { Copy, Send, ExternalLink, Sparkles, Check, Link as LinkIcon } from 'lucide-react';
 import { TelegramGroupLinkModal } from './TelegramGroupLinkModal';
 
+import { useAuth } from '../../context/AuthContext';
+
 export const TelegramShareConsole: React.FC = () => {
-  const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
+  const { user } = useAuth();
+  const rawGroups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
   const recentCommunications = useLiveQuery(() => db.parentCommunications.toArray());
+
+  const groups = (rawGroups || []).filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    if (user?.id) {
+      return g.teacherId === user.id || g.teacherId === user.username || (user.username === 'english' && (!g.teacherId || g.teacherId === 't-1'));
+    }
+    return false;
+  });
 
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
   const [messageText, setMessageText] = useState(

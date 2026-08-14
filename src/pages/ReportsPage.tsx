@@ -10,14 +10,25 @@ import { BarChart3, Download, Clock, AlertCircle } from 'lucide-react';
 import { getFocusedGroupId, clearFocusedGroupId, getSelectedGroupId, setSelectedGroupIdMemory } from '../utils/workspaceContext';
 import { Layers, LogOut } from 'lucide-react';
 
+import { useAuth } from '../context/AuthContext';
+
 export const ReportsPage: React.FC = () => {
-  const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
+  const { user } = useAuth();
+  const rawGroups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
   const students = useLiveQuery(() => db.students.toArray());
   const memberships = useLiveQuery(() => db.groupStudents.toArray());
   const attendanceLogs = useLiveQuery(() => db.attendance.toArray());
   const testResults = useLiveQuery(() => db.testResults.toArray());
   const payments = useLiveQuery(() => db.payments.toArray());
   const submissions = useLiveQuery(() => db.homeworkSubmissions.toArray());
+
+  const groups = (rawGroups || []).filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    if (user?.id) {
+      return g.teacherId === user.id || g.teacherId === user.username || (user.username === 'english' && (!g.teacherId || g.teacherId === 't-1'));
+    }
+    return false;
+  });
 
   const currentMonthStr = new Date().toISOString().slice(0, 7);
 

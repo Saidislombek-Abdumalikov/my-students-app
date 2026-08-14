@@ -14,18 +14,28 @@ import { useAuth } from '../context/AuthContext';
 
 export const PaymentsPage: React.FC = () => {
   const { user } = useAuth();
-  const payments = useLiveQuery(() => db.payments.toArray());
-  const students = useLiveQuery(() => db.students.toArray());
+  const rawPayments = useLiveQuery(() => db.payments.toArray());
+  const rawStudents = useLiveQuery(() => db.students.toArray());
   const rawGroups = useLiveQuery(() => db.groups.toArray());
   const memberships = useLiveQuery(() => db.groupStudents.toArray());
 
-  const groups = rawGroups?.filter((g) => {
+  const groups = (rawGroups || []).filter((g) => {
     if (user?.role === 'ADMIN') return true;
     if (user?.id) {
       return g.teacherId === user.id || g.teacherId === user.username || (user.username === 'english' && (!g.teacherId || g.teacherId === 't-1'));
     }
     return false;
   });
+
+  const teacherGroupIds = new Set(groups.map((g) => g.id));
+  const teacherStudentIds = new Set(
+    (memberships || [])
+      .filter((m) => teacherGroupIds.has(m.groupId) && m.status === 'ACTIVE')
+      .map((m) => m.studentId)
+  );
+
+  const students = (rawStudents || []).filter((s) => user?.role === 'ADMIN' || teacherStudentIds.has(s.id));
+  const payments = (rawPayments || []).filter((p) => user?.role === 'ADMIN' || teacherGroupIds.has(p.groupId) || teacherStudentIds.has(p.studentId));
 
   const currentMonthStr = new Date().toISOString().slice(0, 7);
 

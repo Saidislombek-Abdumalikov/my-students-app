@@ -6,9 +6,20 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { ExcelPerformanceMatrix } from '../components/files/ExcelPerformanceMatrix';
 import { FileSpreadsheet } from 'lucide-react';
 
+import { useAuth } from '../context/AuthContext';
+
 export const FilesPage: React.FC = () => {
-  const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
+  const { user } = useAuth();
+  const rawGroups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
   const [selectedGroupId, setSelectedGroupId] = useState<string>('ALL');
+
+  const groups = (rawGroups || []).filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    if (user?.id) {
+      return g.teacherId === user.id || g.teacherId === user.username || (user.username === 'english' && (!g.teacherId || g.teacherId === 't-1'));
+    }
+    return false;
+  });
 
   if (!groups) {
     return <LoadingSpinner label="Jadval yuklanmoqda..." />;

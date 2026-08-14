@@ -8,21 +8,39 @@ import { Button } from '../components/common/Button';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 
+import { useAuth } from '../context/AuthContext';
+
 export const CalendarPage: React.FC = () => {
+  const { user } = useAuth();
   const currentDate = new Date();
   const [year, setYear] = useState<number>(currentDate.getFullYear());
   const [month, setMonth] = useState<number>(currentDate.getMonth());
   const [eventFilter, setEventFilter] = useState<'ALL' | 'LESSON' | 'HOMEWORK' | 'TEST' | 'PAYMENT'>('ALL');
 
-  const lessons = useLiveQuery(() => db.lessons.toArray());
-  const packages = useLiveQuery(() => db.homeworkPackages.toArray());
-  const tests = useLiveQuery(() => db.tests.toArray());
-  const payments = useLiveQuery(() => db.payments.toArray());
-  const groups = useLiveQuery(() => db.groups.toArray());
+  const rawLessons = useLiveQuery(() => db.lessons.toArray());
+  const rawPackages = useLiveQuery(() => db.homeworkPackages.toArray());
+  const rawTests = useLiveQuery(() => db.tests.toArray());
+  const rawPayments = useLiveQuery(() => db.payments.toArray());
+  const rawGroups = useLiveQuery(() => db.groups.toArray());
 
-  if (!lessons || !packages || !tests || !payments || !groups) {
+  if (!rawLessons || !rawPackages || !rawTests || !rawPayments || !rawGroups) {
     return <LoadingSpinner label="Dars jadvali yuklanmoqda..." />;
   }
+
+  const groups = rawGroups.filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    if (user?.id) {
+      return g.teacherId === user.id || g.teacherId === user.username || (user.username === 'english' && (!g.teacherId || g.teacherId === 't-1'));
+    }
+    return false;
+  });
+
+  const teacherGroupIds = new Set(groups.map((g) => g.id));
+
+  const lessons = rawLessons.filter((l) => user?.role === 'ADMIN' || teacherGroupIds.has(l.groupId));
+  const packages = rawPackages.filter((p) => user?.role === 'ADMIN' || teacherGroupIds.has(p.groupId));
+  const tests = rawTests.filter((t) => user?.role === 'ADMIN' || teacherGroupIds.has(t.groupId));
+  const payments = rawPayments.filter((p) => user?.role === 'ADMIN' || teacherGroupIds.has(p.groupId));
 
   const groupMap = new Map(groups.map((g) => [g.id, g]));
 

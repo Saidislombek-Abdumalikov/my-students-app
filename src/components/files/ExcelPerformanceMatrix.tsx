@@ -9,17 +9,37 @@ interface ExcelPerformanceMatrixProps {
   selectedGroupId: string;
 }
 
+import { useAuth } from '../../context/AuthContext';
+
 export const ExcelPerformanceMatrix: React.FC<ExcelPerformanceMatrixProps> = ({ selectedGroupId }) => {
-  const students = useLiveQuery(() => db.students.where('status').equals('ACTIVE').toArray());
-  const groups = useLiveQuery(() => db.groups.toArray());
+  const { user } = useAuth();
+  const rawStudents = useLiveQuery(() => db.students.where('status').equals('ACTIVE').toArray());
+  const rawGroups = useLiveQuery(() => db.groups.toArray());
   const memberships = useLiveQuery(() => db.groupStudents.toArray());
   const attendanceLogs = useLiveQuery(() => db.attendance.toArray());
   const testResults = useLiveQuery(() => db.testResults.toArray());
   const payments = useLiveQuery(() => db.payments.toArray());
 
-  if (!students || !groups || !memberships || !attendanceLogs || !testResults || !payments) {
+  if (!rawStudents || !rawGroups || !memberships || !attendanceLogs || !testResults || !payments) {
     return <LoadingSpinner label="Excel jadvali tayyorlanmoqda..." />;
   }
+
+  const groups = rawGroups.filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    if (user?.id) {
+      return g.teacherId === user.id || g.teacherId === user.username || (user.username === 'english' && (!g.teacherId || g.teacherId === 't-1'));
+    }
+    return false;
+  });
+
+  const teacherGroupIds = new Set(groups.map((g) => g.id));
+  const teacherStudentIds = new Set(
+    memberships
+      .filter((m) => teacherGroupIds.has(m.groupId) && m.status === 'ACTIVE')
+      .map((m) => m.studentId)
+  );
+
+  const students = rawStudents.filter((s) => user?.role === 'ADMIN' || teacherStudentIds.has(s.id));
 
   const groupMap = new Map(groups.map((g) => [g.id, g]));
 
