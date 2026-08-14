@@ -1,82 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Sun, Moon, Menu } from 'lucide-react';
-import { Button } from '../common/Button';
+import React from 'react';
+import { Menu, LogOut, ShieldCheck, BookOpen } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 interface NavbarProps {
-  onSearchClick?: () => void;
   onToggleSidebar?: () => void;
 }
 
-import { useAuth } from '../../context/AuthContext';
-import { LogOut, ShieldCheck } from 'lucide-react';
-
-export const Navbar: React.FC<NavbarProps> = ({ onSearchClick, onToggleSidebar }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
   const { user, logout } = useAuth();
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-
-  useEffect(() => {
-    const savedTheme = (localStorage.getItem('teacher_os_theme') as 'dark' | 'light') || 'dark';
-    setTheme(savedTheme);
-    document.body.className = savedTheme === 'light' ? 'light-theme' : 'bg-slate-950 text-slate-100';
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    localStorage.setItem('teacher_os_theme', newTheme);
-    document.body.className = newTheme === 'light' ? 'light-theme' : 'bg-slate-950 text-slate-100';
-  };
 
   return (
-    <header className="h-14 border-b border-slate-800 bg-slate-900 sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between">
-      {/* Left: Mobile Toggle & Search */}
-      <div className="flex items-center space-x-3 flex-1 max-w-sm">
-        {/* Mobile Hamburger Button */}
+    <header className="h-14 border-b border-slate-200 bg-white sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between shadow-sm">
+      {/* Left: Mobile Sidebar Toggle & App Title */}
+      <div className="flex items-center space-x-3">
         <button
           onClick={onToggleSidebar}
-          className="lg:hidden p-1.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 hover:text-white"
+          className="lg:hidden p-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 transition-colors"
+          title="Menyu"
         >
-          <Menu className="w-4 h-4" />
+          <Menu className="w-5 h-5" />
         </button>
 
-        {/* Search Input */}
-        <button
-          onClick={onSearchClick}
-          className="w-full flex items-center space-x-2 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-400 transition-colors text-left"
-        >
-          <Search className="w-3.5 h-3.5 text-slate-500" />
-          <span className="flex-1">Qidiruv...</span>
-        </button>
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-sm">
+            <BookOpen className="w-4 h-4" />
+          </div>
+          <span className="text-sm font-extrabold text-slate-900 tracking-tight hidden sm:inline">
+            O'quv Markaz Tizimi
+          </span>
+        </div>
       </div>
 
-      {/* Right: Theme Toggle & Profile */}
+      {/* Right: User Profile Badge & Logout */}
       <div className="flex items-center space-x-3">
-        {/* White / Dark Theme Toggle Button */}
-        <Button
-          variant="outline"
-          size="sm"
-          leftIcon={theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-700" />}
-          onClick={toggleTheme}
-          className="text-xs font-bold"
-        >
-          <span>{theme === 'dark' ? "Oq Rejim (White)" : "To'q Rejim (Dark)"}</span>
-        </Button>
-
-        {/* Profile */}
-        <div className="flex items-center space-x-2 pl-2 border-l border-slate-800">
-          <div className={`w-7 h-7 rounded-lg text-white font-bold text-xs flex items-center justify-center ${user?.role === 'ADMIN' ? 'bg-amber-500 text-slate-950 font-black' : 'bg-emerald-600'}`}>
-            {user?.role === 'ADMIN' ? <ShieldCheck className="w-4 h-4" /> : user?.fullName.charAt(0).toUpperCase() || 'U'}
+        <div className="flex items-center space-x-2.5 pl-2 border-l border-slate-200">
+          <div
+            className={`w-8 h-8 rounded-xl text-white font-bold text-xs flex items-center justify-center shadow-sm ${
+              user?.role === 'ADMIN'
+                ? 'bg-amber-500 text-slate-950 font-black'
+                : 'bg-emerald-600'
+            }`}
+          >
+            {user?.role === 'ADMIN' ? (
+              <ShieldCheck className="w-4 h-4 text-slate-950" />
+            ) : (
+              user?.fullName.charAt(0).toUpperCase() || 'U'
+            )}
           </div>
-          <div className="hidden sm:block">
-            <p className="text-xs font-bold text-slate-200 leading-tight">{user?.fullName || 'Foydalanuvchi'}</p>
-            <p className="text-[10px] text-emerald-400 font-mono leading-tight">
-              {user?.role === 'ADMIN' ? 'Admin (1)' : user?.username || 'user'}
+          <div className="hidden sm:block text-left">
+            <p className="text-xs font-extrabold text-slate-900 leading-tight">
+              {user?.fullName || 'Foydalanuvchi'}
+            </p>
+            <p className="text-[10px] text-emerald-600 font-mono font-bold leading-tight">
+              {user?.role === 'ADMIN' ? 'Admin (1)' : `@${user?.username || 'user'}`}
             </p>
           </div>
           <button
             onClick={logout}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer"
-            title="Chiqish"
+            className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-all cursor-pointer"
+            title="Tizimdan chiqish"
           >
             <LogOut className="w-4 h-4" />
           </button>

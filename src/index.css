@@ -5,75 +5,75 @@
 @layer base {
   body {
     @apply font-sans antialiased selection:bg-emerald-600 selection:text-white;
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
   }
 }
 
-/* Glassmorphism Panel styles for Dark Mode */
+/* Glassmorphism Panel styles for Pristine Light Theme */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(51, 65, 85, 0.5);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
 .glass-panel-hover:hover {
-  background: rgba(30, 41, 59, 0.9);
-  border-color: rgba(52, 211, 153, 0.4);
+  background: #ffffff;
+  border-color: #059669;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
 }
 
 /* ============================================================
-   PREMIUM GOOGLE SHEETS WHITE THEME COLOR SCHEME
-   Zero night mode background bleeding, zero glowing text
+   PRISTINE WHITE & ICE-SLATE LIGHT THEME GLOBAL SYSTEM
+   Zero dark mode backgrounds, zero glowing blurs
    ============================================================ */
-body.light-theme {
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
-}
 
 /* App Wrapper & Layout Containers */
-body.light-theme div[class*="min-h-screen"],
-body.light-theme .min-h-screen,
-body.light-theme .bg-slate-950 {
+div[class*="min-h-screen"],
+.min-h-screen,
+.bg-slate-950 {
   background-color: #f8fafc !important;
   color: #0f172a !important;
 }
 
 /* Sidebar, Header, Navbar */
-body.light-theme aside,
-body.light-theme header,
-body.light-theme nav {
+aside,
+header,
+nav {
   background-color: #ffffff !important;
   color: #0f172a !important;
   border-color: #e2e8f0 !important;
 }
 
 /* Sidebar Nav Items */
-body.light-theme aside a {
+aside a {
   color: #475569 !important;
 }
 
-body.light-theme aside a:hover {
+aside a:hover {
   background-color: #f1f5f9 !important;
   color: #0f172a !important;
 }
 
-body.light-theme aside a[class*="bg-slate-800"],
-body.light-theme aside a[class*="bg-brand-600"],
-body.light-theme aside a[class*="text-emerald-400"] {
+aside a[class*="bg-slate-800"],
+aside a[class*="bg-brand-600"],
+aside a[class*="bg-emerald-600"],
+aside a[class*="text-emerald-400"] {
   background-color: #ecfdf5 !important;
   color: #059669 !important;
   font-weight: 700 !important;
   border-color: #a7f3d0 !important;
 }
 
-/* All Cards, Panels, and Rounded Containers */
-body.light-theme .glass-panel,
-body.light-theme .bg-slate-900,
-body.light-theme .bg-slate-950,
-body.light-theme .bg-slate-800,
-body.light-theme .bg-slate-900\/90,
-body.light-theme .bg-slate-800\/90,
-body.light-theme [class*="rounded-xl"],
-body.light-theme [class*="rounded-lg"] {
+/* All Cards, Panels, and Containers */
+.bg-slate-900,
+.bg-slate-950,
+.bg-slate-800,
+.bg-slate-900\/90,
+.bg-slate-800\/90,
+.bg-slate-950\/60,
+.bg-slate-950\/40 {
   background-color: #ffffff !important;
   color: #0f172a !important;
   border-color: #e2e8f0 !important;
@@ -81,151 +81,148 @@ body.light-theme [class*="rounded-lg"] {
 }
 
 /* Tables */
-body.light-theme table {
+table {
   background-color: #ffffff !important;
   border-collapse: collapse !important;
   border-color: #e2e8f0 !important;
 }
 
-body.light-theme thead,
-body.light-theme th {
+thead,
+th {
   background-color: #f1f5f9 !important;
   color: #334155 !important;
   border-color: #e2e8f0 !important;
   font-weight: 700 !important;
 }
 
-body.light-theme td {
+td {
   border-color: #e2e8f0 !important;
   color: #0f172a !important;
   background-color: #ffffff !important;
 }
 
-body.light-theme tr:hover td {
+tr:hover td {
   background-color: #f8fafc !important;
 }
 
 /* Inputs, Selects, Textareas */
-body.light-theme input,
-body.light-theme select,
-body.light-theme textarea {
+input,
+select,
+textarea {
   background-color: #ffffff !important;
   color: #0f172a !important;
   border-color: #cbd5e1 !important;
 }
 
-body.light-theme input:focus,
-body.light-theme select:focus,
-body.light-theme textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   border-color: #059669 !important;
   outline: none !important;
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2) !important;
 }
 
-/* Text Color Rules for Light Theme */
-body.light-theme .text-slate-100,
-body.light-theme .text-slate-200 {
+/* Text Color Rules */
+.text-slate-100,
+.text-slate-200 {
   color: #0f172a !important;
 }
 
-body.light-theme .text-slate-300 {
+.text-slate-300 {
   color: #334155 !important;
 }
 
-body.light-theme .text-slate-400,
-body.light-theme .text-slate-500 {
+.text-slate-400,
+.text-slate-500 {
   color: #64748b !important;
 }
 
-body.light-theme .text-emerald-400,
-body.light-theme .text-brand-400 {
+.text-emerald-400,
+.text-brand-400 {
   color: #059669 !important;
 }
 
-body.light-theme .text-emerald-500,
-body.light-theme .text-brand-500 {
+.text-emerald-500,
+.text-brand-500 {
   color: #047857 !important;
 }
 
-body.light-theme .border-slate-800,
-body.light-theme .border-slate-700 {
+.border-slate-800,
+.border-slate-700 {
   border-color: #e2e8f0 !important;
 }
 
-/* Buttons in Light Mode */
-body.light-theme button {
-  text-shadow: none !important;
-}
-
-/* Primary Button in Light Theme */
-body.light-theme button.bg-brand-600,
-body.light-theme button[class*="bg-brand-600"],
-body.light-theme button[class*="bg-emerald-600"] {
+/* Primary Button */
+button.bg-brand-600,
+button[class*="bg-brand-600"],
+button[class*="bg-emerald-600"] {
   background-color: #059669 !important;
   color: #ffffff !important;
   border-color: #059669 !important;
 }
 
-body.light-theme button.bg-brand-600:hover,
-body.light-theme button[class*="bg-brand-600"]:hover,
-body.light-theme button[class*="bg-emerald-600"]:hover {
+button.bg-brand-600:hover,
+button[class*="bg-brand-600"]:hover,
+button[class*="bg-emerald-600"]:hover {
   background-color: #047857 !important;
 }
 
-/* Secondary & Outline Buttons in Light Theme */
-body.light-theme button.bg-slate-800,
-body.light-theme button[class*="bg-slate-800"],
-body.light-theme button[class*="bg-slate-900"],
-body.light-theme button[class*="bg-slate-950"] {
+/* Secondary & Outline Buttons */
+button.bg-slate-800,
+button[class*="bg-slate-800"],
+button[class*="bg-slate-900"],
+button[class*="bg-slate-950"] {
   background-color: #ffffff !important;
   color: #334155 !important;
   border: 1px solid #cbd5e1 !important;
 }
 
-body.light-theme button.bg-slate-800:hover,
-body.light-theme button[class*="bg-slate-800"]:hover,
-body.light-theme button[class*="bg-slate-900"]:hover,
-body.light-theme button[class*="bg-slate-950"]:hover {
+button.bg-slate-800:hover,
+button[class*="bg-slate-800"]:hover,
+button[class*="bg-slate-900"]:hover,
+button[class*="bg-slate-950"]:hover {
   background-color: #f1f5f9 !important;
   color: #0f172a !important;
 }
 
-/* Solid Badges in Light Theme */
-body.light-theme .bg-emerald-600 {
+/* Badges */
+.bg-emerald-600 {
   background-color: #059669 !important;
   color: #ffffff !important;
 }
 
-body.light-theme .bg-blue-600 {
+.bg-blue-600 {
   background-color: #2563eb !important;
   color: #ffffff !important;
 }
 
-body.light-theme .bg-amber-500 {
+.bg-amber-500 {
   background-color: #f59e0b !important;
   color: #0f172a !important;
 }
 
-body.light-theme .bg-red-600 {
+.bg-red-600 {
   background-color: #dc2626 !important;
   color: #ffffff !important;
 }
 
-body.light-theme .bg-rose-950 {
+.bg-rose-950 {
   background-color: #ffe4e6 !important;
   color: #9f1239 !important;
 }
 
-body.light-theme .text-rose-400 {
+.text-rose-400 {
   color: #e11d48 !important;
 }
 
-body.light-theme .text-amber-400 {
+.text-amber-400 {
   color: #d97706 !important;
 }
 
-/* Modals */
-body.light-theme [class*="bg-black/"] {
+/* Modals Backdrops */
+[class*="bg-black/"] {
   background-color: rgba(15, 23, 42, 0.4) !important;
+  backdrop-filter: blur(4px) !important;
 }
 
 /* Custom Scrollbar */

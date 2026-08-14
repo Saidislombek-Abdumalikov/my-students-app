@@ -47,30 +47,26 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Dynamic Background Glow Elements */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="w-full max-w-md space-y-6 z-10 animate-fade-in">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6 animate-fade-in">
         {/* Header Branding */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 text-slate-950 shadow-lg shadow-emerald-500/20 mb-2">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600 text-white shadow-md mb-2">
             <BookOpen className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-100">
+          <h1 className="text-2xl font-black tracking-tight text-slate-900">
             O'quv Markaz Tizimiga Kirish
           </h1>
-          <p className="text-xs text-slate-400 font-medium">
+          <p className="text-xs text-slate-500 font-medium">
             Tizimdan foydalanish uchun shaxsiy login va parolingizni kiriting
           </p>
         </div>
 
         {/* Login Form Card */}
-        <Card className="bg-slate-900/90 border-slate-800 p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+        <Card className="bg-white border border-slate-200 p-6 sm:p-8 shadow-md space-y-6">
           {error && (
-            <div className="p-3.5 rounded-xl bg-rose-950/60 border border-rose-500/50 text-rose-300 text-xs font-semibold animate-shake flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0 animate-ping" />
+            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-rose-600 flex-shrink-0 animate-ping" />
               <span>{error}</span>
             </div>
           )}
@@ -78,8 +74,8 @@ export const LoginPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Username Input */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-emerald-400" />
+              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Login / Foydalanuvchi Nomi</span>
               </label>
               <input
@@ -87,7 +83,7 @@ export const LoginPage: React.FC = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="masalan: 1 yoki english"
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-semibold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-all"
                 autoComplete="username"
                 required
               />
@@ -95,8 +91,8 @@ export const LoginPage: React.FC = () => {
 
             {/* Password Input */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-emerald-400" />
+              <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Parol</span>
               </label>
               <div className="relative">
@@ -105,14 +101,14 @@ export const LoginPage: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-semibold text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all pr-10"
+                  className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-all pr-10"
                   autoComplete="current-password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors p-1"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -124,28 +120,28 @@ export const LoginPage: React.FC = () => {
               type="submit"
               variant="primary"
               isLoading={isSubmitting}
-              className="w-full py-3 text-sm font-extrabold shadow-lg shadow-emerald-600/20 mt-2"
+              className="w-full py-3 text-sm font-extrabold shadow-md mt-2"
             >
               Tizimga Kirish
             </Button>
           </form>
 
           {/* Preset Account Badges */}
-          <div className="border-t border-slate-800/80 pt-4 space-y-2">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+          <div className="border-t border-slate-200 pt-4 space-y-2">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
               Tezkor Kirish Akkountlari:
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => handleQuickFill('1', 'saidislomadmin1')}
-                className="p-2 rounded-lg bg-slate-950 border border-amber-500/30 hover:border-amber-500 text-left transition-colors cursor-pointer group"
+                className="p-2 rounded-lg bg-amber-50 border border-amber-200 hover:border-amber-400 text-left transition-all cursor-pointer"
               >
-                <div className="flex items-center space-x-1 text-[11px] font-bold text-amber-400">
-                  <ShieldCheck className="w-3 h-3" />
+                <div className="flex items-center space-x-1 text-[11px] font-bold text-amber-700">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
                   <span>Admin</span>
                 </div>
-                <div className="text-[10px] text-slate-400 font-mono mt-0.5 truncate">
+                <div className="text-[10px] text-amber-800 font-mono mt-0.5 truncate font-semibold">
                   1 / saidislom...
                 </div>
               </button>
@@ -153,13 +149,13 @@ export const LoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => handleQuickFill('english', '1')}
-                className="p-2 rounded-lg bg-slate-950 border border-emerald-500/30 hover:border-emerald-500 text-left transition-colors cursor-pointer group"
+                className="p-2 rounded-lg bg-emerald-50 border border-emerald-200 hover:border-emerald-400 text-left transition-all cursor-pointer"
               >
-                <div className="flex items-center space-x-1 text-[11px] font-bold text-emerald-400">
-                  <Sparkles className="w-3 h-3" />
+                <div className="flex items-center space-x-1 text-[11px] font-bold text-emerald-700">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
                   <span>English</span>
                 </div>
-                <div className="text-[10px] text-slate-400 font-mono mt-0.5 truncate">
+                <div className="text-[10px] text-emerald-800 font-mono mt-0.5 truncate font-semibold">
                   english / 1
                 </div>
               </button>
@@ -167,13 +163,13 @@ export const LoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => handleQuickFill('math', '1')}
-                className="p-2 rounded-lg bg-slate-950 border border-blue-500/30 hover:border-blue-500 text-left transition-colors cursor-pointer group"
+                className="p-2 rounded-lg bg-blue-50 border border-blue-200 hover:border-blue-400 text-left transition-all cursor-pointer"
               >
-                <div className="flex items-center space-x-1 text-[11px] font-bold text-blue-400">
-                  <Sparkles className="w-3 h-3" />
+                <div className="flex items-center space-x-1 text-[11px] font-bold text-blue-700">
+                  <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                   <span>Math</span>
                 </div>
-                <div className="text-[10px] text-slate-400 font-mono mt-0.5 truncate">
+                <div className="text-[10px] text-blue-800 font-mono mt-0.5 truncate font-semibold">
                   math / 1
                 </div>
               </button>
