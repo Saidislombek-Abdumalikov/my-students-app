@@ -28,11 +28,11 @@ export const UsersManagementPage: React.FC = () => {
 
   if (currentUser?.role !== 'ADMIN') {
     return (
-      <div className="p-8 text-center space-y-3 animate-fade-in">
+      <div className="p-8 text-center space-y-3 animate-fade-in bg-white rounded-2xl border border-slate-200 shadow-sm">
         <ShieldCheck className="w-12 h-12 text-rose-500 mx-auto opacity-80" />
-        <h2 className="text-lg font-bold text-slate-100">Ruxsat Berilmadi</h2>
-        <p className="text-xs text-slate-400">
-          Ushbu sahifa faqat Tizim Administratori (Admin) uchun ochiq.
+        <h2 className="text-lg font-bold text-slate-900">Ruxsat Berilmadi</h2>
+        <p className="text-xs text-slate-500 font-medium">
+          Ushbu sahifa faqat Tizim Administratori (Admin) uchun ochoq.
         </p>
       </div>
     );
@@ -118,11 +118,11 @@ export const UsersManagementPage: React.FC = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <Users className="w-6 h-6 text-emerald-400" />
+          <h1 className="text-2xl font-black text-slate-900 flex items-center gap-2">
+            <Users className="w-6 h-6 text-emerald-600" />
             <span>Foydalanuvchilar va Akkountlar Boshqaruvi</span>
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 font-medium mt-0.5">
             O'qituvchilar va Admin akkountlarini yaratish, login hamda parollarni o'zgartirish paneli.
           </p>
         </div>
@@ -137,11 +137,11 @@ export const UsersManagementPage: React.FC = () => {
       </div>
 
       {/* Accounts List Table / Cards */}
-      <Card className="space-y-4 bg-slate-900 border-slate-800 p-5">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <Card className="space-y-4 bg-white border-slate-200 p-5 shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div className="flex items-center space-x-2">
-            <UserCheck className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-sm font-extrabold text-slate-100">Barcha Akkountlar Ro'yxati</h3>
+            <UserCheck className="w-4 h-4 text-emerald-600" />
+            <h3 className="text-sm font-extrabold text-slate-900">Barcha Akkountlar Ro'yxati</h3>
           </div>
           <Badge variant="brand">{users.length} ta foydalanuvchi</Badge>
         </div>
@@ -153,14 +153,14 @@ export const UsersManagementPage: React.FC = () => {
             return (
               <Card
                 key={u.id}
-                className={`p-4 space-y-3 bg-slate-950 border transition-all ${
-                  isAdmin ? 'border-amber-500/40 shadow-lg shadow-amber-500/5' : 'border-slate-800'
+                className={`p-4 space-y-3 bg-white border transition-all ${
+                  isAdmin ? 'border-amber-300 shadow-sm bg-amber-50/20' : 'border-slate-200'
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-2.5">
                     <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm ${
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shadow-sm ${
                         isAdmin
                           ? 'bg-amber-500 text-slate-950'
                           : 'bg-emerald-600 text-white'
@@ -169,10 +169,10 @@ export const UsersManagementPage: React.FC = () => {
                       {isAdmin ? <ShieldCheck className="w-5 h-5" /> : u.fullName.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-slate-100 truncate max-w-[140px]">
+                      <h4 className="text-sm font-bold text-slate-900 truncate max-w-[140px]">
                         {u.fullName}
                       </h4>
-                      <p className="text-[11px] text-slate-400 font-mono">
+                      <p className="text-[11px] text-slate-500 font-mono font-medium">
                         {u.subject ? `${u.subject} O'qituvchisi` : u.role}
                       </p>
                     </div>
@@ -184,19 +184,19 @@ export const UsersManagementPage: React.FC = () => {
                 </div>
 
                 {/* Credentials Display */}
-                <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80 space-y-1 font-mono text-xs">
-                  <div className="flex items-center justify-between text-slate-300">
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1 font-mono text-xs">
+                  <div className="flex items-center justify-between text-slate-700">
                     <span className="text-slate-500">Login:</span>
-                    <span className="font-bold text-emerald-400">{u.username}</span>
+                    <span className="font-bold text-emerald-700">{u.username}</span>
                   </div>
-                  <div className="flex items-center justify-between text-slate-300">
+                  <div className="flex items-center justify-between text-slate-700">
                     <span className="text-slate-500">Parol:</span>
-                    <span className="font-bold text-amber-400">{u.password || '1'}</span>
+                    <span className="font-bold text-amber-700">{u.password || '1'}</span>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center justify-end space-x-2 pt-1 border-t border-slate-800/50">
+                <div className="flex items-center justify-end space-x-2 pt-1 border-t border-slate-100">
                   <Button
                     size="sm"
                     variant="secondary"
@@ -232,38 +232,38 @@ export const UsersManagementPage: React.FC = () => {
       >
         <form onSubmit={handleSaveUser} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-300">Foydalanuvchi To'liq Ismi</label>
+            <label className="text-xs font-bold text-slate-700">Foydalanuvchi To'liq Ismi</label>
             <input
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="masalan: Alisher Navoiy"
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
               required
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">Login (Foydalanuvchi Nomi)</label>
+              <label className="text-xs font-bold text-slate-700">Login (Foydalanuvchi Nomi)</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="masalan: 1, english, math"
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 font-mono"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-mono"
                 required
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">Parol</label>
+              <label className="text-xs font-bold text-slate-700">Parol</label>
               <input
                 type="text"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="masalan: saidislomadmin1 yoki 1"
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500 font-mono"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 font-mono"
                 required
               />
             </div>
@@ -271,11 +271,11 @@ export const UsersManagementPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">Roli</label>
+              <label className="text-xs font-bold text-slate-700">Roli</label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as UserRole)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
               >
                 <option value="TEACHER">TEACHER (O'qituvchi)</option>
                 <option value="ADMIN">ADMIN (Administrator)</option>
@@ -283,18 +283,18 @@ export const UsersManagementPage: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">Fan (Subject)</label>
+              <label className="text-xs font-bold text-slate-700">Fan (Subject)</label>
               <input
                 type="text"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="masalan: English, Math, Physics"
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-xs text-slate-100 font-semibold focus:outline-none focus:border-emerald-500"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 font-semibold focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-end space-x-2 pt-3 border-t border-slate-800">
+          <div className="flex items-center justify-end space-x-2 pt-3 border-t border-slate-200">
             <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>
               Bekor qilish
             </Button>

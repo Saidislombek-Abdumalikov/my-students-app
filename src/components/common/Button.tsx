@@ -22,15 +22,15 @@ export const Button: React.FC<ButtonProps> = ({
   rightIcon,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer';
+  const baseStyles = 'inline-flex items-center justify-center font-bold transition-all duration-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer';
 
   const variants = {
-    primary: 'bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-600/20 focus:ring-brand-500 active:scale-[0.98]',
-    secondary: 'bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700/60 focus:ring-slate-500 active:scale-[0.98]',
-    outline: 'bg-transparent hover:bg-slate-800 text-brand-400 border border-brand-500/30 hover:border-brand-500/60 focus:ring-brand-500 active:scale-[0.98]',
-    ghost: 'bg-transparent hover:bg-slate-800/60 text-slate-300 hover:text-white focus:ring-slate-500',
-    danger: 'bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/20 focus:ring-rose-500 active:scale-[0.98]',
-    success: 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 focus:ring-emerald-500 active:scale-[0.98]',
+    primary: 'bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold shadow-sm focus:ring-emerald-500 active:scale-[0.98]',
+    secondary: 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 shadow-sm focus:ring-slate-400 active:scale-[0.98]',
+    outline: 'bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-300 font-bold focus:ring-emerald-500 active:scale-[0.98]',
+    ghost: 'bg-transparent hover:bg-slate-100 text-slate-600 hover:text-slate-900 focus:ring-slate-400',
+    danger: 'bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-sm focus:ring-rose-500 active:scale-[0.98]',
+    success: 'bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold shadow-sm focus:ring-emerald-500 active:scale-[0.98]',
   };
 
   const sizes = {

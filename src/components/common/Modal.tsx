@@ -47,24 +47,24 @@ export const Modal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity animate-fade-in"
+        className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity animate-fade-in"
         onClick={onClose}
       />
 
       {/* Modal Dialog */}
       <div
-        className={`relative w-full ${maxWidths[maxWidth]} glass-panel rounded-2xl border border-slate-700/60 shadow-2xl overflow-hidden z-10 animate-fade-in my-auto`}
+        className={`relative w-full ${maxWidths[maxWidth]} bg-white text-slate-900 rounded-2xl border border-slate-200 shadow-2xl overflow-hidden z-10 animate-fade-in my-auto`}
       >
         {/* Header */}
-        <div className="flex items-start justify-between p-5 border-b border-slate-800 bg-slate-900/60">
+        <div className="flex items-start justify-between p-5 border-b border-slate-200 bg-slate-50">
           <div>
-            <h2 className="text-lg font-bold text-slate-100">{title}</h2>
-            {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
+            <h2 className="text-lg font-black text-slate-900">{title}</h2>
+            {subtitle && <p className="text-xs text-slate-500 mt-0.5 font-medium">{subtitle}</p>}
           </div>
           <Button
             variant="ghost"
             size="sm"
-            className="p-1 text-slate-400 hover:text-white rounded-lg"
+            className="p-1 text-slate-400 hover:text-slate-800 rounded-lg"
             onClick={onClose}
           >
             <X className="w-5 h-5" />
@@ -72,7 +72,7 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
 
         {/* Content Body */}
-        <div className="p-5 max-h-[75vh] overflow-y-auto space-y-4">
+        <div className="p-5 max-h-[75vh] overflow-y-auto space-y-4 bg-white text-slate-900">
           {children}
         </div>
       </div>
