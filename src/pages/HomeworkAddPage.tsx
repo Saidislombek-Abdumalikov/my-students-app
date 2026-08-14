@@ -44,6 +44,7 @@ export const HomeworkAddPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [focusedGroupId, setFocusedGroupIdState] = useState<string | null>(getFocusedGroupId());
+  const [prevGroupId, setPrevGroupId] = useState<string>('');
 
   // Listen to workspace focus changes
   useEffect(() => {
@@ -63,15 +64,18 @@ export const HomeworkAddPage: React.FC = () => {
     }
   }, [groups, selectedGroupId]);
 
-  // Snap deadline date to group's NEXT scheduled lesson day when group changes
+  // Snap deadline date to group's NEXT scheduled lesson day ONLY when group changes
   useEffect(() => {
     if (!groups || !selectedGroupId) return;
-    const selectedGroup = groups.find((g) => g.id === selectedGroupId);
-    if (selectedGroup) {
-      const nextDay = getNextLessonDate(todayStr, selectedGroup.scheduleDescription, true);
-      setDeadline(nextDay);
+    if (selectedGroupId !== prevGroupId) {
+      setPrevGroupId(selectedGroupId);
+      const selectedGroup = groups.find((g) => g.id === selectedGroupId);
+      if (selectedGroup) {
+        const nextDay = getNextLessonDate(todayStr, selectedGroup.scheduleDescription, true);
+        setDeadline(nextDay);
+      }
     }
-  }, [selectedGroupId, groups, todayStr]);
+  }, [selectedGroupId, groups, todayStr, prevGroupId]);
 
   // Load existing package and tasks from DB if one exists for selectedGroupId + deadline
   useEffect(() => {
@@ -84,6 +88,9 @@ export const HomeworkAddPage: React.FC = () => {
         const dbTasks = await db.homeworkTasks.where('packageId').equals(pkgId).toArray();
         if (dbTasks.length > 0) {
           setTasks(dbTasks.map((t, idx) => ({ id: t.id || `t-${idx}`, name: t.title })));
+        } else if (foundPkg.description) {
+          const names = foundPkg.description.split('; ').filter(Boolean);
+          setTasks(names.map((n, idx) => ({ id: `t-${idx}`, name: n })));
         }
       } else {
         setTitle("Bugungi va keyingi dars vazifalari");
@@ -105,11 +112,14 @@ export const HomeworkAddPage: React.FC = () => {
   const isValidDay = isLessonDay(deadline, schedule);
   const dayName = getUzbekDayName(deadline);
 
-  const groupPackages = packages.filter((p) => selectedGroupId === 'ALL' || p.groupId === selectedGroupId);
+  // Group packages sorted by deadline (upcoming / newest first)
+  const groupPackages = packages
+    .filter((p) => selectedGroupId === 'ALL' || p.groupId === selectedGroupId)
+    .sort((a, b) => b.deadline.localeCompare(a.deadline));
 
   const handleAddTask = () => {
     if (!newTaskName.trim()) return;
-    setTasks((prev) => [...prev, { id: `t-${Date.now()}`, name: newTaskName.trim() }]);
+    setTasks((prev) => [...prev, { id: `t-${Date.now()}-${Math.random()}`, name: newTaskName.trim() }]);
     setNewTaskName('');
   };
 
@@ -133,6 +143,31 @@ export const HomeworkAddPage: React.FC = () => {
       createdAt: new Date().toISOString(),
     });
     alert(`${deadline} (${dayName}) kungi dars kalendarga muvaffaqiyatli biriktirildi va saqlandi!`);
+  };
+
+  const handleSelectExistingPackage = async (pkg: HomeworkPackage) => {
+    setSelectedGroupId(pkg.groupId);
+    setDeadline(pkg.deadline);
+    setTitle(pkg.title);
+    const dbTasks = await db.homeworkTasks.where('packageId').equals(pkg.id).toArray();
+    if (dbTasks.length > 0) {
+      setTasks(dbTasks.map((t, idx) => ({ id: t.id || `t-${idx}`, name: t.title })));
+    } else if (pkg.description) {
+      const names = pkg.description.split('; ').filter(Boolean);
+      setTasks(names.map((n, idx) => ({ id: `t-${idx}`, name: n })));
+    }
+  };
+
+  const handleDeletePackage = async (pkgId: string, pkgTitle: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (confirm(`"${pkgTitle}" vazifasini o'chirib tashlashni tasdiqlaysizmi?`)) {
+      await db.homeworkPackages.delete(pkgId);
+      await db.homeworkTasks.where('packageId').equals(pkgId).delete();
+      const allPkgs = await db.homeworkPackages.toArray();
+      const allTasks = await db.homeworkTasks.toArray();
+      syncCollectionToCloud('homeworkPackages', allPkgs).catch(console.error);
+      syncCollectionToCloud('homeworkTasks', allTasks).catch(console.error);
+    }
   };
 
   const handleSaveHomeworkPackage = async (e: React.FormEvent) => {
@@ -406,12 +441,12 @@ export const HomeworkAddPage: React.FC = () => {
           </form>
         </Card>
 
-        {/* Saved Homework History Drawer */}
+        {/* Saved & Upcoming Homework History Drawer */}
         <Card className="space-y-3 bg-white border-slate-200 p-5">
           <div className="flex items-center justify-between border-b border-slate-200 pb-2">
             <div className="flex items-center space-x-2">
               <History className="w-4 h-4 text-emerald-600" />
-              <h3 className="text-xs font-bold text-slate-800">Saqlangan Vazifalar</h3>
+              <h3 className="text-xs font-bold text-slate-800">Saqlangan Vazifalar Ro'yxati</h3>
             </div>
             <Badge variant="brand">{groupPackages.length} Ta</Badge>
           </div>
@@ -420,15 +455,37 @@ export const HomeworkAddPage: React.FC = () => {
             <p className="text-xs text-slate-500 p-2">Saqlangan vazifalar yo'q.</p>
           ) : (
             <div className="space-y-2 max-h-[500px] overflow-y-auto">
-              {groupPackages.map((pkg) => (
-                <div key={pkg.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900">{pkg.title}</h4>
-                    <span className="text-[10px] font-mono font-bold text-emerald-600">{pkg.deadline}</span>
+              {groupPackages.map((pkg) => {
+                const isUpcoming = pkg.deadline >= todayStr;
+                return (
+                  <div
+                    key={pkg.id}
+                    onClick={() => handleSelectExistingPackage(pkg)}
+                    className={`p-3 rounded-xl border text-xs space-y-1.5 cursor-pointer transition-all hover:border-emerald-500 ${
+                      pkg.deadline === deadline ? 'bg-emerald-50/70 border-emerald-300' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-bold text-slate-900">{pkg.title}</h4>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${isUpcoming ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                        {pkg.deadline} {isUpcoming ? "(Bo'lgusi)" : ''}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 font-medium leading-relaxed">{pkg.description}</p>
+                    <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
+                      <span className="text-[10px] text-emerald-600 font-bold">Tahrirlash / Ko'rish uchun bosing →</span>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeletePackage(pkg.id, pkg.title, e)}
+                        className="text-rose-500 hover:text-rose-700 p-0.5 cursor-pointer"
+                        title="O'chirish"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-[11px] text-slate-500">{pkg.description}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </Card>
@@ -436,4 +493,3 @@ export const HomeworkAddPage: React.FC = () => {
     </div>
   );
 };
-
