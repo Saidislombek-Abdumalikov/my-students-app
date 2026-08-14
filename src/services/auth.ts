@@ -10,7 +10,26 @@ export async function loginUser(username: string, password: string): Promise<Use
   const cleanUsername = username.trim();
   const cleanPassword = password.trim();
 
-  // 1. First check Firebase Auth via username-to-email mapping
+  // 1. Instant check against local DB (seeded admin/teacher accounts)
+  const allUsers = await db.users.toArray();
+  const matchedUser = allUsers.find(
+    (u) => u.username === cleanUsername && (u.password === cleanPassword || (!u.password && cleanPassword === '1'))
+  );
+
+  if (matchedUser) {
+    localStorage.setItem(SESSION_KEY, matchedUser.id);
+    window.dispatchEvent(new Event('auth_state_changed'));
+    
+    // Background cloud sync/auth
+    try {
+      const email = usernameToEmail(cleanUsername);
+      signInWithEmailAndPassword(auth, email, cleanPassword).catch(() => {});
+    } catch {}
+
+    return matchedUser;
+  }
+
+  // 2. Fallback: Check Firebase Auth with timeout
   try {
     const email = usernameToEmail(cleanUsername);
     const userCredential = await signInWithEmailAndPassword(auth, email, cleanPassword);
@@ -27,10 +46,10 @@ export async function loginUser(username: string, password: string): Promise<Use
       }
     }
   } catch (err) {
-    console.log('[Firebase Auth Login Notice] Falling back to Firestore users collection verification:', err);
+    console.log('[Firebase Auth Login Notice]:', err);
   }
 
-  // 2. Fallback: Verify directly against Firestore `users` collection or local DB
+  // 3. Fallback: Check Cloud Firestore users collection
   try {
     const cloudUsers = await fetchCollectionFromCloud('users');
     const matchedCloudUser = cloudUsers.find(
@@ -47,18 +66,6 @@ export async function loginUser(username: string, password: string): Promise<Use
     console.error('[Firestore Login Error]:', err);
   }
 
-  // 3. Fallback to local IndexedDB users table
-  const allUsers = await db.users.toArray();
-  const matchedUser = allUsers.find(
-    (u) => u.username === cleanUsername && (u.password === cleanPassword || (!u.password && cleanPassword === '1'))
-  );
-
-  if (matchedUser) {
-    localStorage.setItem(SESSION_KEY, matchedUser.id);
-    window.dispatchEvent(new Event('auth_state_changed'));
-    return matchedUser;
-  }
-
   return null;
 }
 
@@ -72,18 +79,24 @@ export async function getCurrentUser(): Promise<User | null> {
   const userId = localStorage.getItem(SESSION_KEY);
   if (!userId) return null;
 
+  // Instant response from local DB so UI never hangs
+  const localUser = await db.users.get(userId);
+  if (localUser) return localUser;
+
+  // Fallback to cloud if not found locally
   try {
     const userDocRef = doc(firestore, 'users', userId);
     const userSnap = await getDoc(userDocRef);
     if (userSnap.exists()) {
-      return userSnap.data() as User;
+      const u = userSnap.data() as User;
+      await db.users.put(u);
+      return u;
     }
   } catch (err) {
     console.warn('[Firestore User Fetch Notice]:', err);
   }
 
-  const user = await db.users.get(userId);
-  return user || null;
+  return null;
 }
 
 export async function saveUser(user: User): Promise<void> {
