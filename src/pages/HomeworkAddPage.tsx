@@ -17,9 +17,17 @@ interface MultiTaskItem {
   name: string;
 }
 
+import { useAuth } from '../context/AuthContext';
+
 export const HomeworkAddPage: React.FC = () => {
-  const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
+  const { user } = useAuth();
+  const rawGroups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
   const packages = useLiveQuery(() => db.homeworkPackages.toArray());
+
+  const groups = rawGroups?.filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    return g.teacherId === user?.id || (!g.teacherId && user?.id === 't-1');
+  });
 
   const todayStr = new Date().toISOString().split('T')[0];
 

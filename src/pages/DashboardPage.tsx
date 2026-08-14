@@ -8,12 +8,20 @@ import { Users, GraduationCap, CalendarCheck, AlertCircle, CheckCircle2, ArrowRi
 import { Link, useNavigate } from 'react-router-dom';
 import { getFocusedGroupId, setFocusedGroupId, clearFocusedGroupId, getSelectedGroupId, setSelectedGroupIdMemory } from '../utils/workspaceContext';
 
+import { useAuth } from '../context/AuthContext';
+
 export const DashboardPage: React.FC = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
+  const rawGroups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
   const students = useLiveQuery(() => db.students.where('status').equals('ACTIVE').toArray());
   const payments = useLiveQuery(() => db.payments.toArray());
   const lessons = useLiveQuery(() => db.lessons.toArray());
+
+  const groups = rawGroups?.filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    return g.teacherId === user?.id || (!g.teacherId && user?.id === 't-1');
+  });
 
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
   const [focusedGroupId, setFocusedGroupIdState] = useState<string | null>(getFocusedGroupId());

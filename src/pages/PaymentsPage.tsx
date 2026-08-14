@@ -10,11 +10,19 @@ import { getFocusedGroupId, clearFocusedGroupId, getSelectedGroupId, setSelected
 import { syncCollectionToCloud } from '../services/firebase';
 import { Payment } from '../types';
 
+import { useAuth } from '../context/AuthContext';
+
 export const PaymentsPage: React.FC = () => {
+  const { user } = useAuth();
   const payments = useLiveQuery(() => db.payments.toArray());
   const students = useLiveQuery(() => db.students.toArray());
-  const groups = useLiveQuery(() => db.groups.toArray());
+  const rawGroups = useLiveQuery(() => db.groups.toArray());
   const memberships = useLiveQuery(() => db.groupStudents.toArray());
+
+  const groups = rawGroups?.filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    return g.teacherId === user?.id || (!g.teacherId && user?.id === 't-1');
+  });
 
   const currentMonthStr = new Date().toISOString().slice(0, 7);
 

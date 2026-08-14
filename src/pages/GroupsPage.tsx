@@ -10,7 +10,10 @@ import { Users, Plus, Search, Calendar, ChevronRight, Trash2 } from 'lucide-reac
 import { Link } from 'react-router-dom';
 import { getFocusedGroupId, clearFocusedGroupId } from '../utils/workspaceContext';
 
+import { useAuth } from '../context/AuthContext';
+
 export const GroupsPage: React.FC = () => {
+  const { user } = useAuth();
   const groups = useLiveQuery(() => db.groups.toArray());
   const memberships = useLiveQuery(() => db.groupStudents.toArray());
 
@@ -35,7 +38,13 @@ export const GroupsPage: React.FC = () => {
     }
   };
 
-  const filteredGroups = groups.filter((g) => {
+  // Filter groups by active teacher ownership
+  const myGroups = groups.filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    return g.teacherId === user?.id || (!g.teacherId && user?.id === 't-1');
+  });
+
+  const filteredGroups = myGroups.filter((g) => {
     const matchesSearch =
       g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       g.courseSubject.toLowerCase().includes(searchQuery.toLowerCase());

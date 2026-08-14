@@ -12,12 +12,14 @@ interface GroupModalProps {
 
 import { setSelectedGroupIdMemory } from '../../utils/workspaceContext';
 import { syncCollectionToCloud } from '../../services/firebase';
+import { useAuth } from '../../context/AuthContext';
 
 export const GroupModal: React.FC<GroupModalProps> = ({
   isOpen,
   onClose,
   groupToEdit,
 }) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     courseSubject: 'General English',
@@ -68,7 +70,7 @@ export const GroupModal: React.FC<GroupModalProps> = ({
       } else {
         const newGroup: Group = {
           id: `g-${Date.now()}`,
-          teacherId: 't-1',
+          teacherId: user?.id || 't-1',
           ...formData,
           createdAt: new Date().toISOString(),
         };

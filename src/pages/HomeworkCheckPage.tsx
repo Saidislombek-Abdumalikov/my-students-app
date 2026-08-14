@@ -9,6 +9,7 @@ import { FileCheck, Save, ChevronLeft, ChevronRight, AlertTriangle, Plus, LogOut
 import { getClosestLessonDate, getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
 import { getFocusedGroupId, clearFocusedGroupId, getSelectedGroupId, setSelectedGroupIdMemory } from '../utils/workspaceContext';
 import { syncCollectionToCloud } from '../services/firebase';
+import { useAuth } from '../context/AuthContext';
 
 interface MultiTaskItem {
   id: string;
@@ -16,13 +17,19 @@ interface MultiTaskItem {
 }
 
 export const HomeworkCheckPage: React.FC = () => {
-  const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
+  const { user } = useAuth();
+  const rawGroups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
   const students = useLiveQuery(() => db.students.where('status').equals('ACTIVE').toArray());
   const memberships = useLiveQuery(() => db.groupStudents.toArray());
   const packages = useLiveQuery(() => db.homeworkPackages.toArray());
   const homeworkTasksList = useLiveQuery(() => db.homeworkTasks.toArray());
   const submissions = useLiveQuery(() => db.homeworkSubmissions.toArray());
   const lessons = useLiveQuery(() => db.lessons.toArray());
+
+  const groups = rawGroups?.filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    return g.teacherId === user?.id || (!g.teacherId && user?.id === 't-1');
+  });
 
   const todayStr = new Date().toISOString().split('T')[0];
 

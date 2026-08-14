@@ -10,12 +10,20 @@ import { Test } from '../types';
 
 import { validateAndFormatScore } from '../utils/scoreValidation';
 
+import { useAuth } from '../context/AuthContext';
+
 export const TestsPage: React.FC = () => {
-  const groups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
+  const { user } = useAuth();
+  const rawGroups = useLiveQuery(() => db.groups.where('status').equals('ACTIVE').toArray());
   const students = useLiveQuery(() => db.students.where('status').equals('ACTIVE').toArray());
   const memberships = useLiveQuery(() => db.groupStudents.toArray());
   const tests = useLiveQuery(() => db.tests.toArray());
   const testResults = useLiveQuery(() => db.testResults.toArray());
+
+  const groups = rawGroups?.filter((g) => {
+    if (user?.role === 'ADMIN') return true;
+    return g.teacherId === user?.id || (!g.teacherId && user?.id === 't-1');
+  });
 
   const todayStr = new Date().toISOString().split('T')[0];
 
