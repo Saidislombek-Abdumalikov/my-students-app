@@ -9,6 +9,7 @@ import { AttendanceStatus } from '../types';
 import { getClosestLessonDate, getNextLessonDate, getPrevLessonDate, getUzbekDayName, isLessonDay } from '../utils/scheduleUtils';
 import { getFocusedGroupId, clearFocusedGroupId, getSelectedGroupId, setSelectedGroupIdMemory } from '../utils/workspaceContext';
 
+import { syncCollectionToCloud } from '../services/firebase';
 import { useAuth } from '../context/AuthContext';
 
 export const AttendancePage: React.FC = () => {
@@ -69,14 +70,16 @@ export const AttendancePage: React.FC = () => {
 
   // Load saved attendance data when date or group changes
   useEffect(() => {
-    if (!selectedGroupId || !selectedDate || !attendanceList) return;
+    if (!selectedGroupId || !selectedDate || !attendanceList || !lessons) return;
 
-    const lessonId = `l-${selectedGroupId}-${selectedDate}`;
+    const targetLesson = lessons.find((l) => l.groupId === selectedGroupId && l.date === selectedDate);
+    const targetLessonId = targetLesson?.id || `l-${selectedGroupId}-${selectedDate}`;
+
     const savedAtt: Record<string, AttendanceStatus> = {};
     const savedLate: Record<string, number> = {};
 
     attendanceList.forEach((a) => {
-      if (a.lessonId === lessonId) {
+      if (a.lessonId === targetLessonId || a.lessonId === `l-${selectedGroupId}-${selectedDate}` || a.id.includes(`-${selectedGroupId}-${selectedDate}-`)) {
         savedAtt[a.studentId] = a.status;
         if (a.lateMinutes) savedLate[a.studentId] = a.lateMinutes;
       }
@@ -89,7 +92,7 @@ export const AttendancePage: React.FC = () => {
       setAttendanceState({});
       setLateMinutesState({});
     }
-  }, [selectedGroupId, selectedDate, attendanceList]);
+  }, [selectedGroupId, selectedDate, lessons, attendanceList]);
 
   if (!groups || !students || !memberships || !attendanceList || !lessons) {
     return <LoadingSpinner label="Davomat sahifasi yuklanmoqda..." />;
@@ -127,14 +130,17 @@ export const AttendancePage: React.FC = () => {
 
   const handleAddExtraLesson = async () => {
     const newLessonId = `l-${selectedGroupId}-${selectedDate}`;
-    await db.lessons.put({
+    const newLesson = {
       id: newLessonId,
       groupId: selectedGroupId,
       date: selectedDate,
       title: `Qo'shimcha dars (${selectedDate})`,
-      status: 'COMPLETED',
+      status: 'COMPLETED' as 'COMPLETED',
       createdAt: new Date().toISOString(),
-    });
+    };
+    await db.lessons.put(newLesson);
+    const allLessons = await db.lessons.toArray();
+    syncCollectionToCloud('lessons', allLessons).catch(console.error);
     alert(`${selectedDate} (${dayName}) kungi dars kalendarga muvaffaqiyatli biriktirildi va saqlandi!`);
   };
 
@@ -144,22 +150,25 @@ export const AttendancePage: React.FC = () => {
       let lesson = await db.lessons.where('[groupId+date]').equals([selectedGroupId, selectedDate]).first();
       if (!lesson) {
         const newLessonId = `l-${selectedGroupId}-${selectedDate}`;
-        await db.lessons.put({
+        const newLesson = {
           id: newLessonId,
           groupId: selectedGroupId,
           date: selectedDate,
           title: `Dars (${selectedDate})`,
-          status: 'COMPLETED',
+          status: 'COMPLETED' as 'COMPLETED',
           createdAt: new Date().toISOString(),
-        });
-        lesson = await db.lessons.get(newLessonId);
+        };
+        await db.lessons.put(newLesson);
+        const allLessons = await db.lessons.toArray();
+        syncCollectionToCloud('lessons', allLessons).catch(console.error);
+        lesson = newLesson;
       }
 
       if (!lesson) return;
 
       const entries = Object.entries(attendanceState).map(([sId, status]) => ({
-        id: `att-${lesson.id}-${sId}`,
-        lessonId: lesson.id,
+        id: `att-${lesson!.id}-${sId}`,
+        lessonId: lesson!.id,
         studentId: sId,
         status,
         lateMinutes: status === 'LATE' ? lateMinutesState[sId] || 10 : undefined,
@@ -167,6 +176,8 @@ export const AttendancePage: React.FC = () => {
       }));
 
       await db.attendance.bulkPut(entries);
+      const allAttendance = await db.attendance.toArray();
+      syncCollectionToCloud('attendance', allAttendance).catch(console.error);
       alert('Davomat saqlandi!');
     } catch (err) {
       console.error('Davomatni saqlashda xatolik:', err);

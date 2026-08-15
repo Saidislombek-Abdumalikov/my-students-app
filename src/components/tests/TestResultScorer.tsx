@@ -50,24 +50,43 @@ export const TestResultScorer: React.FC<TestResultScorerProps> = ({ testId }) =>
       memberships.filter((m) => m.status === 'ACTIVE').map((m) => m.studentId)
     );
 
-    const initialState: Record<string, StudentScoreItem> = {};
+    const isIELTS = test?.category?.startsWith('IELTS') ?? false;
 
-    activeStudentIds.forEach((sId) => {
-      const res = existingResults?.find((r) => r.studentId === sId);
-      const defaultScore = isIELTS ? 6.5 : (test?.maxScore || 100);
-      initialState[sId] = {
-        score: res ? res.score : defaultScore,
-        listeningScore: res?.listeningScore || (isIELTS ? 7.0 : 0),
-        readingScore: res?.readingScore || (isIELTS ? 6.5 : 0),
-        writingScore: res?.writingScore || (isIELTS ? 6.0 : 0),
-        speakingScore: res?.speakingScore || (isIELTS ? 6.5 : 0),
-        comment: res?.comment || '',
-        screenshotUrl: res?.screenshotUrl || '',
-      };
+    setScoresState((prev) => {
+      // If we already have scores for this test in component state, merge existing results into defaults without blowing away current edits
+      const updatedState: Record<string, StudentScoreItem> = { ...prev };
+
+      activeStudentIds.forEach((sId) => {
+        const res = existingResults?.find((r) => r.studentId === sId);
+        const defaultScore = isIELTS ? 6.5 : (test?.maxScore || 100);
+
+        if (!updatedState[sId]) {
+          updatedState[sId] = {
+            score: res ? res.score : defaultScore,
+            listeningScore: res?.listeningScore || (isIELTS ? 7.0 : 0),
+            readingScore: res?.readingScore || (isIELTS ? 6.5 : 0),
+            writingScore: res?.writingScore || (isIELTS ? 6.0 : 0),
+            speakingScore: res?.speakingScore || (isIELTS ? 6.5 : 0),
+            comment: res?.comment || '',
+            screenshotUrl: res?.screenshotUrl || '',
+          };
+        } else if (res && !prev[sId]) {
+          updatedState[sId] = {
+            ...updatedState[sId],
+            score: res.score,
+            listeningScore: res.listeningScore || updatedState[sId].listeningScore,
+            readingScore: res.readingScore || updatedState[sId].readingScore,
+            writingScore: res.writingScore || updatedState[sId].writingScore,
+            speakingScore: res.speakingScore || updatedState[sId].speakingScore,
+            comment: res.comment || updatedState[sId].comment,
+            screenshotUrl: res.screenshotUrl || updatedState[sId].screenshotUrl,
+          };
+        }
+      });
+
+      return updatedState;
     });
-
-    setScoresState(initialState);
-  }, [memberships, allStudents, existingResults, test]);
+  }, [testId, memberships, allStudents, existingResults]);
 
   if (!test || !memberships || !allStudents) {
     return <LoadingSpinner label="Loading test scoring workspace..." />;
